@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>עו״ד דויד לייזר | נתוני האתר</title>
+<meta property="og:title" content="עו״ד דויד לייזר | נתוני האתר">
+<meta property="og:description" content="דשבורד לייב: קמפיין Google Ads ונתוני האתר מ-Google Analytics — TripleBoost">
+<link rel="icon" href="/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700&family=IBM+Plex+Sans+Hebrew:wght@400;500;600&display=swap">
+<style>
+
+:root {
+  --bg: #f4f6fb; --surface: #ffffff; --fg: #111a33; --muted: #5b6480; --line: #e0e5f0;
+  --accent: #1f5bff; --accent-2: #12c2e9; --accent-soft: #e8efff;
+  --good: #14804f; --good-soft: #e3f4ec; --warn: #b26a00; --warn-soft: #fbf0dc; --bar: #c9d1e6;
+  --f-display: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--f-body); font-size: 15px; line-height: 1.6;
+  padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
+h1, h2 { font-family: var(--f-display); margin: 0; line-height: 1.25; text-wrap: balance; }
+h1 { font-size: clamp(24px, 4vw, 34px); font-weight: 700; }
+h2 { font-size: 20px; font-weight: 600; }
+p { margin: 0; }
+.num { font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; display: inline-block; }
+main { display: flex; flex-direction: column; gap: 30px; }
+main[hidden] { display: none; }
+section { display: flex; flex-direction: column; gap: 14px; }
+
+/* Header */
+.top { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.top-band { height: 6px; background: linear-gradient(90deg, var(--accent-2), var(--accent)); }
+.top-in { padding: 22px 26px 24px; display: flex; flex-direction: column; gap: 16px; }
+.brand { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.brand .tb { height: 30px; width: auto; }
+.brand .client { height: 34px; width: auto; }
+.title-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
+.meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.chip { font-size: 13px; font-weight: 500; padding: 3px 12px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); }
+.chip.on { background: var(--good-soft); color: var(--good); }
+.chip.off { background: var(--warn-soft); color: var(--warn); }
+.live { display: inline-flex; align-items: center; gap: 7px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 0 rgba(20,128,79,.5); animation: pulse 2s infinite; }
+@keyframes pulse { 70% { box-shadow: 0 0 0 8px rgba(20,128,79,0); } 100% { box-shadow: 0 0 0 0 rgba(20,128,79,0); } }
+@media (prefers-reduced-motion: reduce) { .dot { animation: none; } }
+
+/* Range tabs */
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tabs button {
+  font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+  padding: 7px 16px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); color: var(--fg);
+}
+.tabs button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tabs button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+
+/* KPIs */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.kpi .l { font-size: 13px; color: var(--muted); }
+.kpi .v { font-family: var(--f-display); font-size: 28px; font-weight: 700; }
+.kpi.hero { background: linear-gradient(135deg, var(--accent), #2f7bff 60%, var(--accent-2)); border-color: transparent; color: #fff; }
+.kpi.hero .l { color: rgba(255,255,255,.85); }
+.kpis.small { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.kpis.small .kpi { padding: 12px 14px; }
+.kpis.small .v { font-size: 20px; font-weight: 600; }
+
+/* Funnel */
+.funnel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; display: flex; flex-direction: column; gap: 10px; }
+.fstep { display: grid; grid-template-columns: 130px minmax(0, 1fr) 120px; gap: 12px; align-items: center; font-size: 14px; }
+.fstep .track { height: 26px; border-radius: 6px; background: var(--bg); overflow: hidden; }
+.fstep .fill { height: 100%; border-radius: 6px; background: linear-gradient(270deg, var(--accent-2), var(--accent)); min-width: 3px; }
+.fstep .val { font-weight: 600; text-align: end; }
+.fstep .val small { color: var(--muted); font-weight: 400; margin-inline-start: 6px; }
+
+/* Daily chart */
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px 12px; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart .legend { display: flex; gap: 18px; font-size: 12.5px; color: var(--muted); margin-bottom: 8px; }
+.chart .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-inline-end: 6px; }
+.empty { color: var(--muted); font-size: 14px; padding: 18px 0; text-align: center; }
+
+/* Tables */
+.tbl { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { padding: 10px 14px; text-align: start; white-space: nowrap; }
+thead th { font-size: 12.5px; color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--line); }
+tbody td { border-bottom: 1px solid var(--line); }
+tbody tr:last-child td { border-bottom: 0; }
+td.n, th.n { text-align: end; font-variant-numeric: tabular-nums; }
+td.n span { direction: ltr; unicode-bidi: isolate; }
+.name { font-weight: 500; white-space: normal; min-width: 180px; }
+tr.total td { font-weight: 600; background: var(--accent-soft); }
+.best { color: var(--good); font-weight: 600; }
+
+/* Breakdowns */
+.split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.card h3 { font-family: var(--f-display); font-size: 16px; font-weight: 600; margin: 0; }
+.brow { display: grid; grid-template-columns: 90px minmax(0, 1fr) 110px; gap: 10px; align-items: center; font-size: 13.5px; }
+.brow .track { height: 18px; background: var(--bg); border-radius: 5px; overflow: hidden; }
+.brow .fill { height: 100%; background: var(--bar); border-radius: 5px; }
+.brow.top .fill { background: linear-gradient(270deg, var(--accent-2), var(--accent)); }
+.brow .val { text-align: end; color: var(--muted); }
+.brow .val b { color: var(--fg); font-weight: 600; }
+
+.state { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 30px; text-align: center; color: var(--muted); }
+.loading .kpi .v, .loading .val { color: transparent; background: linear-gradient(90deg, #eef1f7, #f7f8fb, #eef1f7); border-radius: 6px; }
+footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
+
+@media (max-width: 900px) { .kpis.small { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .split { grid-template-columns: minmax(0, 1fr); }
+  .fstep { grid-template-columns: 96px minmax(0, 1fr) 104px; font-size: 13px; }
+  .top-in { padding: 18px; }
+}
+@media (max-width: 460px) {
+  .kpis.small { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpi .v { font-size: 23px; }
+  .brand .tb { height: 24px; } .brand .client { height: 26px; }
+}
+.wordmark { font-family: var(--f-display); font-weight: 700; font-size: 22px; letter-spacing: .06em; direction: ltr; }
+.wordmark small { font-size: 13px; letter-spacing: .02em; color: var(--muted); font-weight: 500; margin-inline-start: 8px; }
+.yes { color: var(--good); font-weight: 600; }
+.no { color: var(--bar); }
+.note { font-size: 13px; color: var(--muted); }
+.rt { display: inline-flex; align-items: center; gap: 7px; font-weight: 500; color: var(--good); }
+.pg { font-weight: 500; white-space: normal; min-width: 200px; max-width: 520px; overflow-wrap: anywhere; }
+.pg small { display: block; color: var(--muted); font-weight: 400; font-size: 12px; direction: ltr; text-align: start; unicode-bidi: isolate; }
+.src small { display: block; color: var(--muted); font-size: 12px; direction: ltr; text-align: start; unicode-bidi: isolate; }
+.ads-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.ads-head .note { font-size: 13px; }
+.kpis.five { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+@media (max-width: 760px) { .kpis.five { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kpis.five .hero { grid-column: span 2; } }
+.cname bdi + bdi::before { content: " · "; color: var(--muted); }
+.client-name { font-family: var(--f-display); font-weight: 600; font-size: 18px; }
+.client-name small { display: block; font-size: 13px; color: var(--muted); font-weight: 500; direction: ltr; text-align: start; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="top-band"></div>
+    <div class="top-in">
+      <div class="brand">
+        <span class="client-name">עו״ד ונוטריון דויד לייזר ושות׳<small>laizer-law.co.il</small></span>
+        <img class="tb" src="/logo.png" alt="TripleBoost">
+      </div>
+      <div class="title-row">
+        <div>
+          <h1>נתוני האתר</h1>
+          <div class="meta">
+            <span class="rt"><span class="dot"></span><span id="rt">—</span></span>
+            <span id="updated"></span>
+          </div>
+        </div>
+        <div class="tabs" role="group" aria-label="טווח תאריכים">
+          <button data-p="today">היום</button>
+          <button data-p="yesterday">אתמול</button>
+          <button data-p="last_7d">7 ימים</button>
+          <button data-p="last_30d">30 ימים</button>
+          <button data-p="maximum">מההתחלה</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div id="err" class="state" hidden>הנתונים לא זמינים כרגע. נסו לרענן בעוד כמה דקות.</div>
+  <main id="main" class="loading">
+    <section id="adsSec" hidden>
+      <div class="ads-head"><h2>קמפיין Google Ads</h2><span class="note" id="adsCamp"></span></div>
+      <div class="kpis five" id="adsKpis"></div>
+      <div class="chart" id="adsChart"></div>
+      <div class="tbl"><table id="adsGroups"></table></div>
+    </section>
+    <section>
+      <h2>נתוני האתר</h2>
+      <div class="kpis" id="kpis"></div>
+      <div class="kpis small" id="kpis2"></div>
+    </section>
+    <section>
+      <h2>נתוני האתר יום אחר יום</h2>
+      <div class="chart" id="chart"></div>
+    </section>
+    <section>
+      <h2>מקורות תנועה</h2>
+      <div class="tbl"><table id="sources"></table></div>
+    </section>
+    <section>
+      <h2>הדפים הנצפים ביותר</h2>
+      <div class="tbl"><table id="pages"></table></div>
+    </section>
+    <section>
+      <div class="split">
+        <div class="card"><h3>מכשיר</h3><div id="devices"></div></div>
+        <div class="card"><h3>ערים</h3><div id="cities"></div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>הוכן על ידי TripleBoost</span>
+    <span>מקור הנתונים: Google Ads + Google Analytics · מתעדכן כל 30 דקות</span>
+  </footer>
+</div>
+
+<script>
+const API = "https://bbupowzicprgtfltyepd.supabase.co/functions/v1/gaLive?c=laizer";
+const REFRESH_MS = 5 * 60000;
+let preset = "last_30d";
+try { const s = localStorage.getItem("lz-preset"); if (s) preset = s; } catch (e) {}
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const nf0 = new Intl.NumberFormat("he-IL", { maximumFractionDigits: 0 });
+const nf1 = new Intl.NumberFormat("he-IL", { maximumFractionDigits: 1 });
+const N = (v) => `<span class="num">${v == null ? "—" : nf0.format(v)}</span>`;
+const P1 = (v) => `<span class="num">${v == null ? "—" : nf1.format(v) + "%"}</span>`;
+const PCT = (a, b) => P1(b ? (a * 100) / b : null);
+const DUR = (s) => { if (s == null) return "—"; s = Math.round(s); return s >= 60 ? `<span class="num">${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}</span> דק׳` : `<span class="num">${s}</span> שנ׳`; };
+const kpi = (l, v, cls = "") => `<div class="kpi ${cls}"><span class="l">${l}</span><span class="v">${v}</span></div>`;
+const ILS = (v) => `<span class="num">${v == null ? "—" : "₪" + new Intl.NumberFormat("he-IL", { maximumFractionDigits: v < 100 ? 2 : 0 }).format(v)}</span>`;
+// "Search | דיני משפחה | TB" → each part in its own <bdi> so mixed Hebrew/English doesn't flip in RTL.
+const cname = (n) => `<span class="cname">${String(n || "").replace(/\s*\|\s*TB\s*$/i, "").split(" | ").map((x) => `<bdi>${esc(x)}</bdi>`).join("")}</span>`;
+const STATUS = { ENABLED: "פעיל", PAUSED: "מושהה", REMOVED: "הוסר" };
+function renderAds(a) {
+  $("adsSec").hidden = !a;
+  if (!a) return;
+  const t = a.total || {};
+  $("adsCamp").innerHTML = (a.campaigns || []).map((c) => `${cname(c.name)}${STATUS[c.status] ? ` (${STATUS[c.status]})` : ""}`).join(" · ");
+  $("adsKpis").innerHTML =
+    kpi("עלות", ILS(t.cost), "hero") +
+    kpi("חשיפות", N(t.impressions)) +
+    kpi("קליקים", N(t.clicks)) +
+    kpi("אחוז הקלקה (CTR)", P1(t.ctr)) +
+    kpi("עלות לקליק", ILS(t.cpc));
+  renderBars($("adsChart"), a.daily || [], "clicks", "cost", "קליקים", "עלות", (d) => `${nf0.format(d.clicks)} קליקים · ₪${nf0.format(d.cost)} · ${nf0.format(d.impressions)} חשיפות`);
+  const g = a.adgroups || [];
+  $("adsGroups").innerHTML = `<thead><tr><th>קבוצת מודעות</th><th class="n">חשיפות</th><th class="n">קליקים</th><th class="n">CTR</th><th class="n">עלות לקליק</th><th class="n">עלות</th></tr></thead><tbody>` +
+    (g.length ? g.map((r) => `<tr><td class="name">${cname(r.name)}</td><td class="n">${N(r.impressions)}</td><td class="n">${N(r.clicks)}</td><td class="n">${P1(r.ctr)}</td><td class="n">${ILS(r.cpc)}</td><td class="n">${ILS(r.cost)}</td></tr>`).join("") +
+      `<tr class="total"><td>סה״כ</td><td class="n">${N(t.impressions)}</td><td class="n">${N(t.clicks)}</td><td class="n">${P1(t.ctr)}</td><td class="n">${ILS(t.cpc)}</td><td class="n">${ILS(t.cost)}</td></tr>`
+      : `<tr><td colspan="6" class="empty">אין עדיין נתונים בטווח הזה</td></tr>`) + "</tbody>";
+}
+const DEV = { mobile: "נייד", desktop: "מחשב", tablet: "טאבלט" };
+
+// GA source / medium → readable name (raw value kept underneath).
+function sourceName(sm) {
+  const [s, m] = String(sm).split(" / ");
+  if (sm === "(direct) / (none)") return "כניסה ישירה";
+  if (s === "google" && (m === "cpc" || m === "paid")) return "Google Ads (ממומן)";
+  if (m === "organic") return s === "google" ? "חיפוש אורגני בגוגל" : `חיפוש אורגני · ${s}`;
+  if (/facebook|fb|instagram|ig|meta/i.test(s)) return /cpc|paid|ads/i.test(m) ? "פייסבוק/אינסטגרם (ממומן)" : "פייסבוק/אינסטגרם";
+  if (m === "referral") return `הפניה מאתר · ${s}`;
+  if (sm === "(not set)" || !sm) return "לא ידוע";
+  return s;
+}
+function pageName(path) {
+  let p = path;
+  try { p = decodeURIComponent(path); } catch (e) {}
+  if (p === "/" || p === "") return "דף הבית";
+  return p.replace(/^\/|\/$/g, "").replace(/-/g, " ");
+}
+const bar = (label, v, tot, extra, top) => `<div class="brow ${top ? "top" : ""}"><span>${label}</span><div class="track"><div class="fill" style="width:${tot ? Math.max(1, (v / tot) * 100) : 0}%"></div></div><span class="val"><b>${N(v)}</b>${extra ? " · " + extra : ""}</span></div>`;
+
+function render(d) {
+  const t = d.total || {};
+  $("updated").textContent = d.updated_at ? "עודכן " + new Date(d.updated_at).toLocaleString("he-IL", { timeZone: "Asia/Jerusalem", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "";
+  $("rt").textContent = `${nf0.format(d.realtime_users || 0)} באתר ב-30 הדקות האחרונות`;
+
+  $("kpis").innerHTML =
+    kpi("כניסות לאתר", N(t.sessions), "hero") +
+    kpi("מבקרים", N(t.users)) +
+    kpi("צפיות בדפים", N(t.page_views)) +
+    kpi("זמן ממוצע בכניסה", DUR(t.avg_engagement_sec));
+  const mob = (d.devices || []).find((r) => r.deviceCategory === "mobile")?.sessions || 0;
+  $("kpis2").innerHTML =
+    kpi("מבקרים חדשים", N(t.new_users)) +
+    kpi("מבקרים חוזרים", N(Math.max(0, (t.users || 0) - (t.new_users || 0)))) +
+    kpi("כניסות עם מעורבות", N(t.engaged_sessions)) +
+    kpi("אחוז מעורבות", P1(t.engagement_rate)) +
+    kpi("דפים לכניסה", `<span class="num">${t.pages_per_session == null ? "—" : nf1.format(t.pages_per_session)}</span>`) +
+    kpi("כניסות מנייד", PCT(mob, t.sessions));
+
+  renderAds(d.ads);
+  renderChart(d.daily || []);
+
+  const src = d.sources || [];
+  $("sources").innerHTML = `<thead><tr><th>מקור</th><th class="n">כניסות</th><th class="n">% מהכניסות</th><th class="n">כניסות עם מעורבות</th><th class="n">% מעורבות</th></tr></thead><tbody>` +
+    (src.length ? src.map((r) => `<tr><td class="name src"><bdi>${esc(sourceName(r.sessionSourceMedium))}</bdi><small>${esc(r.sessionSourceMedium)}</small></td><td class="n">${N(r.sessions)}</td><td class="n">${PCT(r.sessions, t.sessions)}</td><td class="n">${N(r.engagedSessions)}</td><td class="n">${PCT(r.engagedSessions, r.sessions)}</td></tr>`).join("") +
+      `<tr class="total"><td>סה״כ</td><td class="n">${N(t.sessions)}</td><td class="n">${PCT(t.sessions, t.sessions)}</td><td class="n">${N(t.engaged_sessions)}</td><td class="n">${P1(t.engagement_rate)}</td></tr>`
+      : `<tr><td colspan="5" class="empty">אין עדיין נתונים בטווח הזה</td></tr>`) + "</tbody>";
+
+  const pg = d.pages || [];
+  $("pages").innerHTML = `<thead><tr><th>דף</th><th class="n">צפיות</th><th class="n">מבקרים</th></tr></thead><tbody>` +
+    (pg.length ? pg.map((r) => `<tr><td class="pg"><bdi>${esc(pageName(r.pagePath))}</bdi></td><td class="n">${N(r.screenPageViews)}</td><td class="n">${N(r.activeUsers)}</td></tr>`).join("")
+      : `<tr><td colspan="3" class="empty">אין עדיין נתונים בטווח הזה</td></tr>`) + "</tbody>";
+
+  const dv = d.devices || [];
+  const dvTot = dv.reduce((a, r) => a + r.sessions, 0);
+  $("devices").innerHTML = dv.map((r, i) => bar(DEV[r.deviceCategory] || esc(r.deviceCategory), r.sessions, dvTot, PCT(r.sessions, dvTot), i === 0)).join("") || `<p class="empty">אין עדיין נתונים</p>`;
+  const ct = (d.cities || []).filter((r) => r.city && r.city !== "(not set)");
+  const ctMax = Math.max(1, ...ct.map((r) => r.sessions));
+  $("cities").innerHTML = ct.map((r, i) => bar(esc(r.city), r.sessions, ctMax, "כניסות", i === 0)).join("") || `<p class="empty">אין עדיין נתונים</p>`;
+}
+
+function renderChart(days) {
+  renderBars($("chart"), days, "sessions", "users", "כניסות", "מבקרים", (d) => `${nf0.format(d.sessions)} כניסות · ${nf0.format(d.users || 0)} מבקרים · ${nf0.format(d.page_views || 0)} צפיות`);
+}
+function renderBars(el, days, barKey, lineKey, barLabel, lineLabel, tip) {
+  if (!days.length) { el.innerHTML = `<p class="empty">אין עדיין נתונים בטווח הזה</p>`; return; }
+  const W = 1000, H = 260, pb = 28, pt = 22;
+  const n = days.length, slot = W / n, bw = Math.min(38, slot * 0.62);
+  const enq = (d) => d[lineKey] || 0;
+  const maxS = Math.max(1, ...days.map((d) => d[barKey] || 0));
+  const maxC = Math.max(1, ...days.map(enq));
+  const y = (v, m) => H - pb - (v / m) * (H - pb - pt);
+  const every = Math.ceil(n / 12);
+  const x = (i) => W - (i + 0.5) * slot;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${barLabel} ו${lineLabel} לפי יום">`;
+  svg += `<line x1="0" x2="${W}" y1="${H - pb}" y2="${H - pb}" stroke="var(--line)"/>`;
+  days.forEach((d, i) => {
+    const cx = x(i), top = y(d[barKey] || 0, maxS);
+    const date = d.date.slice(8, 10) + "." + d.date.slice(5, 7);
+    svg += `<g><title>${date}: ${tip(d)}</title>`;
+    svg += `<rect x="${cx - bw / 2}" y="${top}" width="${bw}" height="${Math.max(0, H - pb - top)}" rx="4" fill="var(--bar)"/></g>`;
+    if (i % every === 0) svg += `<text x="${cx}" y="${H - 8}" text-anchor="middle" font-size="12" fill="var(--muted)">${date}</text>`;
+  });
+  svg += `<polyline points="${days.map((d, i) => `${x(i)},${y(enq(d), maxC)}`).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>`;
+  days.forEach((d, i) => { svg += `<circle cx="${x(i)}" cy="${y(enq(d), maxC)}" r="4" fill="var(--accent)"/>`; });
+  svg += `</svg>`;
+  el.innerHTML = `<div class="legend"><span><i style="background:var(--bar)"></i>${barLabel}</span><span><i style="background:var(--accent)"></i>${lineLabel}</span></div>` + svg;
+}
+
+let timer, seq = 0;
+async function load(showLoading) {
+  const my = ++seq;
+  if (showLoading) $("main").classList.add("loading");
+  try {
+    const r = await fetch(`${API}&p=${preset}`, { cache: "no-store" });
+    const d = await r.json();
+    if (my !== seq) return;
+    if (d.error) throw new Error(d.error);
+    render(d);
+    $("main").classList.remove("loading");
+    $("main").hidden = false; $("err").hidden = true; $("main").dataset.ok = "1";
+  } catch (e) {
+    if (my !== seq) return;
+    if (!$("main").dataset.ok) { $("main").hidden = true; $("err").hidden = false; }
+  } finally {
+    clearTimeout(timer);
+    timer = setTimeout(() => load(false), REFRESH_MS);
+  }
+}
+function setPreset(p) {
+  preset = p;
+  try { localStorage.setItem("lz-preset", p); } catch (e) {}
+  document.querySelectorAll(".tabs button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.p === p)));
+  load(true);
+}
+document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => setPreset(b.dataset.p)));
+document.addEventListener("visibilitychange", () => { if (!document.hidden) load(false); });
+setPreset(preset);
+</script>
+</body>
+</html>

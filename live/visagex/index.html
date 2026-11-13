@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>VisageX | נתונים בזמן אמת</title>
+<meta property="og:title" content="VisageX | נתונים בזמן אמת">
+<meta property="og:description" content="נתוני הקמפיין במטא ונתוני דף הסבב — לייב, TripleBoost">
+<meta property="og:image" content="https://crm.tripleboost.net/live/visagex/visagex-logo.png">
+<link rel="icon" href="/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700&family=IBM+Plex+Sans+Hebrew:wght@400;500;600&display=swap">
+<style>
+:root {
+  --bg: #f4f6fb; --surface: #ffffff; --fg: #111a33; --muted: #5b6480; --line: #e0e5f0;
+  --accent: #1a3cff; --accent-2: #12b8ea; --accent-soft: #e8edff;
+  --good: #14804f; --good-soft: #e3f4ec; --warn: #b26a00; --warn-soft: #fbf0dc; --bar: #c9d1e6;
+  --f-display: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--f-body); font-size: 15px; line-height: 1.6;
+  padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
+h1, h2 { font-family: var(--f-display); margin: 0; line-height: 1.25; text-wrap: balance; }
+h1 { font-size: clamp(24px, 4vw, 34px); font-weight: 700; }
+h2 { font-size: 20px; font-weight: 600; }
+.sub { color: var(--muted); font-size: 13.5px; margin-top: -8px; }
+p { margin: 0; }
+.num { font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; display: inline-block; }
+.view { display: flex; flex-direction: column; gap: 30px; }
+.view[hidden], main[hidden], section[hidden], .title-row[hidden] { display: none; }
+main { display: flex; flex-direction: column; gap: 30px; }
+section { display: flex; flex-direction: column; gap: 14px; }
+
+/* Header */
+.top { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.top-band { height: 6px; background: linear-gradient(90deg, var(--accent-2), var(--accent)); }
+.top-in { padding: 22px 26px 24px; display: flex; flex-direction: column; gap: 16px; }
+.brand { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.brand .tb { height: 30px; width: auto; }
+.brand .client { height: 34px; width: auto; }
+.views { display: flex; gap: 4px; background: var(--bg); padding: 4px; border-radius: 12px; width: fit-content; max-width: 100%; }
+.views button { font: inherit; cursor: pointer; border: 0; background: transparent; padding: 8px 18px; border-radius: 9px; color: var(--muted); font-weight: 500; font-size: 15px; }
+.views button[aria-selected="true"] { background: var(--surface); color: var(--fg); font-weight: 600; box-shadow: 0 1px 3px rgba(17,26,51,.12); }
+.views button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+.title-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
+.meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.chip { font-size: 13px; font-weight: 500; padding: 3px 12px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); }
+.chip.on { background: var(--good-soft); color: var(--good); }
+.chip.off { background: var(--warn-soft); color: var(--warn); }
+.live { display: inline-flex; align-items: center; gap: 7px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 0 rgba(20,128,79,.5); animation: pulse 2s infinite; }
+@keyframes pulse { 70% { box-shadow: 0 0 0 8px rgba(20,128,79,0); } 100% { box-shadow: 0 0 0 0 rgba(20,128,79,0); } }
+@media (prefers-reduced-motion: reduce) { .dot { animation: none; } }
+
+/* Range tabs */
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tabs button {
+  font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+  padding: 7px 16px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); color: var(--fg);
+}
+.tabs button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tabs button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+
+/* KPIs */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.kpi .l { font-size: 13px; color: var(--muted); }
+.kpi .v { font-family: var(--f-display); font-size: 28px; font-weight: 700; }
+.kpi .h { font-size: 12.5px; color: var(--muted); }
+.kpi.hero { background: linear-gradient(135deg, var(--accent), #2a6cff 60%, var(--accent-2)); border-color: transparent; color: #fff; }
+.kpi.hero .l, .kpi.hero .h { color: rgba(255,255,255,.85); }
+.kpis.small .kpi { padding: 12px 14px; }
+.kpis.small .v { font-size: 20px; font-weight: 600; }
+#v-camp .kpis.small { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+#v-page .kpis.small { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* Funnel */
+.funnel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; display: flex; flex-direction: column; gap: 10px; }
+.fstep { display: grid; grid-template-columns: 130px minmax(0, 1fr) 120px; gap: 12px; align-items: center; font-size: 14px; }
+#v-page .fstep { grid-template-columns: 170px minmax(0, 1fr) 130px; }
+.fstep .track { height: 26px; border-radius: 6px; background: var(--bg); overflow: hidden; }
+.fstep .fill { height: 100%; border-radius: 6px; background: linear-gradient(270deg, var(--accent-2), var(--accent)); min-width: 3px; }
+.fstep .val { font-weight: 600; text-align: end; }
+.fstep .val small { color: var(--muted); font-weight: 400; margin-inline-start: 6px; }
+
+/* Charts */
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px 12px; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart .legend { display: flex; gap: 18px; font-size: 12.5px; color: var(--muted); margin-bottom: 8px; flex-wrap: wrap; }
+.chart .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-inline-end: 6px; }
+.empty { color: var(--muted); font-size: 14px; padding: 18px 0; text-align: center; }
+
+/* Tables */
+.tbl { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { padding: 10px 14px; text-align: start; white-space: nowrap; }
+thead th { font-size: 12.5px; color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--line); }
+tbody td { border-bottom: 1px solid var(--line); }
+tbody tr:last-child td { border-bottom: 0; }
+td.n, th.n { text-align: end; font-variant-numeric: tabular-nums; }
+td.n span { direction: ltr; unicode-bidi: isolate; }
+.name { font-weight: 500; white-space: normal; min-width: 170px; }
+tr.total td { font-weight: 600; background: var(--accent-soft); }
+.best { color: var(--good); font-weight: 600; }
+.yes { color: var(--good); font-weight: 600; }
+.no { color: #b7bdd0; }
+.tag { font-size: 12px; padding: 1px 8px; border-radius: 99px; background: var(--good-soft); color: var(--good); font-weight: 500; }
+
+/* Breakdowns */
+.split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.card h3 { font-family: var(--f-display); font-size: 16px; font-weight: 600; margin: 0; }
+.brow { display: grid; grid-template-columns: 90px minmax(0, 1fr) 110px; gap: 10px; align-items: center; font-size: 13.5px; }
+#v-page .brow { grid-template-columns: 100px minmax(0, 1fr) 96px; }
+.brow .track { height: 18px; background: var(--bg); border-radius: 5px; overflow: hidden; }
+.brow .fill { height: 100%; background: var(--bar); border-radius: 5px; }
+.brow.top .fill, #v-page .brow .fill { background: linear-gradient(270deg, var(--accent-2), var(--accent)); }
+.brow .val { text-align: end; color: var(--muted); }
+.brow .val b { color: var(--fg); font-weight: 600; }
+
+.state { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 30px; text-align: center; color: var(--muted); }
+.loading .kpi .v, .loading .val { color: transparent; background: linear-gradient(90deg, #eef1f7, #f7f8fb, #eef1f7); border-radius: 6px; }
+footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
+
+@media (max-width: 900px) { #v-camp .kpis.small { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  .kpis, #v-page .kpis.small { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .split { grid-template-columns: minmax(0, 1fr); }
+  .fstep { grid-template-columns: 96px minmax(0, 1fr) 104px; font-size: 13px; }
+  #v-page .fstep { grid-template-columns: 110px minmax(0, 1fr) 104px; }
+  .top-in { padding: 18px; }
+}
+@media (max-width: 460px) {
+  #v-camp .kpis.small { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpi .v { font-size: 23px; }
+  .brand .tb { height: 24px; } .brand .client { height: 26px; }
+  .views { width: 100%; } .views button { flex: 1; padding: 8px 10px; }
+  #v-page .brow { grid-template-columns: 76px minmax(0, 1fr) 84px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="top-band"></div>
+    <div class="top-in">
+      <div class="brand">
+        <img class="client" src="/live/visagex/visagex-logo.png" alt="VisageX">
+        <img class="tb" src="/logo.png" alt="TripleBoost">
+      </div>
+      <div class="views" role="tablist" aria-label="דשבורדים">
+        <button role="tab" id="tab-camp" data-v="camp" aria-controls="v-camp">נתוני קמפיין</button>
+        <button role="tab" id="tab-page" data-v="page" aria-controls="v-page">נתוני דף הסבב</button>
+      </div>
+
+      <div class="title-row" data-for="camp">
+        <div>
+          <h1>נתוני קמפיין בזמן אמת</h1>
+          <div class="meta">
+            <span class="live"><span class="dot"></span>לייב ממנהל המודעות של מטא</span>
+            <span id="c-status" class="chip" hidden></span>
+            <span id="c-updated"></span>
+          </div>
+        </div>
+        <div class="tabs" role="group" aria-label="טווח תאריכים">
+          <button data-p="today">היום</button>
+          <button data-p="yesterday">אתמול</button>
+          <button data-p="last_7d">7 ימים</button>
+          <button data-p="last_30d">30 ימים</button>
+          <button data-p="maximum">מתחילת הקמפיין</button>
+        </div>
+      </div>
+
+      <div class="title-row" data-for="page" hidden>
+        <div>
+          <h1>מה עושים הגולשים בדף הסבב</h1>
+          <div class="meta">
+            <span class="live"><span class="dot"></span>לייב מדף VisageX באתר Exit Valley</span>
+            <span id="p-updated"></span>
+          </div>
+        </div>
+        <div class="tabs" role="group" aria-label="טווח תאריכים">
+          <button data-p="today">היום</button>
+          <button data-p="yesterday">אתמול</button>
+          <button data-p="last_7d">7 ימים</button>
+          <button data-p="last_30d">30 ימים</button>
+          <button data-p="maximum">מתחילת המדידה</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== Campaign view ===== -->
+  <div class="view" id="v-camp" role="tabpanel" aria-labelledby="tab-camp">
+    <div id="c-err" class="state" hidden>הנתונים לא זמינים כרגע. נסו לרענן בעוד כמה דקות.</div>
+    <main id="c-main" class="loading">
+      <section>
+        <div class="kpis" id="c-kpis"></div>
+        <div class="kpis small" id="c-kpis2"></div>
+      </section>
+      <section>
+        <h2>משפך</h2>
+        <div class="funnel" id="c-funnel"></div>
+      </section>
+      <section>
+        <h2>יום אחר יום</h2>
+        <div class="chart" id="c-chart"></div>
+      </section>
+      <section>
+        <h2>קהלים</h2>
+        <div class="tbl"><table id="c-adsets"></table></div>
+      </section>
+      <section>
+        <h2>מודעות</h2>
+        <div class="tbl"><table id="c-ads"></table></div>
+      </section>
+      <section>
+        <div class="split">
+          <div class="card"><h3>לפי גיל</h3><div id="c-age"></div></div>
+          <div class="card"><h3>לפי פלטפורמה</h3><div id="c-placement"></div></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ===== Landing-page view ===== -->
+  <div class="view" id="v-page" role="tabpanel" aria-labelledby="tab-page" hidden>
+    <div id="p-err" class="state" hidden>הנתונים לא זמינים כרגע. נסו לרענן בעוד כמה דקות.</div>
+    <main id="p-main" class="loading">
+      <section>
+        <div class="kpis" id="p-kpis"></div>
+        <div class="kpis small" id="p-kpis2"></div>
+      </section>
+      <section>
+        <h2>מכניסה ועד השארת פרטים</h2>
+        <div class="funnel" id="p-funnel"></div>
+      </section>
+      <section>
+        <h2>עד איזה שקף בפיץ' הגיעו</h2>
+        <p class="sub">כמה כניסות הגיעו לכל אחד מ-18 השקפים של המצגת</p>
+        <div class="chart" id="p-slides"></div>
+      </section>
+      <section>
+        <div class="split">
+          <div class="card"><h3>זמן בדף</h3><div id="p-time"></div></div>
+          <div class="card"><h3>עומק גלילה</h3><div id="p-scroll"></div></div>
+        </div>
+      </section>
+      <section>
+        <h2>יום אחר יום</h2>
+        <div class="chart" id="p-chart"></div>
+      </section>
+      <section>
+        <h2>מאיפה הגיעו</h2>
+        <div class="tbl"><table id="p-sources"></table></div>
+      </section>
+      <section id="p-adsSec" hidden>
+        <h2>לפי מודעה</h2>
+        <div class="tbl"><table id="p-ads"></table></div>
+      </section>
+      <section>
+        <div class="split">
+          <div class="card"><h3>על מה לחצו</h3><div id="p-clicks"></div></div>
+          <div class="card"><h3>מכשיר</h3><div id="p-devices"></div></div>
+        </div>
+      </section>
+      <section>
+        <h2>כניסות אחרונות</h2>
+        <p class="sub">50 הכניסות האחרונות בטווח. אין כאן פרטים מזהים של גולשים</p>
+        <div class="tbl"><table id="p-recent"></table></div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <span>הוכן על ידי TripleBoost</span>
+    <span id="foot"></span>
+  </footer>
+</div>
+
+<script>
+const REFRESH_MS = 120000;
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const nf0 = new Intl.NumberFormat("he-IL", { maximumFractionDigits: 0 });
+const nf1 = new Intl.NumberFormat("he-IL", { maximumFractionDigits: 1, minimumFractionDigits: 1 });
+const nf1t = new Intl.NumberFormat("he-IL", { maximumFractionDigits: 1 });
+const nf2 = new Intl.NumberFormat("he-IL", { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+const N = (v) => `<span class="num">${v == null ? "—" : nf0.format(v)}</span>`;
+const fmtWhen = (s) => new Date(s).toLocaleString("he-IL", { timeZone: "Asia/Jerusalem", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+// Internal naming ("… | TB", "VisageX | …") stays internal.
+const clean = (s) => String(s || "").replace(/\s*\|\s*TB\s*$/i, "").replace(/^Visagex\s*\|\s*/i, "");
+// Each " | " part isolated on its own so mixed Hebrew/English/"45+" keep their order in RTL.
+const nameHtml = (s) => clean(s).split("|").map((x) => x.trim()).filter(Boolean)
+  .map((x) => /^[\d\s+\-]+$/.test(x) ? `<span class="num">${esc(x)}</span>` : `<bdi>${esc(x)}</bdi>`).join(" · ");
+
+// Shared loader: one per view, each with its own range, refresh timer and API.
+function makeView({ key, api, storeKey, render }) {
+  const $ = (id) => document.getElementById(key + "-" + id);
+  const row = document.querySelector(`.title-row[data-for="${key === "c" ? "camp" : "page"}"]`);
+  let preset = "maximum", timer, seq = 0, active = false;
+  try { const s = localStorage.getItem(storeKey); if (s) preset = s; } catch (e) {}
+  async function load(showLoading) {
+    const my = ++seq;
+    if (showLoading) $("main").classList.add("loading");
+    try {
+      const r = await fetch(`${api}&p=${preset}`, { cache: "no-store" });
+      const d = await r.json();
+      if (my !== seq) return;
+      if (d.error) throw new Error(d.error);
+      render(d, $);
+      $("main").classList.remove("loading");
+      $("main").hidden = false; $("err").hidden = true; $("main").dataset.ok = "1";
+    } catch (e) {
+      if (my !== seq) return;
+      if (!$("main").dataset.ok) { $("main").hidden = true; $("err").hidden = false; }
+    } finally {
+      clearTimeout(timer);
+      if (active) timer = setTimeout(() => load(false), REFRESH_MS);
+    }
+  }
+  function setPreset(p) {
+    preset = p;
+    try { localStorage.setItem(storeKey, p); } catch (e) {}
+    row.querySelectorAll(".tabs button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.p === p)));
+    load(true);
+  }
+  row.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => setPreset(b.dataset.p)));
+  return {
+    show() { active = true; if ($("main").dataset.ok) load(false); else setPreset(preset); },
+    hide() { active = false; clearTimeout(timer); },
+    refresh() { if (active) load(false); },
+  };
+}
+
+/* ================= Campaign (Meta) ================= */
+const ILS = (v, d = 0) => `<span class="num">${v == null ? "—" : "₪" + (d ? nf2 : nf0).format(v)}</span>`;
+const PCT = (v) => `<span class="num">${v == null ? "—" : nf2.format(v) + "%"}</span>`;
+const F1 = (v) => `<span class="num">${v == null ? "—" : nf1.format(v)}</span>`;
+const STATUS = { ACTIVE: ["פעיל", "on"], PAUSED: ["מושהה", "off"], CAMPAIGN_PAUSED: ["מושהה", "off"], IN_PROCESS: ["בבדיקה", ""], WITH_ISSUES: ["דורש טיפול", "off"], ARCHIVED: ["בארכיון", "off"] };
+const PLAT = { facebook: "פייסבוק", instagram: "אינסטגרם", messenger: "מסנג'ר", audience_network: "Audience Network", threads: "Threads" };
+const ckpi = (l, v, cls = "") => `<div class="kpi ${cls}"><span class="l">${l}</span><span class="v">${v}</span></div>`;
+
+function renderCamp(d, $) {
+  const t = d.total;
+  const st = STATUS[d.campaign?.status];
+  $("status").hidden = !st;
+  if (st) { $("status").textContent = "סטטוס: " + st[0]; $("status").className = "chip " + st[1]; }
+  $("updated").textContent = "עודכן " + fmtWhen(d.updated_at);
+
+  $("kpis").innerHTML =
+    ckpi("לידים", N(t.leads), "hero") +
+    ckpi("עלות לליד", ILS(t.cpl)) +
+    ckpi("הוצאה", ILS(t.spend)) +
+    ckpi("קליקים לאתר", N(t.link_clicks));
+  $("kpis2").innerHTML =
+    ckpi("עלות לקליק", ILS(t.cpc, 2)) +
+    ckpi("CTR", PCT(t.ctr)) +
+    ckpi("עלות ל-1,000 חשיפות", ILS(t.cpm, 2)) +
+    ckpi("חשיפות", N(t.impressions)) +
+    ckpi("אנשים שנחשפו", N(t.reach)) +
+    ckpi("תדירות", F1(t.frequency)) +
+    ckpi("צפיות בדף", N(t.landing_page_views)) +
+    ckpi("עלות לצפייה בדף", ILS(t.cost_per_lpv, 2)) +
+    ckpi("המרה מקליק לליד", PCT(t.lead_rate)) +
+    ckpi("צפיות בווידאו (3 שנ׳)", N(t.video_views)) +
+    ckpi("צפיות מלאות (ThruPlay)", N(t.thruplays)) +
+    ckpi("כל הקליקים", N(t.clicks));
+
+  const steps = [["חשיפות", t.impressions], ["אנשים שנחשפו", t.reach], ["קליקים לאתר", t.link_clicks], ["צפיות בדף", t.landing_page_views], ["לידים", t.leads]];
+  const max = Math.max(1, ...steps.map((s) => s[1]));
+  $("funnel").innerHTML = steps.map(([l, v], i) => {
+    const prev = i > 0 && steps[i - 1][1] > 0 ? (v * 100) / steps[i - 1][1] : null;
+    const w = v > 0 ? Math.max(1.2, Math.sqrt(v / max) * 100) : 0;
+    return `<div class="fstep"><span>${l}</span><div class="track"><div class="fill" style="width:${w}%"></div></div>
+      <span class="val">${N(v)}${prev != null && i > 1 ? `<small>${PCT(prev)}</small>` : ""}</span></div>`;
+  }).join("");
+
+  campChart($("chart"), d.daily || []);
+
+  const head = `<thead><tr><th>שם</th><th class="n">הוצאה</th><th class="n">חשיפות</th><th class="n">קליקים</th><th class="n">CTR</th><th class="n">עלות לקליק</th><th class="n">לידים</th><th class="n">עלות לליד</th></tr></thead>`;
+  const rows = (list) => {
+    if (!list.length) return head + `<tbody><tr><td colspan="8" class="empty">אין עדיין נתונים בטווח הזה</td></tr></tbody>`;
+    const withL = list.filter((r) => r.cpl != null);
+    const bestCpl = withL.length > 1 ? Math.min(...withL.map((r) => r.cpl)) : null;
+    const sorted = [...list].sort((a, b) => b.leads - a.leads || b.spend - a.spend);
+    return head + "<tbody>" + sorted.map((r) => `<tr><td class="name">${nameHtml(r.name)}</td><td class="n">${ILS(r.spend)}</td><td class="n">${N(r.impressions)}</td><td class="n">${N(r.link_clicks)}</td><td class="n">${PCT(r.ctr)}</td><td class="n">${ILS(r.cpc, 2)}</td><td class="n">${N(r.leads)}</td><td class="n ${r.cpl != null && r.cpl === bestCpl ? "best" : ""}">${ILS(r.cpl)}</td></tr>`).join("") +
+      `<tr class="total"><td>סה״כ</td><td class="n">${ILS(t.spend)}</td><td class="n">${N(t.impressions)}</td><td class="n">${N(t.link_clicks)}</td><td class="n">${PCT(t.ctr)}</td><td class="n">${ILS(t.cpc, 2)}</td><td class="n">${N(t.leads)}</td><td class="n">${ILS(t.cpl)}</td></tr></tbody>`;
+  };
+  $("adsets").innerHTML = rows(d.adsets || []);
+  $("ads").innerHTML = rows(d.ads || []);
+
+  campBars($("age"), d.age || [], (k) => `<span class="num">${esc(k)}</span>`);
+  campBars($("placement"), d.placement || [], (k) => esc(PLAT[k] || k));
+}
+
+function campBars(el, list, label) {
+  const items = list.filter((r) => r.spend > 0 || r.leads > 0).sort((a, b) => b.leads - a.leads || b.spend - a.spend);
+  if (!items.length) { el.innerHTML = `<p class="empty">אין עדיין נתונים</p>`; return; }
+  const max = Math.max(1, ...items.map((r) => r.leads));
+  const useLeads = items.some((r) => r.leads > 0);
+  const maxS = Math.max(1, ...items.map((r) => r.spend));
+  el.innerHTML = items.map((r, i) => {
+    const w = useLeads ? (r.leads / max) * 100 : (r.spend / maxS) * 100;
+    return `<div class="brow ${i === 0 ? "top" : ""}"><span>${label(r.key)}</span><div class="track"><div class="fill" style="width:${Math.max(w, 1)}%"></div></div>
+      <span class="val"><b>${N(r.leads)}</b> לידים · ${ILS(r.cpl)}</span></div>`;
+  }).join("");
+}
+
+function campChart(el, days) {
+  if (!days.length) { el.innerHTML = `<p class="empty">אין עדיין נתונים בטווח הזה</p>`; return; }
+  const W = 1000, H = 260, pb = 28, pt = 22;
+  const n = days.length, slot = W / n, bw = Math.min(38, slot * 0.62);
+  const maxS = Math.max(1, ...days.map((d) => d.spend));
+  const maxL = Math.max(1, ...days.map((d) => d.leads));
+  const y = (v, m) => H - pb - (v / m) * (H - pb - pt);
+  const every = Math.ceil(n / 12);
+  const x = (i) => W - (i + 0.5) * slot; // RTL: chronological right→left
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="הוצאה ולידים לפי יום">`;
+  svg += `<line x1="0" x2="${W}" y1="${H - pb}" y2="${H - pb}" stroke="var(--line)"/>`;
+  days.forEach((d, i) => {
+    const cx = x(i), top = y(d.spend, maxS);
+    const date = d.date.slice(8, 10) + "." + d.date.slice(5, 7);
+    svg += `<g><title>${date}: הוצאה ₪${nf0.format(d.spend)} · ${nf0.format(d.leads)} לידים · ${nf0.format(d.link_clicks)} קליקים</title>`;
+    svg += `<rect x="${cx - bw / 2}" y="${top}" width="${bw}" height="${Math.max(0, H - pb - top)}" rx="4" fill="var(--bar)"/></g>`;
+    if (i % every === 0) svg += `<text x="${cx}" y="${H - 8}" text-anchor="middle" font-size="12" fill="var(--muted)">${date}</text>`;
+  });
+  const pts = days.map((d, i) => `${x(i)},${y(d.leads, maxL)}`).join(" ");
+  svg += `<polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>`;
+  days.forEach((d, i) => {
+    const cy = y(d.leads, maxL);
+    svg += `<circle cx="${x(i)}" cy="${cy}" r="4" fill="var(--accent)"/>`;
+    if (d.leads > 0 && n <= 31) svg += `<text x="${x(i)}" y="${cy - 9}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--accent)">${d.leads}</text>`;
+  });
+  svg += `</svg>`;
+  el.innerHTML = `<div class="legend"><span><i style="background:var(--bar)"></i>הוצאה (₪)</span><span><i style="background:var(--accent)"></i>לידים</span></div>` + svg;
+}
+
+/* ================= Landing page (סבב) ================= */
+const pct = (a, b) => (b > 0 ? (a * 100) / b : null);
+const P = (v) => `<span class="num">${v == null ? "—" : nf1t.format(v) + "%"}</span>`;
+const DUR = (s) => {
+  if (s == null) return "—";
+  s = Math.round(s);
+  const m = Math.floor(s / 60), r = s % 60;
+  return m ? `<span class="num">${m}:${String(r).padStart(2, "0")}</span> דק׳` : `<span class="num">${r}</span> שנ׳`;
+};
+const pkpi = (l, v, h = "", cls = "") => `<div class="kpi ${cls}"><span class="l">${l}</span><span class="v">${v}</span>${h ? `<span class="h">${h}</span>` : ""}</div>`;
+const CLICK = { video: "נגן סרטון", invest: "מתעניין בהשקעה (כפתור ראשי)" };
+const DEV = { mobile: "נייד", desktop: "מחשב" };
+const yn = (b) => (b ? `<span class="yes">✓</span>` : `<span class="no">—</span>`);
+
+function renderPage(d, $) {
+  const t = d.totals || {};
+  const S = t.sessions || 0;
+  $("updated").textContent = "עודכן " + fmtWhen(d.updated_at);
+
+  $("kpis").innerHTML =
+    pkpi("כניסות לדף", N(S), `${N(t.visitors)} גולשים שונים`, "hero") +
+    pkpi("זמן ממוצע בדף", DUR(t.avg_seconds), `חציון ${DUR(t.median_seconds)}`) +
+    pkpi("לחצו \"מתעניין בהשקעה\"", N(t.invest), `${P(pct(t.invest, S))} מהכניסות`) +
+    pkpi("השאירו פרטים", N(t.leads), `${P(pct(t.leads, S))} מהכניסות`);
+  $("kpis2").innerHTML =
+    pkpi("פתחו את הסרטון", N(t.video), `${P(pct(t.video, S))} · ממוצע ${DUR(t.avg_video_seconds)}`) +
+    pkpi("הגיעו לפיץ'", N(t.reached_pitch), `${P(pct(t.reached_pitch, S))} מהכניסות`) +
+    pkpi("גלילה ממוצעת", P(t.avg_scroll), "מאורך הדף") +
+    pkpi("יצאו תוך 10 שניות", N(t.bounce), `${P(pct(t.bounce, S))} מהכניסות`);
+
+  const steps = [
+    ["נכנסו לדף", S], ["הגיעו לפיץ'", t.reached_pitch], ["ראו חצי מהפיץ'", t.pitch_half],
+    ["לחצו מתעניין בהשקעה", t.invest], ["התחילו למלא טופס", t.form_start], ["השאירו פרטים", t.leads],
+  ];
+  $("funnel").innerHTML = steps.map(([l, v], i) => {
+    const w = S > 0 ? Math.max(v > 0 ? 1.5 : 0, (v / S) * 100) : 0;
+    return `<div class="fstep"><span>${l}</span><div class="track"><div class="fill" style="width:${w}%"></div></div>
+      <span class="val">${N(v)}${i > 0 ? `<small>${P(pct(v, S))}</small>` : ""}</span></div>`;
+  }).join("");
+
+  pageSlides($("slides"), d.slides || [], S);
+  pageBars($("time"), (d.time || []).map((r) => [esc(r.label), r.sessions]), S);
+  pageBars($("scroll"), (d.scroll || []).map((r) => [`לפחות <span class="num">${r.pct}%</span>`, r.sessions]), S);
+  pageChart($("chart"), d.days || []);
+
+  const src = d.sources || [];
+  $("sources").innerHTML = `<thead><tr><th>מקור</th><th class="n">כניסות</th><th class="n">זמן ממוצע</th><th class="n">לחצו השקעה</th><th class="n">לידים</th><th class="n">המרה</th></tr></thead><tbody>` +
+    (src.length ? src.map((r) => `<tr><td class="name"><bdi>${esc(r.source)}</bdi></td><td class="n">${N(r.sessions)}</td><td class="n">${DUR(r.avg_seconds)}</td><td class="n">${N(r.invest)}</td><td class="n">${N(r.leads)}</td><td class="n">${P(pct(r.leads, r.sessions))}</td></tr>`).join("")
+      : `<tr><td colspan="6" class="empty">אין עדיין כניסות בטווח הזה</td></tr>`) + "</tbody>";
+
+  const ads = d.ads || [];
+  $("adsSec").hidden = !ads.length;
+  $("ads").innerHTML = `<thead><tr><th>מודעה</th><th class="n">כניסות</th><th class="n">זמן ממוצע</th><th class="n">פתחו סרטון</th><th class="n">לחצו השקעה</th><th class="n">לידים</th></tr></thead><tbody>` +
+    ads.map((r) => `<tr><td class="name">${nameHtml(r.ad)}</td><td class="n">${N(r.sessions)}</td><td class="n">${DUR(r.avg_seconds)}</td><td class="n">${N(r.video)}</td><td class="n">${N(r.invest)}</td><td class="n">${N(r.leads)}</td></tr>`).join("") + "</tbody>";
+
+  pageBars($("clicks"), (d.clicks || []).slice(0, 10).map((r) => [`<bdi>${esc(CLICK[r.label] || r.label)}</bdi>`, r.sessions]), S);
+  pageBars($("devices"), (d.devices || []).sort((a, b) => b.sessions - a.sessions).map((r) => [DEV[r.device] || esc(r.device), r.sessions]), S);
+
+  const rec = d.recent || [];
+  $("recent").innerHTML = `<thead><tr><th>מתי</th><th>מקור</th><th>מכשיר</th><th class="n">זמן בדף</th><th class="n">גלילה</th><th class="n">שקף בפיץ'</th><th>סרטון</th><th>לחץ השקעה</th><th>ליד</th></tr></thead><tbody>` +
+    (rec.length ? rec.map((r) => `<tr><td>${fmtWhen(r.at)}${r.returning ? ` <span class="tag">חוזר</span>` : ""}</td>
+      <td><bdi>${esc(r.ad ? clean(r.ad) : r.source)}</bdi></td><td>${DEV[r.device] || ""}</td><td class="n">${DUR(r.seconds)}</td><td class="n">${P(r.scroll)}</td>
+      <td class="n">${r.pitch_slide ? `<span class="num">${r.pitch_slide}/18</span>` : "—"}</td><td>${r.video ? `<span class="yes">✓</span> ${DUR(r.video_seconds)}` : yn(false)}</td><td>${yn(r.invest)}</td><td>${yn(r.lead)}</td></tr>`).join("")
+      : `<tr><td colspan="9" class="empty">אין עדיין כניסות בטווח הזה</td></tr>`) + "</tbody>";
+}
+
+function pageBars(el, rows, total) {
+  if (!rows.length || !total) { el.innerHTML = `<p class="empty">אין עדיין נתונים</p>`; return; }
+  const max = Math.max(1, ...rows.map((r) => r[1]));
+  el.innerHTML = rows.map(([l, v]) => `<div class="brow"><span>${l}</span><div class="track"><div class="fill" style="width:${v > 0 ? Math.max(1.5, (v / max) * 100) : 0}%"></div></div>
+    <span class="val"><b>${N(v)}</b> · ${P(pct(v, total))}</span></div>`).join("");
+}
+
+function pageSlides(el, slides, S) {
+  if (!S || !slides.length) { el.innerHTML = `<p class="empty">אין עדיין כניסות בטווח הזה</p>`; return; }
+  const W = 1000, H = 230, pb = 28, pt = 26, n = slides.length, slot = W / n, bw = Math.min(42, slot * 0.66);
+  const y = (v) => H - pb - (v / S) * (H - pb - pt);
+  const x = (i) => W - (i + 0.5) * slot; // RTL: slide 1 on the right
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="כניסות שהגיעו לכל שקף בפיץ'">`;
+  svg += `<line x1="0" x2="${W}" y1="${H - pb}" y2="${H - pb}" stroke="var(--line)"/>`;
+  slides.forEach((s, i) => {
+    const top = y(s.sessions), p = pct(s.sessions, S);
+    svg += `<g><title>שקף ${s.n}: ${nf0.format(s.sessions)} כניסות (${nf1t.format(p || 0)}%)</title>`;
+    svg += `<rect x="${x(i) - bw / 2}" y="${top}" width="${bw}" height="${Math.max(0, H - pb - top)}" rx="4" fill="url(#slideGrad)"/></g>`;
+    svg += `<text x="${x(i)}" y="${H - 8}" text-anchor="middle" font-size="12" fill="var(--muted)">${s.n}</text>`;
+    if (s.sessions > 0) svg += `<text x="${x(i)}" y="${top - 7}" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--fg)">${Math.round(p)}%</text>`;
+  });
+  svg += `<defs><linearGradient id="slideGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--accent-2)"/></linearGradient></defs></svg>`;
+  el.innerHTML = svg;
+}
+
+function pageChart(el, days) {
+  if (!days.length) { el.innerHTML = `<p class="empty">אין עדיין נתונים בטווח הזה</p>`; return; }
+  const W = 1000, H = 260, pb = 28, pt = 22;
+  const n = days.length, slot = W / n, bw = Math.min(38, slot * 0.62);
+  const maxS = Math.max(1, ...days.map((d) => d.sessions));
+  const y = (v) => H - pb - (v / maxS) * (H - pb - pt);
+  const every = Math.ceil(n / 12);
+  const x = (i) => W - (i + 0.5) * slot;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="כניסות, לחיצות השקעה ולידים לפי יום">`;
+  svg += `<line x1="0" x2="${W}" y1="${H - pb}" y2="${H - pb}" stroke="var(--line)"/>`;
+  days.forEach((d, i) => {
+    const cx = x(i), top = y(d.sessions), date = d.date.slice(8, 10) + "." + d.date.slice(5, 7);
+    svg += `<g><title>${date}: ${nf0.format(d.sessions)} כניסות · ${nf0.format(d.invest)} לחצו השקעה · ${nf0.format(d.leads)} לידים</title>`;
+    svg += `<rect x="${cx - bw / 2}" y="${top}" width="${bw}" height="${Math.max(0, H - pb - top)}" rx="4" fill="var(--bar)"/>`;
+    const it = y(d.invest);
+    svg += `<rect x="${cx - bw / 2}" y="${it}" width="${bw}" height="${Math.max(0, H - pb - it)}" rx="4" fill="var(--accent-2)"/>`;
+    const lt = y(d.leads);
+    svg += `<rect x="${cx - bw / 2}" y="${lt}" width="${bw}" height="${Math.max(0, H - pb - lt)}" rx="4" fill="var(--accent)"/></g>`;
+    if (n <= 31) svg += `<text x="${cx}" y="${top - 7}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--fg)">${d.sessions}</text>`;
+    if (i % every === 0) svg += `<text x="${cx}" y="${H - 8}" text-anchor="middle" font-size="12" fill="var(--muted)">${date}</text>`;
+  });
+  svg += `</svg>`;
+  el.innerHTML = `<div class="legend"><span><i style="background:var(--bar)"></i>כניסות</span><span><i style="background:var(--accent-2)"></i>לחצו מתעניין בהשקעה</span><span><i style="background:var(--accent)"></i>לידים</span></div>` + svg;
+}
+
+/* ================= View switch ================= */
+const VIEWS = {
+  camp: makeView({ key: "c", api: "https://bbupowzicprgtfltyepd.supabase.co/functions/v1/campaignLive?c=visagex", storeKey: "vx-preset", render: renderCamp }),
+  page: makeView({ key: "p", api: "https://bbupowzicprgtfltyepd.supabase.co/functions/v1/pageLive?s=visagex", storeKey: "vx-page-preset", render: renderPage }),
+};
+const FOOT = { camp: "הנתונים מתעדכנים אוטומטית ממטא כל חצי שעה", page: "מתעדכן אוטומטית כל 2 דקות" };
+let current = null;
+
+function showView(v, push) {
+  if (!VIEWS[v]) v = "camp";
+  if (v === current) return;
+  if (current) VIEWS[current].hide();
+  current = v;
+  document.querySelectorAll(".views button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.v === v)));
+  document.querySelectorAll(".title-row").forEach((r) => (r.hidden = r.dataset.for !== v));
+  document.getElementById("v-camp").hidden = v !== "camp";
+  document.getElementById("v-page").hidden = v !== "page";
+  document.getElementById("foot").textContent = FOOT[v];
+  if (push) {
+    const u = new URL(location.href);
+    if (v === "page") u.searchParams.set("v", "page"); else u.searchParams.delete("v");
+    history.replaceState(null, "", u);
+  }
+  VIEWS[v].show();
+}
+document.querySelectorAll(".views button").forEach((b) => b.addEventListener("click", () => showView(b.dataset.v, true)));
+document.addEventListener("visibilitychange", () => { if (!document.hidden && current) VIEWS[current].refresh(); });
+showView(new URLSearchParams(location.search).get("v"), false);
+</script>
+</body>
+</html>
