@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>תמונת מצב</title>
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7;
+  --surface: #ffffff;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #898781;
+  --line: #e1e0d9;
+  --border: rgba(11, 11, 11, 0.10);
+  --red: #d03b3b;
+  --red-wash: rgba(208, 59, 59, 0.08);
+  --link: #1c5cab;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --ink: #f0efec;
+    --ink-2: #c3c2b7;
+    --muted: #898781;
+    --line: #2c2c2a;
+    --border: rgba(255, 255, 255, 0.10);
+    --red: #e66767;
+    --red-wash: rgba(230, 103, 103, 0.10);
+    --link: #86b6ef;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d;
+  --surface: #1a1a19;
+  --ink: #f0efec;
+  --ink-2: #c3c2b7;
+  --muted: #898781;
+  --line: #2c2c2a;
+  --border: rgba(255, 255, 255, 0.10);
+  --red: #e66767;
+  --red-wash: rgba(230, 103, 103, 0.10);
+  --link: #86b6ef;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 28px 16px 72px; }
+
+header h1 { margin: 0; font-size: 28px; font-weight: 650; }
+header .meta { margin: 4px 0 0; color: var(--ink-2); }
+.demo { margin: 12px 0 0; padding: 8px 12px; border-radius: 8px; background: rgba(250, 178, 25, 0.18); font-size: 14px; }
+
+/* ---------- bar: period + search ---------- */
+.bar {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
+  padding: 12px 0; margin: 18px 0 6px;
+  background: var(--page);
+  border-bottom: 1px solid var(--border);
+}
+.seg { display: inline-flex; padding: 3px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); }
+.seg button {
+  font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+  padding: 8px 18px; border: 0; border-radius: 9px; background: transparent; color: var(--ink-2);
+}
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--page); }
+.seg button:active { transform: scale(0.97); }
+.bar input {
+  flex: 1 1 180px; max-width: 280px; min-width: 0;
+  font: inherit; padding: 9px 12px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--ink);
+}
+.totals { width: 100%; color: var(--ink-2); font-size: 14px; }
+.totals b { color: var(--ink); }
+.totals .bad { color: var(--red); font-weight: 600; }
+
+/* ---------- client cards ---------- */
+.grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); margin-top: 14px; }
+.client {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0;
+}
+.client.problem { border: 2px solid var(--red); padding: 15px 17px; }
+.client-head { display: flex; align-items: flex-start; gap: 8px; }
+.client-head h2 { margin: 0; font-size: 17px; font-weight: 650; line-height: 1.3; flex: 1; }
+.client-head a { color: var(--link); text-decoration: none; font-size: 14px; white-space: nowrap; }
+.client-head a:hover { text-decoration: underline; }
+
+.problems { display: flex; flex-direction: column; gap: 4px; }
+.problem-line {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--red); font-weight: 600; font-size: 14px;
+  background: var(--red-wash); border-radius: 8px; padding: 6px 10px;
+}
+.problem-line::before {
+  content: "!"; flex: none; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--red); color: #fff; font-size: 12px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+
+.results { display: flex; flex-wrap: wrap; gap: 4px 22px; }
+.result .n { font-size: 30px; font-weight: 650; letter-spacing: -0.01em; line-height: 1.1; }
+.result .w { font-size: 14px; color: var(--ink-2); }
+.result.zero .n { color: var(--muted); }
+.note { color: var(--muted); font-size: 14px; }
+
+.camps { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.camps li { display: flex; align-items: baseline; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.camps li:last-child { border-bottom: 0; padding-bottom: 0; }
+.camps .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-2); text-decoration: none; }
+.camps .nm:hover { text-decoration: underline; }
+.camps .cnt { white-space: nowrap; font-weight: 600; }
+.camps .cnt.zero { color: var(--muted); font-weight: 400; }
+.camps li.bad .nm, .camps li.bad .why { color: var(--red); }
+.camps .why { font-size: 13px; font-weight: 600; white-space: nowrap; }
+
+details.quiet { margin-top: 28px; color: var(--ink-2); font-size: 14px; }
+details.quiet summary { cursor: pointer; }
+details.quiet p { margin: 8px 0 0; line-height: 1.9; }
+
+.empty { color: var(--ink-2); padding: 24px 0; }
+footer { margin-top: 28px; font-size: 13px; color: var(--muted); }
+
+@media (max-width: 640px) {
+  .bar { position: static; }
+  .grid { grid-template-columns: 1fr; }
+  .seg { width: 100%; }
+  .seg button { flex: 1; padding: 8px 6px; }
+  .bar input { max-width: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>תמונת מצב</h1>
+    <p class="meta" id="meta"></p>
+    <p class="demo" id="demo" hidden>אלה נתוני דוגמה, לא החשבונות האמיתיים.</p>
+  </header>
+
+  <div class="bar">
+    <div class="seg" id="seg" role="group" aria-label="תקופה">
+      <button data-p="today" aria-pressed="true">היום</button>
+      <button data-p="yday" aria-pressed="false">אתמול</button>
+      <button data-p="w" aria-pressed="false">7 ימים</button>
+    </div>
+    <input type="search" id="q" placeholder="חיפוש לקוח…" aria-label="חיפוש לקוח">
+    <div class="totals" id="totals"></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <div id="quiet"></div>
+  <footer id="foot"></footer>
+</div>
+
+<script>
+
+const KINDS = {
+  leads:         ["ליד", "לידים"],
+  purchases:     ["רכישה", "רכישות"],
+  conversations: ["שיחה", "שיחות"],
+  registrations: ["הרשמה", "הרשמות"],
+  lpv:           ["צפייה בדף", "צפיות בדף"],
+  clicks:        ["קליק", "קליקים"],
+  video:         ["צפייה בסרטון", "צפיות בסרטון"],
+  engagement:    ["מעורבות", "מעורבויות"],
+  page:          ["עוקב", "עוקבים"],
+  reach:         ["איש שנחשף", "אנשים שנחשפו"],
+  impressions:   ["חשיפה", "חשיפות"],
+  results:       ["תוצאה", "תוצאות"],
+};
+const KIND_ORDER = Object.keys(KINDS);
+const ACC_PROBLEM = {
+  2: "החשבון מושבת", 3: "חוב פתוח בחשבון", 7: "החשבון בבדיקת סיכון", 8: "החשבון ממתין לתשלום",
+  9: "החשבון בתקופת חסד", 100: "החשבון בתהליך סגירה", 101: "החשבון סגור", 202: "החשבון סגור",
+};
+const LIVE = ["ACTIVE", "IN_PROCESS", "WITH_ISSUES"];
+const PERIOD_NAME = { today: "היום", yday: "אתמול", w: "ב-7 הימים האחרונים" };
+
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const nf = new Intl.NumberFormat("he-IL", { maximumFractionDigits: 0 });
+const word = (kind, n) => (KINDS[kind] || KINDS.results)[Math.round(n) === 1 ? 0 : 1];
+const shortDate = (iso) => { const [, m, d] = iso.split("-"); return `${+d}.${+m}`; };
+const sumRange =(arr, [x, y]) => { let t = 0; for (let i = Math.max(0, x); i <= y; i++) t += arr[i] || 0; return t; };
+const adsUrl = (a, cid) => `https://adsmanager.facebook.com/adsmanager/manage/campaigns?act=${encodeURIComponent(a.account_id)}` +
+  (cid ? `&selected_campaign_ids=${encodeURIComponent(cid)}` : "");
+
+function prep(a) {
+  const T = a.dates.length - 1;
+  const R = { today: [T, T], yday: [T - 1, T - 1], w: [T - 7, T - 1] };
+  const camps = (a.campaigns || []).map((c) => {
+    const live = c.live ?? LIVE.includes(c.status);
+    let last = -1;
+    c.spend.forEach((v, i) => { if (v > 0) last = i; });
+    const stopped = live && last >= 0 && last <= T - 2; // ran before, nothing yesterday and today
+    let why = "";
+    if (c.status === "WITH_ISSUES") why = "בעיה בקמפיין";
+    else if (c.bad_ads) why = c.bad_ads === 1 ? "מודעה נדחתה" : `${c.bad_ads} מודעות נדחו`;
+    else if (stopped) why = `לא רץ מאז ${shortDate(a.dates[last])}`;
+    const p = {};
+    for (const r in R) p[r] = { res: sumRange(c.results, R[r]), spend: sumRange(c.spend, R[r]) };
+    return { ...c, live, why, stopped, p };
+  });
+
+  const problems = [];
+  if (a.error) problems.push("לא הצלחנו לקרוא את החשבון");
+  // an account status matters only for a client that ran ads in the last two weeks
+  if (ACC_PROBLEM[a.status] && camps.length) problems.push(ACC_PROBLEM[a.status]);
+  if (a.spend_cap > 0 && a.amount_spent >= a.spend_cap) problems.push("החשבון הגיע למגבלת ההוצאה");
+  const badAds = (a.bad_ads || []).length;
+  if (badAds) problems.push(badAds === 1 ? "מודעה אחת נדחתה" : `${badAds} מודעות נדחו`);
+  const stopped = camps.filter((c) => c.stopped).length;
+  if (stopped) problems.push(stopped === 1 ? "קמפיין פעיל שלא רץ אתמול והיום" : `${stopped} קמפיינים פעילים שלא רצו אתמול והיום`);
+
+  const anySpend = camps.some((c) => c.spend.some((v) => v > 0));
+  const quiet = !problems.length && !camps.some((c) => c.live) && !anySpend;
+  return { ...a, R, camps, problems, quiet };
+}
+
+function totalsFor(a, period) {
+  const t = {};
+  for (const c of a.camps) if (c.kind) t[c.kind] = (t[c.kind] || 0) + c.p[period].res;
+  return t;
+}
+
+function mainKinds(a) {
+  // kinds the account works on, in a fixed order: leads, purchases, conversations…
+  const ks = new Set(a.camps.filter((c) => c.kind && (c.live || c.p.w.spend || c.p.today.spend)).map((c) => c.kind));
+  return KIND_ORDER.filter((k) => ks.has(k));
+}
+
+function clientHtml(a, period) {
+  const t = totalsFor(a, period);
+  const kinds = mainKinds(a);
+  const results = kinds.length
+    ? `<div class="results">${kinds.map((k) => `<div class="result${t[k] ? "" : " zero"}"><div class="n">${nf.format(t[k] || 0)}</div><div class="w">${word(k, t[k] || 0)}</div></div>`).join("")}</div>`
+    : `<div class="note">אין קמפיין פעיל</div>`;
+
+  const shown = a.camps
+    .filter((c) => c.live || c.why || c.p[period].res > 0 || c.p[period].spend > 0)
+    .sort((x, y) => (!!y.why - !!x.why) || (y.p[period].res - x.p[period].res) || x.name.localeCompare(y.name, "he"));
+  const camps = shown.length ? `<ul class="camps">${shown.map((c) => {
+    const n = c.p[period].res;
+    const cnt = c.kind ? `${nf.format(n)} ${word(c.kind, n)}` : "—";
+    return `<li class="${c.why ? "bad" : ""}">
+      <a class="nm" href="${adsUrl(a, c.id)}" target="_blank" rel="noopener" title="${esc(c.name)}">${esc(c.name)}</a>
+      ${c.why ? `<span class="why">${esc(c.why)}</span>` : ""}
+      <span class="cnt${n ? "" : " zero"}">${cnt}</span>
+    </li>`;
+  }).join("")}</ul>` : "";
+
+  return `<section class="client${a.problems.length ? " problem" : ""}">
+    <div class="client-head">
+      <h2>${esc(a.name)}</h2>
+      <a href="${adsUrl(a)}" target="_blank" rel="noopener" title="פתיחה במנהל המודעות">↗</a>
+    </div>
+    ${a.problems.length ? `<div class="problems">${a.problems.map((p) => `<div class="problem-line">${esc(p)}</div>`).join("")}</div>` : ""}
+    ${a.error ? `<div class="note">${esc(a.error)}</div>` : results}
+    ${a.error ? "" : camps}
+  </section>`;
+}
+
+const state = { period: "today", q: "" };
+let ALL = [];
+
+function render() {
+  const q = state.q.trim().toLowerCase();
+  const match = (a) => !q || a.name.toLowerCase().includes(q);
+  const list = ALL.filter((a) => !a.quiet && match(a))
+    .sort((x, y) => (!!y.problems.length - !!x.problems.length) || x.name.localeCompare(y.name, "he"));
+  document.getElementById("grid").innerHTML = list.length
+    ? list.map((a) => clientHtml(a, state.period)).join("")
+    : `<p class="empty">אין לקוח בשם הזה.</p>`;
+
+  const sum = {};
+  ALL.forEach((a) => { const t = totalsFor(a, state.period); for (const k in t) sum[k] = (sum[k] || 0) + t[k]; });
+  const parts = KIND_ORDER.filter((k) => sum[k]).map((k) => `<b>${nf.format(sum[k])}</b> ${word(k, sum[k])}`);
+  const bad = ALL.filter((a) => a.problems.length).length;
+  document.getElementById("totals").innerHTML =
+    `כל הלקוחות ${PERIOD_NAME[state.period]}: ${parts.length ? parts.join(" · ") : "אין תוצאות עדיין"}` +
+    (bad ? ` · <span class="bad">${bad === 1 ? "לקוח אחד עם בעיה" : `${bad} לקוחות עם בעיה`}</span>` : "");
+
+  const quiet = ALL.filter((a) => a.quiet && match(a));
+  document.getElementById("quiet").innerHTML = quiet.length
+    ? `<details class="quiet"><summary>${quiet.length} חשבונות בלי פעילות בשבועיים האחרונים</summary><p>${quiet.map((a) => esc(a.name)).join(" · ")}</p></details>`
+    : "";
+}
+
+// The board lives at crm.tripleboost.net/tb-status/#<key>; the key never reaches a server log (it is in the hash)
+// and is sent to the tbStatus edge function as a header. The data refreshes on the server every 5 minutes.
+const FN = "https://bbupowzicprgtfltyepd.supabase.co/functions/v1/tbStatus";
+const KEY_STORE = "tb-status-key";
+function boardKey() {
+  const fromHash = decodeURIComponent(location.hash.slice(1));
+  try {
+    if (fromHash) localStorage.setItem(KEY_STORE, fromHash);
+    return fromHash || localStorage.getItem(KEY_STORE) || "";
+  } catch { return fromHash; }
+}
+const fmtTime = (d) => d.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" });
+
+async function load(refresh = false) {
+  const key = boardKey();
+  const fail = (msg) => { document.querySelector(".wrap").innerHTML = `<h1>תמונת מצב</h1><p class="empty">${msg}</p>`; };
+  if (!key) return fail("הקישור לא מלא. פותחים את הקישור המלא שקיבלת.");
+  let res;
+  try {
+    res = await fetch(FN + (refresh ? "?refresh=1" : ""), { headers: { "x-board-key": key }, cache: "no-store" });
+  } catch { if (!ALL.length) fail("אין חיבור. מנסים שוב בעוד רגע."); return; }
+  if (res.status === 403) { try { localStorage.removeItem(KEY_STORE); } catch {} return fail("אין גישה. פותחים את הקישור המלא שקיבלת."); }
+  const DATA = await res.json();
+  if (!DATA.accounts?.length) {
+    document.getElementById("meta").textContent = "הנתונים נאספים עכשיו מכל החשבונות. הלוח יתמלא בדקות הקרובות.";
+    setTimeout(load, 30000);
+    return;
+  }
+  ALL = DATA.accounts.map(prep);
+  const gen = new Date(DATA.generated_at);
+  const missing = DATA.total_accounts - DATA.accounts.length;
+  document.getElementById("meta").textContent =
+    `עודכן ב${gen.toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "numeric" })} בשעה ${fmtTime(gen)}` +
+    (missing > 0 ? ` · עוד ${missing} חשבונות נטענים` : "");
+  render();
+}
+
+function init() {
+  document.getElementById("foot").textContent =
+    "\"היום\" הוא מתחילת היום ועד שעת העדכון. \"7 ימים\" הם שבעת הימים המלאים עד אתמול, כמו במנהל המודעות. הנתונים מתעדכנים לבד כל כמה דקות.";
+  load();
+  setInterval(load, 5 * 60 * 1000);
+
+  document.getElementById("seg").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-p]");
+    if (!b) return;
+    state.period = b.dataset.p;
+    document.querySelectorAll("#seg button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    render();
+  });
+  document.getElementById("q").addEventListener("input", (e) => { state.q = e.target.value; render(); });
+}
+init();
+</script>
+</body>
+</html>
