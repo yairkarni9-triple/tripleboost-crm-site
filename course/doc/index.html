@@ -1,0 +1,1269 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>פלייבוק המטא של TripleBoost</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap">
+<style>
+/* Layout: one long document, read top to bottom. Whiteboard boards (dot grid, ink-outlined nodes, arrows) carry the explanations; text stays short. Contents on the side only for jumping. */
+:root{
+  color-scheme: light;
+  --bg:#FFFFFF;
+  --paper:#FAFBFD;
+  --soft:#F2F5FA;
+  --ink:#0B1020;
+  --ink-2:#434A60;
+  --ink-3:#7A8196;
+  --line:#E2E6EE;
+  --dot:#D5DCE8;
+  --blue:#0253FC;
+  --blue-ink:#0142CC;
+  --blue-soft:#EAF0FF;
+  --amber-soft:#FFF4DE;
+  --amber-ink:#8A5A00;
+  --good:#0F8F47;
+  --good-soft:#E5F6EC;
+  --bad:#D2343F;
+  --bad-soft:#FCEBED;
+  --font:"Heebo","Assistant",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+h1,h2,h3,h4{margin:0;line-height:1.2;text-wrap:balance}
+p{margin:0}
+ul,ol{margin:0}
+img{max-width:100%;height:auto;display:block}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:6px}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1220px;margin:0 auto;display:flex;align-items:center;gap:14px;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top img{height:24px;width:auto}
+.top span{font-weight:700;font-size:15px;color:var(--ink-2)}
+
+.shell{max-width:1220px;margin:0 auto;display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px;padding-block:24px 90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 70px);align-self:start;max-height:calc(100vh - 96px);overflow:auto}
+.side h2{font-size:13px;color:var(--ink-3);font-weight:700;letter-spacing:.06em;margin-bottom:8px}
+.toc{list-style:none;padding:0;display:grid;gap:1px}
+.toc a{display:block;text-decoration:none;color:var(--ink-2);padding:5px 10px;border-radius:8px;font-size:15px;line-height:1.35}
+.toc a:hover{background:var(--soft)}
+.toc a.part{font-weight:800;color:var(--ink);margin-top:10px}
+.toc a.on{background:var(--blue-soft);color:var(--blue-ink)}
+.toc a.sub{padding-inline-start:22px;font-size:14px}
+
+main{min-width:0;display:grid;gap:0}
+
+/* hero */
+.hero{border-radius:24px;padding:32px;background:linear-gradient(160deg,#EEF3FF 0%,#FFFFFF 75%);border:1px solid var(--line);display:grid;gap:16px}
+.kick{font-size:14px;font-weight:700;color:var(--blue);letter-spacing:.04em}
+.hero h1{font-size:clamp(34px,5.2vw,56px);font-weight:900}
+.hero h1 span{color:var(--blue)}
+.lead{font-size:19px;color:var(--ink-2);max-width:62ch}
+.note-row{display:flex;flex-wrap:wrap;gap:8px}
+.note-row span{font-size:14px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:5px 12px;color:var(--ink-2)}
+
+/* part headers */
+.part{padding-top:64px;scroll-margin-top:70px}
+.part-h{display:flex;gap:16px;align-items:center;margin-bottom:6px}
+.part-h .letter{width:58px;height:58px;border-radius:16px;background:var(--ink);color:#fff;font-size:30px;font-weight:900;display:grid;place-items:center;flex:none}
+.part-h h2{font-size:clamp(28px,4vw,40px);font-weight:900}
+.part-sub{color:var(--ink-2);font-size:18px;margin-bottom:8px;max-width:60ch}
+
+/* topics */
+.topic{padding-top:40px;display:grid;gap:16px;scroll-margin-top:70px}
+.topic > h3{font-size:clamp(22px,2.8vw,28px);font-weight:800;display:flex;gap:10px;align-items:baseline}
+.topic > h3 .n{color:var(--blue);font-variant-numeric:tabular-nums}
+.punch{font-size:19px;font-weight:700;color:var(--ink);background:var(--blue-soft);border-radius:12px;padding:12px 16px;max-width:70ch}
+.txt{color:var(--ink-2);max-width:66ch}
+.txt b{color:var(--ink)}
+.word{display:grid;gap:4px;border:1px dashed #BFD0FF;background:#fff;border-radius:12px;padding:10px 14px;font-size:15px;color:var(--ink-2);max-width:70ch}
+.word strong{color:var(--blue-ink);font-size:13px;letter-spacing:.04em}
+.word b{color:var(--ink)}
+.warn{border-radius:14px;background:var(--amber-soft);padding:14px 18px;display:grid;gap:10px}
+.warn h4{font-size:18px;font-weight:800;color:var(--amber-ink)}
+.warn ol{padding-inline-start:20px;display:grid;gap:8px;color:var(--ink-2)}
+.warn ol b{color:var(--ink)}
+
+/* whiteboard */
+.board{border:1px solid var(--line);border-radius:20px;padding:22px;background-color:var(--paper);background-image:radial-gradient(var(--dot) 1px,transparent 1.2px);background-size:18px 18px;display:grid;gap:0;justify-items:center;min-width:0;overflow:hidden}
+.board > *{max-width:100%}
+.nd{background:#fff;border:1.5px solid var(--ink);border-radius:14px;padding:10px 16px;text-align:center;font-weight:700;box-shadow:3px 3px 0 var(--ink);min-width:0;line-height:1.4}
+.nd small{display:block;font-weight:400;color:var(--ink-2);font-size:14px}
+.nd.blue{background:var(--blue);border-color:var(--blue-ink);color:#fff;box-shadow:3px 3px 0 var(--blue-ink)}
+.nd.blue small{color:#DCE6FF}
+.nd.soft{background:var(--blue-soft);border-color:var(--blue-ink);box-shadow:3px 3px 0 var(--blue-ink)}
+.nd.big{font-size:20px;padding:14px 22px}
+.stem{width:2px;height:24px;background:var(--ink)}
+.arrow-d{color:var(--blue);font-size:22px;font-weight:900;line-height:1;padding:6px 0}
+.brs{--n:2;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:18px;position:relative;padding-top:24px;width:100%}
+.brs::before{content:"";position:absolute;top:0;height:2px;background:var(--ink);right:calc(100% / (var(--n) * 2));left:calc(100% / (var(--n) * 2))}
+.brs > .br{position:relative;display:grid;gap:0;justify-items:center;align-content:start;min-width:0}
+.brs > .br::before{content:"";position:absolute;top:-24px;left:50%;width:2px;height:24px;background:var(--ink)}
+.brs.n3{--n:3}
+.brs.n4{--n:4}
+.lbl{font-size:13px;font-weight:700;color:var(--ink-3);margin:8px 0 4px;text-align:center}
+.flowh{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;width:100%}
+.flowh .nd{flex:1 1 120px;font-size:15px;padding:9px 12px}
+.flowh .ar{color:var(--blue);font-weight:900;flex:none}
+
+/* phones */
+.phones{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;align-items:flex-end}
+.ph{display:grid;gap:6px;justify-items:center}
+.ph .scr{border:5px solid var(--ink);border-radius:20px;overflow:hidden;background:#fff;position:relative}
+.ph .cap{font-size:14px;font-weight:700}
+.ph .cap small{display:block;font-weight:400;color:var(--ink-3);font-size:13px;text-align:center}
+.scr.sq{width:150px;height:240px;display:grid;align-content:center;background:#EEF1F6}
+.scr.sq img{width:100%}
+.scr.tall{width:135px;height:240px}
+.scr.tall img{width:100%;height:100%;object-fit:cover}
+.play{position:absolute;inset:auto auto 10px 10px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.6) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M8 5v14l11-7z' fill='white'/%3E%3C/svg%3E") center/16px no-repeat}
+.search{background:#fff;border:1px solid #DADCE0;border-radius:99px;padding:8px 12px;font-size:13px;color:#202124;margin:12px 8px;display:flex;gap:6px;align-items:center}
+.search::before{content:"";width:10px;height:10px;border:2px solid #5f6368;border-radius:50%;flex:none}
+.res{margin:4px 10px;height:10px;border-radius:4px;background:#E8EAED}
+.res.t{height:12px;background:#C6D4FF;width:70%}
+.feedp{margin:8px;height:26px;border-radius:6px;background:#E8EAED}
+.feedad{margin:8px;border-radius:8px;overflow:hidden;border:2px solid var(--blue)}
+
+/* spectrum */
+.spec{width:100%;display:grid;gap:10px}
+.spec-bar{height:12px;border-radius:99px;background:linear-gradient(90deg,var(--blue) 0%,#9DB6FF 50%,#C9CFDD 100%)}
+.spec-ends{display:flex;justify-content:space-between;gap:10px;font-weight:800;font-size:15px}
+.spec-ends span:first-child{color:var(--ink-2)}
+.spec-ends span:last-child{color:var(--blue-ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:14px;border-radius:99px;padding:4px 12px;background:#fff;border:1px solid var(--line)}
+.chip.m{background:var(--blue-soft);border-color:#C7D5FF;color:var(--blue-ink);font-weight:600}
+.spec-cols{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:14px}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;width:100%}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:0}
+.stat .n{font-size:13px;color:var(--blue-ink);font-weight:700}
+.stat .v{font-size:22px;font-weight:900;font-variant-numeric:tabular-nums}
+.stat .v small{font-size:13px;font-weight:500;color:var(--ink-2)}
+.stat .c{font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.foot{font-size:13px;color:var(--ink-3)}
+
+/* objective leaf cards */
+.leaf{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:10px;width:100%;margin-top:10px;text-align:start}
+.leaf h4{font-size:15px;font-weight:800;color:var(--ink)}
+.leaf ul{padding-inline-start:18px;font-size:15px;color:var(--ink-2);display:grid;gap:4px}
+.leaf ul li::marker{color:var(--blue)}
+.thumbs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.thumbs figure{margin:0;display:grid;gap:4px}
+.thumbs img{border-radius:10px;border:1px solid var(--line)}
+.thumbs figcaption{font-size:12px;color:var(--ink-3);text-align:center}
+.mini-flow{display:grid;gap:4px;font-size:14px}
+.mini-flow div{background:var(--soft);border-radius:8px;padding:6px 10px}
+.mini-flow i{font-style:normal;color:var(--blue);font-weight:900;text-align:center}
+
+/* annotated */
+.ann{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start;width:100%}
+.pw{position:relative}
+.pin{position:absolute;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-weight:800;font-size:13px;display:grid;place-items:center;box-shadow:0 0 0 3px #fff,0 4px 10px rgba(2,83,252,.35)}
+.legend{list-style:none;padding:0;display:grid;gap:10px}
+.legend li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:start}
+.legend .b{width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-weight:800;font-size:13px;display:grid;place-items:center}
+.legend strong{display:block;font-size:16px}
+.legend p{font-size:15px;color:var(--ink-2);line-height:1.5}
+.phone2{border:6px solid var(--ink);border-radius:22px;overflow:hidden;background:#fff}
+.formpair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.formpair .cap{font-size:13px;font-weight:700;text-align:center;margin-top:4px}
+
+/* shots */
+.shot{display:grid;gap:6px;width:100%;margin:0}
+.shot img{border:1px solid var(--line);border-radius:12px;cursor:zoom-in;background:#fff;width:100%}
+.shot figcaption{font-size:14px;color:var(--ink-3)}
+.shot .num{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px;font-weight:800;margin-inline-end:6px}
+
+/* campaign tree */
+.camp-sets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;width:100%}
+.setcol{display:grid;gap:0;justify-items:center}
+.setcol .ads{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;max-width:280px;margin-top:0}
+.setcol .ads img{border-radius:10px;border:1.5px solid var(--ink)}
+.same{margin-top:14px;font-weight:800;color:var(--blue-ink);background:#fff;border:1.5px dashed var(--blue);border-radius:99px;padding:6px 16px;font-size:15px}
+.why3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:4px;align-content:start;min-width:0}
+.card .k{font-size:13px;font-weight:700;color:var(--blue-ink)}
+.card h4{font-size:17px;font-weight:800}
+.card p{font-size:15px;color:var(--ink-2);line-height:1.5}
+
+/* timeline */
+.tl{display:grid;gap:0;position:relative}
+.step{display:grid;grid-template-columns:48px minmax(0,1fr);gap:16px;position:relative;padding-bottom:34px;scroll-margin-top:70px}
+.step::before{content:"";position:absolute;top:48px;bottom:0;right:23px;width:2px;background:var(--line)}
+.step:last-child::before{display:none}
+.step .sn{width:48px;height:48px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center;box-shadow:0 0 0 5px var(--blue-soft)}
+.step .sc{display:grid;gap:12px;min-width:0;padding-top:6px}
+.step h3{font-size:22px;font-weight:800}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.assets{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.asset{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;display:grid;gap:2px}
+.asset b{font-size:15px}
+.asset span{font-size:13px;color:var(--ink-2);line-height:1.4}
+.rawflow{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:center}
+.raw2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.raw2 figure{margin:0;display:grid;gap:4px}
+.raw2 img{border-radius:10px;border:1px solid var(--line);aspect-ratio:3/4;object-fit:cover;width:100%}
+.raw2 figcaption,.rawflow figcaption{font-size:13px;color:var(--ink-3);text-align:center}
+.bigarrow{font-size:34px;color:var(--blue);font-weight:900}
+
+/* gallery */
+.gal{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.gc{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;display:grid;align-content:start}
+.gc .im{position:relative}
+.gc img{width:100%;aspect-ratio:1;object-fit:cover}
+.gc .bd{padding:10px 12px;display:grid;gap:3px}
+.gc .niche{font-size:16px;font-weight:800}
+.gc .r{font-size:14px;color:var(--blue-ink);font-weight:700;font-variant-numeric:tabular-nums}
+.gc .w{font-size:14px;color:var(--ink-2);line-height:1.45}
+.tag{position:absolute;top:8px;right:8px;font-size:12px;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.92);color:var(--ink)}
+
+/* hooks */
+.hooks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.hk{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:4px;align-content:start}
+.hk .s{font-size:13px;font-weight:700;color:var(--blue-ink)}
+.hk q{quotes:"״" "״";font-weight:800;font-size:16px;line-height:1.4}
+.hk span{font-size:13px;color:var(--ink-3)}
+
+/* ad mock + story */
+.admock{background:#fff;border:1.5px solid var(--ink);border-radius:14px;overflow:hidden;font-size:15px;max-width:340px;width:100%;box-shadow:3px 3px 0 var(--ink)}
+.admock .hd{display:flex;gap:10px;align-items:center;padding:10px 12px}
+.admock .av{width:32px;height:32px;border-radius:50%;background:var(--soft)}
+.admock .nm{font-weight:700;line-height:1.2;font-size:14px}
+.admock .spn{font-size:12px;color:var(--ink-3)}
+.admock .pt{padding:0 12px 10px;white-space:pre-line;line-height:1.45}
+.admock .more{color:var(--ink-3);font-weight:600}
+.admock .ft{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--soft)}
+.admock .hl{font-weight:700;line-height:1.3}
+.admock .ds{font-size:13px;color:var(--ink-3)}
+.admock .cta{flex:none;background:#E4E6EB;border-radius:6px;padding:6px 10px;font-weight:700;font-size:13px}
+.mk{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-weight:800;font-size:11px;vertical-align:middle;margin-inline-end:6px}
+.formats{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:center}
+.formats figure{flex:0 0 auto;display:grid;gap:6px;justify-items:center;margin:0}
+.formats figcaption{font-size:13px;color:var(--ink-3)}
+.sqi{width:170px;border-radius:12px;border:1.5px solid var(--ink)}
+.story{position:relative;width:135px;aspect-ratio:9/16;border-radius:16px;overflow:hidden;border:5px solid var(--ink);background:#222}
+.story .bgi{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(12px) brightness(.6);transform:scale(1.2)}
+.story .fgi{position:absolute;inset-inline:0;top:50%;transform:translateY(-58%);width:100%}
+.safe{position:absolute;inset-inline:0;background:repeating-linear-gradient(-45deg,rgba(210,52,63,.5) 0 6px,rgba(210,52,63,.22) 6px 12px);display:grid;place-items:center;font-size:10px;font-weight:700;color:#fff}
+.safe.t{top:0;height:11.9%}
+.safe.bt{bottom:0;height:21.3%}
+
+/* tables, checklist, spend */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff;width:100%}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:15px}
+th,td{text-align:start;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--soft);font-size:14px;color:var(--ink-2);font-weight:700}
+tr:last-child td{border-bottom:0}
+td{color:var(--ink-2)}
+td:first-child{color:var(--ink);font-weight:700}
+.check{list-style:none;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.check li{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:15px}
+.check li::before{content:"";flex:none;width:18px;height:18px;border-radius:5px;border:2px solid var(--blue);margin-top:3px}
+.spend{display:grid;gap:8px;width:100%}
+.sp{display:grid;grid-template-columns:70px minmax(0,1fr) 64px 80px;gap:10px;align-items:center;font-variant-numeric:tabular-nums;font-size:15px}
+.track{background:var(--soft);height:30px;border-radius:8px;overflow:hidden}
+.fill{height:100%;border-radius:8px;display:flex;align-items:center;padding-inline:10px;font-weight:800;font-size:13px;white-space:nowrap}
+.fill.g{background:var(--blue);color:#fff}
+.fill.w{background:#C9CFDD;color:var(--ink)}
+.vd{font-size:13px;font-weight:800;text-align:center;border-radius:99px;padding:3px 6px}
+.vd.off{background:var(--bad-soft);color:var(--bad)}
+.vd.on{background:var(--good-soft);color:var(--good)}
+.gloss{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.gloss div{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#fff}
+.gloss dt{font-weight:800}
+.gloss dd{margin:2px 0 0;color:var(--ink-2);font-size:15px;line-height:1.5}
+.end{margin-top:60px;border-top:1px solid var(--line);padding-top:24px;color:var(--ink-2);display:grid;gap:10px}
+.end img{height:24px;width:auto}
+
+#lb{position:fixed;inset:0;z-index:60;background:rgba(11,16,32,.92);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));cursor:zoom-out}
+#lb img{max-width:100%;max-height:100%;border-radius:10px;background:#fff}
+
+/* levels tree */
+.lvbox{width:min(100%,560px);border:1.5px solid var(--ink);border-radius:16px;background:#fff;box-shadow:3px 3px 0 var(--ink);padding:14px 16px;display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:12px;row-gap:4px;align-items:start;text-align:start}
+.lvbox .lv{grid-row:1 / span 4;width:44px;height:44px;border-radius:12px;background:var(--ink);color:#fff;font-weight:900;display:grid;place-items:center;font-size:19px}
+.lvbox h4{font-size:18px;font-weight:900;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lvbox .what{font-size:15px;color:var(--ink-2);line-height:1.5}
+.lvbox .what b{color:var(--ink)}
+.lvbox.top{border-color:var(--blue-ink);box-shadow:3px 3px 0 var(--blue-ink);background:var(--blue-soft)}
+.lvbox.top .lv{background:var(--blue)}
+.star{background:var(--blue);color:#fff;border-radius:99px;padding:2px 10px;font-size:12px;font-weight:800}
+.mini-ads{display:flex;gap:6px;margin-top:4px}
+.mini-ads img{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.sub-h{font-size:19px;font-weight:800;margin-top:10px;color:var(--ink)}
+/* sequences */
+.seq{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:nowrap;width:100%}
+.seq .it{flex:1 1 0;min-width:0;max-width:220px;display:grid;gap:6px;justify-items:center}
+.seq .it > img{border-radius:12px;border:1.5px solid var(--ink);width:100%}
+.seq .it .c{font-size:13px;font-weight:700;text-align:center;color:var(--ink-2)}
+.seq .it .c b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;margin-inline-end:4px}
+.seq .ar{color:var(--blue);font-size:24px;font-weight:900;flex:none}
+.seq .phone2{border-width:5px;border-radius:18px;width:100%}
+.crm{width:100%;background:#fff;border:1.5px solid var(--ink);border-radius:14px;padding:10px;display:grid;gap:6px;box-shadow:3px 3px 0 var(--ink)}
+.crm-h{font-weight:800;font-size:14px;text-align:center}
+.crm-r{display:flex;justify-content:space-between;align-items:center;gap:6px;background:var(--soft);border-radius:8px;padding:6px 8px;font-size:12px}
+.crm-r i{font-style:normal;font-weight:700;font-size:11px;border-radius:99px;padding:1px 8px;background:#E2E6EE}
+.crm-r i.g{background:var(--good-soft);color:var(--good)}
+.crm-r i.b{background:var(--blue-soft);color:var(--blue-ink)}
+.bubble{font-size:12px;border-radius:10px;padding:5px 8px;max-width:85%}
+.bubble.l{background:#fff;border:1px solid var(--line);justify-self:start}
+.bubble.r{background:#D9FDD3;justify-self:end}
+.site-img{height:54px;border-radius:8px;background:linear-gradient(135deg,#C9D4C1,#7E8F6E)}
+.site-btn{background:var(--ink);color:#fff;border-radius:8px;text-align:center;font-size:12px;font-weight:700;padding:5px}
+.px{font-size:12px;color:var(--ink-2);text-align:center}
+.legend.cols2{grid-template-columns:repeat(2,minmax(0,1fr))}
+/* raw rows, research, hooks, pairs, ads manager */
+.rawrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;width:100%}
+.rr{display:grid;gap:4px;justify-items:center}
+.rr .raw{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.rr .ad{width:100%;border-radius:10px;border:1.5px solid var(--ink)}
+.rr .dn{color:var(--blue);font-size:22px;font-weight:900;line-height:1}
+.g3r{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.hooks2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.hk2{display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px}
+.hk2 img{width:76px;height:76px;object-fit:cover;border-radius:10px}
+.hk2 .s{display:block;font-size:13px;font-weight:700;color:var(--blue-ink)}
+.hk2 q{quotes:"״" "״";display:block;font-weight:800;font-size:16px;line-height:1.35}
+.hk2 .n2{display:block;font-size:13px;color:var(--ink-3)}
+.pairs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:820px}
+.pair{display:grid;grid-template-columns:1fr .56fr;gap:6px;align-items:end;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px}
+.pair img{width:100%;border-radius:8px;border:1px solid var(--line)}
+.pair .pl{grid-column:1 / -1;font-size:14px;font-weight:800}
+.am1{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:18px;align-items:start}
+.am2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.am3{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px;align-items:start}
+.am2 figcaption,.am3 figcaption{color:var(--ink-2);font-size:14px;line-height:1.5}
+.am2 figcaption b,.am3 figcaption b{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px}
+.pw .pin{width:24px;height:24px;font-size:12px}
+@media (max-width:1000px){
+  .am3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .am3 figure:first-child{grid-column:1 / -1}
+}
+@media (max-width:760px){
+  .seq{flex-direction:column;align-items:center}
+  .seq .it{max-width:260px;width:100%}
+  .seq .ar{transform:rotate(-90deg)}
+  .legend.cols2,.hooks2,.g3r,.am1,.am2{grid-template-columns:minmax(0,1fr)}
+  .rawrow{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+}
+@media (max-width:560px){
+  .pairs,.am3{grid-template-columns:minmax(0,1fr)}
+  .am3 figure:first-child{grid-column:auto}
+}
+
+/* v6: app icons, chips, word list, hotspots */
+.app{background:#fff;border:1.5px solid var(--ink);border-radius:14px;box-shadow:3px 3px 0 var(--ink);padding:12px;display:grid;gap:4px;justify-items:center;text-align:center;width:100%}
+.app svg{width:46px;height:46px}
+.app b{font-size:17px}
+.app span{font-size:14px;color:var(--ink-2);line-height:1.4}
+.chips{align-items:flex-start;align-content:flex-start}
+.chips.toleft{justify-content:flex-end}
+.chip{padding:6px 14px;font-size:15px}
+.chip.g{background:#EEF0F4;border-color:#D5DAE3;color:var(--ink-2);font-weight:600}
+.spec-cols{grid-template-columns:minmax(0,1fr) minmax(0,2fr)}
+.spec-bar{background:linear-gradient(90deg,var(--blue) 0%,#9DB6FF 55%,#C9CFDD 100%);transform:none}
+.wl{list-style:none;padding:0;margin:0;display:grid;gap:4px}
+.ico-s svg{width:40px;height:40px}
+.ico-s{margin-bottom:4px}
+.hsfig{position:relative;border:1px solid var(--line);border-radius:12px;background:#fff}
+.hsfig img{display:block;width:100%;border-radius:12px}
+.hs{position:absolute;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--blue);border:2.5px solid #fff;cursor:pointer;padding:0;box-shadow:0 2px 6px rgba(0,0,0,.25);animation:hsPulse 2.2s infinite}
+.hs::before{content:"";position:absolute;inset:-9px;border-radius:50%}
+.hs.on{background:var(--ink);animation:none}
+@keyframes hsPulse{0%{box-shadow:0 0 0 0 rgba(2,83,252,.5),0 2px 6px rgba(0,0,0,.25)}70%{box-shadow:0 0 0 10px rgba(2,83,252,0),0 2px 6px rgba(0,0,0,.25)}100%{box-shadow:0 0 0 0 rgba(2,83,252,0),0 2px 6px rgba(0,0,0,.25)}}
+#hsp{position:absolute;z-index:40;max-width:min(280px,calc(100vw - 32px));background:var(--ink);color:#fff;border-radius:12px;padding:10px 14px;font-size:15px;line-height:1.5;box-shadow:0 12px 30px rgba(11,16,32,.3);font-family:var(--font)}
+#hsp b{display:block;color:#9DB8FF;font-size:14px;margin-bottom:2px}
+.hs-hint{display:flex;gap:10px;align-items:center;font-size:15px;color:var(--ink-2);background:var(--blue-soft);border-radius:10px;padding:8px 12px}
+.hs-demo{width:16px;height:16px;border-radius:50%;background:var(--blue);border:2px solid #fff;box-shadow:0 0 0 3px rgba(2,83,252,.25);flex:none}
+.amlvl{display:grid;gap:10px;margin-top:8px}
+.hsgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.hsgrid figure{margin:0;display:grid;gap:6px}
+.hsgrid figcaption{font-weight:700;font-size:15px}
+@media (max-width:760px){.hsgrid{grid-template-columns:minmax(0,1fr)} .spec-cols{grid-template-columns:minmax(0,1fr)} .chips.toleft{justify-content:flex-start}}
+@media (prefers-reduced-motion:reduce){.hs{animation:none}}
+@media (max-width:760px){.brs.n4{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
+
+@media (max-width:1000px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:0}
+  .side{display:none}
+  .gal{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .assets{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:760px){
+  .ann,.why3,.spec-cols,.hooks{grid-template-columns:minmax(0,1fr)}
+  .gal,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .brs,.brs.n3{grid-template-columns:minmax(0,1fr);padding-top:0;gap:22px}
+  .brs::before,.brs > .br::before{display:none}
+  .rawflow{grid-template-columns:minmax(0,1fr)}
+  .bigarrow{transform:rotate(-90deg);justify-self:center}
+  .check{grid-template-columns:minmax(0,1fr)}
+  .hero{padding:22px}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  .g2,.gloss,.camp-sets,.formpair{grid-template-columns:minmax(0,1fr)}
+  .assets{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .board{padding:16px}
+  .flowh{flex-direction:column;align-items:stretch}
+  .flowh .ar{transform:rotate(-90deg);align-self:center}
+  .sp{grid-template-columns:60px minmax(0,1fr) 72px}
+  .sp .ld{display:none}
+  .step{grid-template-columns:38px minmax(0,1fr);gap:12px}
+  .step .sn{width:38px;height:38px;font-size:17px}
+  .step::before{right:18px;top:38px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* v7: number badges, callouts, part maps */
+.kn{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;font-weight:800;font-size:14px;margin-bottom:6px;font-variant-numeric:tabular-nums}
+.why{border-radius:14px;background:var(--soft);border-inline-start:4px solid var(--blue);padding:12px 16px;color:var(--ink-2);max-width:70ch}
+.why b{color:var(--ink)}
+.pmap{list-style:none;padding:0;margin:14px 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.pmap.c5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.pmap a{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-weight:700;font-size:15px;line-height:1.3;height:100%;transition:background-color .15s ease,border-color .15s ease}
+.pmap a:hover{background:var(--blue-soft);border-color:#C7D5FF}
+.pmap .pn{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums}
+.part-h .letter{background:var(--blue)}
+.step{padding-bottom:44px}
+.step h3{font-size:24px}
+.topic{padding-top:48px}
+
+/* v7: static winners, broken down */
+.four .card{border-top:3px solid var(--blue)}
+.wb-index{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:8px}
+.wb-index a{position:relative;display:grid;gap:2px;text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;text-align:center;transition:border-color .15s ease,transform .15s ease}
+.wb-index a:hover{border-color:var(--blue)}
+.wb-index a:active{transform:scale(.97)}
+.wb-index img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px}
+.wb-index b{font-size:12px;line-height:1.25;margin-top:4px}
+.wb-index i{font-style:normal;font-size:12px;font-weight:800;color:var(--blue-ink);font-variant-numeric:tabular-nums}
+.wi-n{position:absolute;top:2px;right:2px;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px;font-weight:800;box-shadow:0 0 0 2px #fff}
+.wbs{display:grid;gap:18px}
+.wb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;scroll-margin-top:80px}
+.wb:target{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+.wb-img{border-radius:12px}
+.wb-side{display:grid;gap:12px;align-content:center;min-width:0}
+.wb-top{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.wb-num{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--ink);color:#fff;font-weight:900;font-size:17px;font-variant-numeric:tabular-nums}
+.wb-niche{font-weight:800;font-size:16px}
+.wb-type{font-size:13px;font-weight:700;color:var(--ink-2);background:var(--soft);border-radius:99px;padding:3px 10px}
+.wb-side h4{font-size:22px;font-weight:900;line-height:1.25}
+.wb-res{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:10px;align-items:baseline;background:var(--good-soft);border-radius:14px;padding:12px 16px}
+.wb-res b{grid-row:1 / span 2;font-size:40px;font-weight:900;line-height:1;color:var(--good);font-variant-numeric:tabular-nums}
+.wb-res span{font-weight:800;font-size:17px;color:var(--ink)}
+.wb-res i{font-style:normal;font-size:15px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.wb-pts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.wpt{display:flex;gap:8px;align-items:center;text-align:start;font:inherit;font-size:15px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:7px 10px;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,transform .1s ease}
+.wpt b{flex:none;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:12px;font-weight:800}
+.wpt:hover{background:var(--blue-soft);border-color:#C7D5FF}
+.wpt:active{transform:scale(.97)}
+.wpt.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.wpt.on b{background:#fff;color:var(--ink)}
+.wb-note{font-size:14px;color:var(--amber-ink);background:var(--amber-soft);border-radius:10px;padding:8px 12px;line-height:1.5}
+.hs.n{width:26px;height:26px;color:#fff;font:800 13px/1 var(--font);display:grid;place-items:center;font-variant-numeric:tabular-nums}
+.hs.n.on{background:var(--ink)}
+@media (max-width:1000px){.wb-index{grid-template-columns:repeat(5,minmax(0,1fr))}.pmap.c5{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}}
+@media (max-width:760px){
+  .wb{grid-template-columns:minmax(0,1fr);gap:14px;padding:12px}
+  .wb-side h4{font-size:20px}
+  .wb-index{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .pmap,.pmap.c5{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:420px){.wb-pts{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.wpt{font-size:14px;padding:6px 8px}}
+.hero .flowh .nd{flex:1 1 0}
+.thumbs.t3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (prefers-reduced-motion:reduce){.wpt,.wb-index a,.pmap a{transition:none}}
+</style>
+
+<div dir="rtl" lang="he">
+<header class="top"><div class="top-in"><img src="assets/logo-dark.png" alt="TripleBoost"><span>פלייבוק מטא</span></div></header>
+
+<div class="shell">
+<aside class="side" aria-label="תוכן עניינים">
+  <h2>תוכן עניינים</h2>
+  <nav><ul class="toc" id="toc">
+    <li><a class="part" href="#a">א. מה זה מטא</a></li>
+    <li><a class="sub" href="#a1">1. מטא: חברה אחת, ארבע אפליקציות</a></li>
+    <li><a class="sub" href="#a2">2. גוללים, לא מחפשים</a></li>
+    <li><a class="sub" href="#a3">3. למי מטא מתאים</a></li>
+    <li><a class="part" href="#b">ב. איך בנוי קמפיין</a></li>
+    <li><a class="sub" href="#b1">1. שלוש רמות</a></li>
+    <li><a class="sub" href="#b2">2. מגבלות</a></li>
+    <li><a class="sub" href="#b3">3. יעד לידים: טופס או וואטסאפ</a></li>
+    <li><a class="sub" href="#b4">4. יעד רכישות</a></li>
+    <li><a class="part" href="#c">ג. מלקוח חדש ועד השקה</a></li>
+    <li><a class="sub" href="#c1">1. המשימה ב-CRM</a></li>
+    <li><a class="sub" href="#c2">2. אסטרטגיה ותמלול</a></li>
+    <li><a class="sub" href="#c3">3. מכירים את הלקוח</a></li>
+    <li><a class="sub" href="#c4">4. מה חסר</a></li>
+    <li><a class="sub" href="#c5">5. חומרים מהלקוח</a></li>
+    <li><a class="sub" href="#c6">6. מחקר</a></li>
+    <li><a class="sub" href="#c7">7. קריאייטיב</a></li>
+    <li><a class="sub" href="#c8">8. טקסטים</a></li>
+    <li><a class="sub" href="#c9">9. ריבוע וסטורי</a></li>
+    <li><a class="sub" href="#c10">10. השקה במנהל המודעות</a></li>
+    <li><a class="part" href="#d">ד. אחרי ההשקה</a></li>
+    <li><a class="sub" href="#d1">1. בודקים</a></li>
+    <li><a class="sub" href="#d2">2. מתי מחליפים</a></li>
+    <li><a class="sub" href="#d3">3. הקשר עם הלקוח</a></li>
+    <li><a class="part" href="#gl">מילון</a></li>
+  </ul></nav>
+</aside>
+
+<main>
+
+<header class="hero">
+  <div class="kick">פלייבוק TripleBoost · לעובד חדש</div>
+  <h1>מה זה בכלל <span>מטא?</span></h1>
+  <p class="lead">ואיך אנחנו עובדים איתה: איך בנוי קמפיין, ומה עושים מהרגע שלקוח חדש נכנס ועד שהלידים מגיעים אליו.</p>
+  <div class="note-row"><span>קוראים מלמעלה למטה</span><span>המסמך רחב: איך כותבים טקסט, תסריט או קריאייטיב יהיו במסמכים נפרדים</span><span>לחיצה על צילום מסך מגדילה אותו</span></div>
+  <div class="board" style="margin-top:6px">
+    <div class="flowh">
+      <a class="nd blue" href="#a" style="text-decoration:none"><small>חלק א</small>מה זה מטא</a><span class="ar">←</span>
+      <a class="nd" href="#b" style="text-decoration:none;color:var(--ink)"><small>חלק ב</small>איך בנוי קמפיין</a><span class="ar">←</span>
+      <a class="nd" href="#c" style="text-decoration:none;color:var(--ink)"><small>חלק ג</small>מלקוח חדש ועד השקה</a><span class="ar">←</span>
+      <a class="nd" href="#d" style="text-decoration:none;color:var(--ink)"><small>חלק ד</small>אחרי ההשקה</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============ PART A ============ -->
+<section class="part" id="a">
+  <div class="part-h"><div class="letter">א</div><h2>מה זה מטא</h2></div>
+  <p class="part-sub">לפני שמדברים על קמפיינים: איפה אנחנו מפרסמים, ולמי זה מתאים.</p>
+  <ul class="pmap"><li><a href="#a1"><span class="pn">1</span>חברה אחת, ארבע אפליקציות</a></li><li><a href="#a2"><span class="pn">2</span>גוללים, לא מחפשים</a></li><li><a href="#a3"><span class="pn">3</span>למי מטא מתאים</a></li></ul>
+
+  <div class="topic" id="a1">
+    <h3><span class="n">1</span>מטא: חברה אחת, ארבע אפליקציות</h3>
+    <p class="punch">בונים קמפיין פעם אחת, והמודעה יכולה להופיע בכל האפליקציות של מטא.</p>
+    <div class="board">
+      <div class="nd blue big">מטא<small>מנהל המודעות: המקום שבו בונים את כל הקמפיינים</small></div>
+      <div class="stem"></div>
+      <div class="brs n4" style="--n:4">
+        <div class="br"><div class="app">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1877F2"/><path d="M26.6 38V26.1h4l.6-4.7h-4.6v-3c0-1.4.4-2.3 2.3-2.3h2.5V12c-.4-.1-1.9-.2-3.6-.2-3.5 0-5.9 2.1-5.9 6.1v3.5h-4v4.7h4V38z" fill="#fff"/></svg>
+          <b>פייסבוק</b><span>מודעות בפיד, בסטורי וברילס</span></div></div>
+        <div class="br"><div class="app">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><defs><radialGradient id="gIg" cx="30%" cy="107%" r="150%"><stop offset="0" stop-color="#fdf497"/><stop offset=".08" stop-color="#fdf497"/><stop offset=".45" stop-color="#fd5949"/><stop offset=".6" stop-color="#d6249f"/><stop offset=".9" stop-color="#285AEB"/></radialGradient></defs><rect width="48" height="48" rx="12" fill="url(#gIg)"/><rect x="11" y="11" width="26" height="26" rx="8" fill="none" stroke="#fff" stroke-width="3"/><circle cx="24" cy="24" r="6.5" fill="none" stroke="#fff" stroke-width="3"/><circle cx="31.6" cy="16.4" r="2" fill="#fff"/></svg>
+          <b>אינסטגרם</b><span>מודעות בפיד, בסטורי וברילס</span></div></div>
+        <div class="br"><div class="app">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#25D366"/><path d="M24 11.5a12.5 12.5 0 0 0-10.8 18.8L11.5 36.5l6.4-1.7A12.5 12.5 0 1 0 24 11.5z" fill="#fff"/><path d="M19.6 17.9c-.3-.6-.6-.6-.9-.6h-.8c-.3 0-.7.1-1 .5-.4.4-1.3 1.3-1.3 3.1s1.3 3.6 1.5 3.9c.2.2 2.6 4.1 6.4 5.6 3.2 1.2 3.8 1 4.5.9.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.2-.3-.3-.7-.5l-2.5-1.2c-.3-.1-.6-.2-.8.2l-1.1 1.4c-.2.2-.4.3-.8.1-.4-.2-1.6-.6-3-1.9-1.1-1-1.9-2.2-2.1-2.6-.2-.4 0-.6.2-.8l.6-.7c.2-.2.3-.4.4-.7.1-.3 0-.5 0-.7z" fill="#25D366"/></svg>
+          <b>וואטסאפ</b><span>לחיצה על מודעה פותחת שיחה עם העסק</span></div></div>
+        <div class="br"><div class="app">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="gMs" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#0099FF"/><stop offset=".6" stop-color="#A033FF"/><stop offset="1" stop-color="#FF5C87"/></linearGradient></defs><circle cx="24" cy="24" r="24" fill="url(#gMs)"/><path d="M24 11c-7.3 0-13 5.3-13 12.5 0 3.8 1.6 7.1 4.2 9.3V37l3.9-2.1c1.5.4 3.1.6 4.9.6 7.3 0 13-5.3 13-12.5S31.3 11 24 11z" fill="#fff"/><path d="M15.8 27.4l4.8-7.6 4.6 3.4 4.9-3.6-4.8 7.6-4.6-3.4z" fill="#8B3DFF"/></svg>
+          <b>מסנג׳ר</b><span>לחיצה על מודעה פותחת צ׳אט עם העסק</span></div></div>
+      </div>
+    </div>
+  </div>
+
+<div class="topic" id="a2">
+    <h3><span class="n">2</span>גוללים, לא מחפשים</h3>
+    <p class="punch">בגוגל אנשים מחפשים פתרון. במטא אנשים גוללים, והמודעה צריכה לעצור אותם.</p>
+    <div class="board">
+      <div class="g2" style="width:100%">
+        <div style="display:grid;gap:10px;justify-items:center">
+          <div class="nd">גוגל: מחפשים<small>״יש לי בעיה עכשיו״</small></div>
+          <div class="ph"><div class="scr tall" style="background:#fff"><div class="search">הדוד התקלקל</div><div class="res t"></div><div class="res"></div><div class="res t" style="width:60%"></div><div class="res"></div><div class="res t" style="width:50%"></div><div class="res"></div></div></div>
+          <p class="txt" style="text-align:center;font-size:15px">האדם כבר יודע שהוא צריך.<br>המודעה רק עונה לו.</p>
+        </div>
+        <div style="display:grid;gap:10px;justify-items:center">
+          <div class="nd soft">מטא: גוללים<small>״לא חיפשתי, אבל ראיתי ורציתי״</small></div>
+          <div class="ph"><div class="scr tall" style="background:#fff"><div class="feedp"></div><div class="feedp"></div><div class="feedad"><img src="assets/asaf.jpg" alt=""></div><div class="feedp"></div></div></div>
+          <p class="txt" style="text-align:center;font-size:15px">אף אחד לא נכנס לפייסבוק כי הוא צריך משהו.<br>המודעה צריכה לתפוס את העין וליצור רצון.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic" id="a3">
+    <h3><span class="n">3</span>למי מטא מתאים</h3>
+    <p class="punch">מטא עובדת הכי טוב כשאפשר להראות את השירות בתמונה ולגרום לאנשים לרצות אותו.</p>
+    <div class="board">
+      <div class="spec">
+        <div class="spec-ends"><span>צורך דחוף: קודם גוגל</span><span>אפשר לעורר רצון: מטא</span></div>
+        <div class="spec-bar"></div>
+        <div class="spec-cols">
+          <div class="chips"><span class="chip g">אינסטלטור</span><span class="chip g">מנעולן</span><span class="chip g">דוד שהתקלקל</span></div>
+          <div class="chips toleft"><span class="chip m">הפעלות לילדים</span><span class="chip m">פרגולות</span><span class="chip m">הובלות</span><span class="chip m">סטודיו כושר</span><span class="chip m">שף פרטי</span><span class="chip m">סידור ארונות</span><span class="chip m">ניקוי מזגנים</span><span class="chip m">הופעות</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="why"><b>זה לא חוק.</b> יש עסקים שמתאימים גם לגוגל וגם למטא. ניקוי מזגנים, למשל, הוא לא מקרה חירום, אבל המודעה במטא יצרה את הצורך: ״האוויר בבית שלך מזוהם, ואתה לא רואה את זה״.</div>
+  </div>
+</section>
+
+<!-- ============ PART B ============ -->
+<section class="part" id="b">
+  <div class="part-h"><div class="letter">ב</div><h2>איך בנוי קמפיין</h2></div>
+  <p class="part-sub">קודם המבנה וההיגיון. אחר כך כל יעד לעומק: לידים ורכישות.</p>
+  <ul class="pmap"><li><a href="#b1"><span class="pn">1</span>שלוש רמות</a></li><li><a href="#b2"><span class="pn">2</span>מגבלות</a></li><li><a href="#b3"><span class="pn">3</span>לידים: טופס או וואטסאפ</a></li><li><a href="#b4"><span class="pn">4</span>רכישות</a></li></ul>
+
+  <div class="topic" id="b1">
+    <h3><span class="n">1</span>שלוש רמות, מלמעלה למטה</h3>
+    <p class="punch">כל קמפיין בנוי משלוש רמות. הרמה העליונה, היעד, קובעת את כל השאר.</p>
+    <div class="word"><strong>מילים חדשות</strong><ul class="wl"><li><b>סדרת מודעות</b> = הרמה שקובעת למי מראים ואיפה.</li><li><b>CBO</b> = התקציב נקבע ברמת הקמפיין, ומטא מחלקת אותו לבד בין הסדרות.</li><li><b>רחב</b> = רק מיקום וגיל, ומטא מוצאת את האנשים.</li><li><b>תחומי עניין</b> = מכוונים לאנשים לפי מה שמעניין אותם.</li></ul></div>
+    <div class="board">
+      <div class="lvbox top">
+        <div class="lv">1</div>
+        <h4>קמפיין: מה אנחנו רוצים שיקרה? <span class="star">הכי חשוב</span></h4>
+        <p class="what">כאן בוחרים את <b>היעד</b>: לידים או רכישות. כאן גם קובעים שם ותקציב יומי.</p>
+        <div class="chips"><span class="chip m">יעד</span><span class="chip m">שם</span><span class="chip m">תקציב (CBO)</span></div>
+      </div>
+      <div class="stem"></div>
+      <div class="brs" style="--n:2">
+        <div class="br">
+          <div class="lvbox">
+            <div class="lv">2</div>
+            <h4>סדרת מודעות: רחב</h4>
+            <p class="what">למי ואיפה: מיקום וגיל בלבד. מטא מוצאת את האנשים.</p>
+            <div class="chips"><span class="chip">מיקום ורדיוס</span><span class="chip">גיל</span><span class="chip">לאן הליד הולך</span></div>
+          </div>
+          <div class="stem"></div>
+          <div class="lvbox">
+            <div class="lv">3</div>
+            <h4>מודעות</h4>
+            <p class="what">מה רואים: קריאייטיב, טקסט ראשי, כותרת ותיאור.</p>
+            <div class="mini-ads"><img src="assets/fitness-1.jpg" alt=""><img src="assets/fitness-2.jpg" alt=""></div>
+          </div>
+        </div>
+        <div class="br">
+          <div class="lvbox">
+            <div class="lv">2</div>
+            <h4>סדרת מודעות: תחומי עניין</h4>
+            <p class="what">אותו מיקום וגיל, ועוד תחומי עניין שמתאימים לעסק.</p>
+            <div class="chips"><span class="chip">מיקום ורדיוס</span><span class="chip">גיל</span><span class="chip">תחומי עניין</span></div>
+          </div>
+          <div class="stem"></div>
+          <div class="lvbox">
+            <div class="lv">3</div>
+            <h4>מודעות</h4>
+            <p class="what">אותן מודעות בדיוק.</p>
+            <div class="mini-ads"><img src="assets/fitness-1.jpg" alt=""><img src="assets/fitness-2.jpg" alt=""></div>
+          </div>
+        </div>
+      </div>
+      <div class="same">אותן מודעות בשתי הסדרות</div>
+    </div>
+
+    <p class="txt"><b>למה היעד הכי חשוב?</b> מטא מראה את המודעה למי שהכי סביר שיעשה בדיוק את מה שבחרנו. יעד לידים מביא אנשים שממלאים טפסים ושולחים הודעות. יעד רכישות מביא אנשים שקונים. יעד לא נכון מביא אנשים לא נכונים.</p>
+    <div class="why3">
+      <div class="card"><span class="k">CBO</span><h4>הכסף זז לבד</h4><p>מטא מעבירה את התקציב לסדרה שמביאה תוצאות, בלי שנזיז ידנית.</p></div>
+      <div class="card"><span class="k">שתי סדרות</span><h4>בודקים איזה קהל עובד</h4><p>רחב מול תחומי עניין. אחרי כמה ימים רואים מאיפה מגיעים לידים טובים יותר.</p></div>
+      <div class="card"><span class="k">אותן מודעות</span><h4>השוואה הוגנת</h4><p>ההבדל היחיד בין הסדרות הוא הקהל, אז ברור מה עבד.</p></div>
+    </div>
+
+    <p class="txt"><b>דוגמה אמיתית:</b> לקוח עם סטודיו כושר, קמפיין לידים.</p>
+    <div class="board">
+      <div class="nd blue">קמפיין לידים · CBO<small>220 לידים · 12.4 ₪ לליד</small></div>
+      <div class="stem"></div>
+      <div class="brs" style="--n:2">
+        <div class="br"><div class="nd">רחב<small>169 לידים · 12.9 ₪</small></div></div>
+        <div class="br"><div class="nd">תחומי עניין<small>51 לידים · 10.8 ₪</small></div></div>
+      </div>
+    </div>
+    <figure class="shot"><img src="assets/ty-campaigns.jpg" alt="רשימת הקמפיינים" loading="lazy"><figcaption><span class="num">1</span>רמת הקמפיין במנהל המודעות</figcaption></figure>
+    <figure class="shot"><img src="assets/ty-adsets.jpg" alt="שתי סדרות המודעות" loading="lazy"><figcaption><span class="num">2</span>רמת הסדרות: Broad (רחב) ו-Interest (תחומי עניין)</figcaption></figure>
+    <figure class="shot"><img src="assets/ty-ads.jpg" alt="המודעות בשתי הסדרות" loading="lazy"><figcaption><span class="num">3</span>רמת המודעות: כל קריאייטיב מופיע פעמיים, פעם בכל סדרה</figcaption></figure>
+  </div>
+
+  <div class="topic" id="b2">
+    <h3><span class="n">2</span>מגבלות שצריך להכיר</h3>
+    <p class="punch">מטא צריכה זמן ודאטה כדי ללמוד. כל שינוי גדול מתחיל את הלמידה מחדש.</p>
+    <div class="warn">
+      <h4>חמש מגבלות</h4>
+      <ol>
+        <li><b>שלב הלמידה.</b> בימים הראשונים מטא לומדת למי להראות. שינוי גדול באמצע, כמו קהל חדש, קריאייטיב חדש או קפיצה חדה בתקציב, מחזיר אותה להתחלה. נותנים לקמפיין כמה ימים לפני ששופטים.</li>
+        <li><b>CBO לא מחלק שווה.</b> מטא יכולה לשים את רוב הכסף על סדרה אחת. בסטודיו הכושר, ״רחב״ קיבל 2,180 ₪ ו״תחומי עניין״ 553 ₪. זה תקין. שופטים לפי התוצאות.</li>
+        <li><b>תקציב קטן, מעט מודעות.</b> תקציב קטן שמתפזר על הרבה מודעות לא נותן לאף אחת מספיק. לכן מכינים 2 עד 4 קריאייטיבים.</li>
+        <li><b>מטא מאשרת כל מודעה.</b> מודעות נדחות על הבטחות בריאות קיצוניות, על ״לפני ואחרי״ של גוף, או על פנייה אישית כמו ״יש לך חובות?״.</li>
+        <li><b>תחומים מוגבלים.</b> בגיוס עובדים, נדל״ן ואשראי מטא מגבילה את הכיוון לפי גיל ומיקום.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="topic" id="b3">
+    <h3><span class="n">3</span>יעד לידים: טופס או וואטסאפ</h3>
+    <p class="punch">ביעד לידים יש שתי דרכים לקבל את הליד: טופס בתוך פייסבוק, או שיחה בוואטסאפ.</p>
+    <p class="txt">מתחילים מהידע שלנו, ובעיקר שואלים את הלקוח איך נוח לו לקבל לידים.</p>
+
+    <h4 class="sub-h">טופס לידים · לקוח עם משרדים פרטיים</h4>
+    <div class="board">
+      <div class="seq">
+        <div class="it"><img src="assets/amys.jpg" alt="המודעה" loading="lazy"><span class="c"><b>1</b> המודעה</span></div>
+        <span class="ar" aria-hidden="true">←</span>
+        <div class="it"><div class="phone2 pw"><img src="assets/form-p1.jpg" alt="טופס, עמוד ראשון" loading="lazy"><span class="pin" style="left:88%;top:9%">2</span><span class="pin" style="left:90%;top:39%">3</span><span class="pin" style="left:90%;top:66%">4</span></div><span class="c">עמוד 1 בטופס</span></div>
+        <span class="ar" aria-hidden="true">←</span>
+        <div class="it"><div class="phone2 pw"><img src="assets/form-p2.jpg" alt="טופס, עמוד שני" loading="lazy"><span class="pin" style="left:90%;top:50%">5</span></div><span class="c">עמוד 2 בטופס</span></div>
+        <span class="ar" aria-hidden="true">←</span>
+        <div class="it"><div class="crm"><div class="crm-h">CRM של הלקוח</div><div class="crm-r"><span>ליד חדש</span><i>חדש</i></div><div class="crm-r"><span>ליד חדש</span><i class="g">דיברנו</i></div><div class="crm-r"><span>ליד חדש</span><i class="b">נסגר</i></div></div><span class="c"><b>6</b> הליד ב-CRM</span></div>
+      </div>
+    </div>
+    <ol class="legend cols2">
+      <li><span class="b">1</span><div><strong>המודעה</strong><p>״חלאס עם חוזים ל-3 שנים.״ לחיצה פותחת את הטופס, בלי לצאת מפייסבוק.</p></div></li>
+      <li><span class="b">2</span><div><strong>תמונה</strong><p>תמונה או לוגו בראש הטופס, כדי שהליד יראה שהוא במקום הנכון.</p></div></li>
+      <li><span class="b">3</span><div><strong>המלל</strong><p>כותרת ושתי שורות שמזכירות מה מקבלים.</p></div></li>
+      <li><span class="b">4</span><div><strong>שאלה מסננת</strong><p>״כמה אנשי צוות אתם?״. עוזרת להבין אם הליד מתאים, עוד לפני שמתקשרים.</p></div></li>
+      <li><span class="b">5</span><div><strong>פרטים</strong><p>שם וטלפון. פייסבוק ממלאת אותם לבד, והליד לוחץ ״המשך״.</p></div></li>
+      <li><span class="b">6</span><div><strong>מה קורה אחרי</strong><p>האוטומציה שולחת ללקוח הודעה ״קיבלת ליד חדש״, והליד נכנס ל-CRM שלו. משם הלקוח מתקשר ומסמן מה קרה.</p></div></li>
+    </ol>
+
+    <h4 class="sub-h">וואטסאפ · לקוח בתחום הפעלות לילדים</h4>
+    <div class="board">
+      <div class="seq">
+        <div class="it"><img src="assets/asaf.jpg" alt="המודעה" loading="lazy"><span class="c"><b>1</b> המודעה</span></div>
+        <span class="ar" aria-hidden="true">←</span>
+        <div class="it"><div class="phone2 pw"><img src="assets/wa-chat.jpg" alt="שיחת וואטסאפ" loading="lazy"><span class="pin" style="left:86%;top:20%">2</span><span class="pin" style="left:93%;top:30%">3</span><span class="pin" style="left:93%;top:91%">4</span></div><span class="c">השיחה שנפתחת</span></div>
+        <span class="ar" aria-hidden="true">←</span>
+        <div class="it"><div class="crm"><div class="crm-h">הלקוח ממשיך</div><div class="bubble l">מתי האירוע?</div><div class="bubble r">ב-12 לחודש</div><div class="bubble l">יש לי מקום, נסגור?</div></div><span class="c"><b>5</b> השיחה ממשיכה</span></div>
+      </div>
+    </div>
+    <ol class="legend cols2">
+      <li><span class="b">1</span><div><strong>המודעה</strong><p>כפתור ״שליחת הודעה״. לחיצה פותחת וואטסאפ.</p></div></li>
+      <li><span class="b">2</span><div><strong>מאיזו מודעה</strong><p>העסק רואה מאיזו מודעה הליד הגיע.</p></div></li>
+      <li><span class="b">3</span><div><strong>ברכה אוטומטית</strong><p>מגיעה מיד, וכבר שואלת שאלה ראשונה.</p></div></li>
+      <li><span class="b">4</span><div><strong>הודעה מוכנה</strong><p>הליד רק לוחץ ״שלח״. ברגע הזה נספר הליד.</p></div></li>
+      <li><span class="b">5</span><div><strong>מה קורה אחרי</strong><p>את השיחה מנהל הלקוח בעצמו, בוואטסאפ שלו.</p></div></li>
+    </ol>
+
+    <div class="tbl"><table><thead><tr><th></th><th>טופס לידים</th><th>וואטסאפ</th></tr></thead><tbody>
+      <tr><td>מתי נספר ליד</td><td>כששלח טופס</td><td>כששלח הודעה</td></tr>
+      <tr><td>כמות</td><td>פחות</td><td>בדרך כלל יותר</td></tr>
+      <tr><td>איכות</td><td>לרוב רלוונטיים יותר, בזכות השאלה המסננת</td><td>לפעמים פחות רלוונטיים</td></tr>
+      <tr><td>מחיר</td><td>ליד יקר יותר</td><td>ליד זול יותר</td></tr>
+      <tr><td>מה קורה אחרי</td><td>הודעה ללקוח, והליד נכנס ל-CRM</td><td>הלקוח ממשיך את השיחה</td></tr>
+    </tbody></table></div>
+  </div>
+
+  <div class="topic" id="b4">
+    <h3><span class="n">4</span>יעד רכישות</h3>
+    <p class="punch">ביעד רכישות המודעה מובילה לאתר של הלקוח, והמטרה היא שיקנו.</p>
+    <div class="board">
+      <div class="seq">
+        <div class="it"><img src="assets/hagor.jpg" alt="מודעה לחנות ציוד טקטי" loading="lazy"><span class="c"><b>1</b> המודעה</span></div>
+        <span class="ar" aria-hidden="true">←</span>
+        <div class="it"><div class="crm"><div class="crm-h">האתר של הלקוח</div><div class="site-img"></div><div class="site-btn">הוספה לסל</div></div><span class="c"><b>2</b> נכנסים לאתר</span></div>
+        <span class="ar" aria-hidden="true">←</span>
+        <div class="it"><div class="crm"><div class="crm-h">קנייה</div><div class="crm-r"><span>תשלום</span><i class="g">שולם</i></div></div><span class="c"><b>3</b> קונים</span></div>
+        <span class="ar" aria-hidden="true">←</span>
+        <div class="it"><div class="crm"><div class="crm-h">פיקסל</div><p class="px">מדווח למטא מי קנה, ובכמה</p></div><span class="c"><b>4</b> מטא לומדת</span></div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card"><span class="k">מה מודדים</span><h4>כמה חזר על כל שקל</h4><p>כאן לא סופרים לידים. אצל לקוח שמוכר כרטיסים להופעות, כל שקל בפרסום החזיר בערך 5 ₪ במכירות.</p></div>
+      <div class="card"><span class="k">מה חייב להיות</span><h4>פיקסל באתר</h4><p>בלי פיקסל מטא לא יודעת מי קנה, ולא יכולה למצוא עוד קונים כמוהו.</p></div>
+    </div>
+    <div class="thumbs t3" style="max-width:640px"><figure><img src="assets/hagor.jpg" alt=""><figcaption>חנות ציוד טקטי</figcaption></figure><figure><img src="assets/pettra.jpg" alt=""><figcaption>כרטיסים להופעה</figcaption></figure><figure><img src="assets/sambazon.jpg" alt=""><figcaption>אסאי קפוא · כל שקל החזיר כ-6 ₪</figcaption></figure></div>
+  </div>
+</section>
+
+<!-- ============ PART C ============ -->
+<section class="part" id="c">
+  <div class="part-h"><div class="letter">ג</div><h2>מלקוח חדש ועד השקה</h2></div>
+  <p class="part-sub">עשרה שלבים, לפי הסדר שבו הם קורים.</p>
+  <ul class="pmap c5"><li><a href="#c1"><span class="pn">1</span>המשימה ב-CRM</a></li><li><a href="#c2"><span class="pn">2</span>אסטרטגיה ותמלול</a></li><li><a href="#c3"><span class="pn">3</span>מכירים את הלקוח</a></li><li><a href="#c4"><span class="pn">4</span>מה חסר</a></li><li><a href="#c5"><span class="pn">5</span>חומרים מהלקוח</a></li><li><a href="#c6"><span class="pn">6</span>מחקר</a></li><li><a href="#c7"><span class="pn">7</span>קריאייטיב</a></li><li><a href="#c8"><span class="pn">8</span>טקסטים</a></li><li><a href="#c9"><span class="pn">9</span>אישורים וסטורי</a></li><li><a href="#c10"><span class="pn">10</span>השקה</a></li></ul>
+
+  <div class="tl" style="margin-top:24px">
+
+    <div class="step" id="c1"><div class="sn">1</div><div class="sc">
+      <h3>המשימה נכנסת ל-CRM</h3>
+      <p class="txt">כל לקוח חדש מתחיל במשימה במערכת שלנו (crm.tripleboost.net), משויכת לעובד.</p>
+      <figure class="shot"><img src="assets/crm-task.jpg" alt="משימה ב-CRM" loading="lazy"><figcaption>משימה אמיתית. לחיצה מגדילה.</figcaption></figure>
+      <div class="g4">
+        <div class="card"><span class="kn">1</span><h4>שם המשימה</h4><p>מה עושים, ולאיזה לקוח</p></div>
+        <div class="card"><span class="kn">2</span><h4>תיאור קצר</h4><p>מה כבר קיים, ומה הלקוח מוכר</p></div>
+        <div class="card"><span class="kn">3</span><h4>קובץ האסטרטגיה</h4><p>פותחים אותו ראשון</p></div>
+        <div class="card"><span class="kn">4</span><h4>עדיפות ושיוך</h4><p>כמה דחוף, ומי אחראי</p></div>
+      </div>
+    </div></div>
+
+    <div class="step" id="c2"><div class="sn">2</div><div class="sc">
+      <h3>קוראים את האסטרטגיה ואת התמלול</h3>
+      <p class="txt"><b>האסטרטגיה</b> אומרת מה עושים: באילו ערוצים, לאן מובילים את הליד, כמה תקציב ואיך מודדים. <b>התמלול</b> של השיחות עם הלקוח מראה מה הוא אמר ומה הובטח לו. אפשר לתת אותו ל-Claude ולשאול.</p>
+      <div class="g2">
+        <figure class="shot"><img src="assets/strategy-hero.jpg" alt="פתיחת מסמך האסטרטגיה" loading="lazy"><figcaption>הפתיחה: המבנה במשפט אחד</figcaption></figure>
+        <figure class="shot"><img src="assets/strategy-facts.jpg" alt="העובדות על הלקוח באסטרטגיה" loading="lazy"><figcaption>העובדות: מחיר, קהל, מה מבדל</figcaption></figure>
+      </div>
+    </div></div>
+
+    <div class="step" id="c3"><div class="sn">3</div><div class="sc">
+      <h3>מכירים את הלקוח: עוברים על כל הנכסים שלו</h3>
+      <p class="txt">לפני הכל, נכנסים לכל מקום שבו הלקוח קיים. ככה מבינים את המוצר יותר טוב ממה שכתוב באסטרטגיה.</p>
+      <div class="g4">
+        <div class="card"><div class="ico-s"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#EAF0FF"/><circle cx="24" cy="24" r="13" fill="none" stroke="#0142CC" stroke-width="2.5"/><path d="M11 24h26M24 11c4 4 5.5 8.5 5.5 13S28 33 24 37c-4-4-5.5-8.5-5.5-13S20 15 24 11z" fill="none" stroke="#0142CC" stroke-width="2.5"/></svg></div><h4>האתר</h4><p>מה מוכרים, מחירים, ואיך העסק מדבר.</p></div>
+        <div class="card"><div class="ico-s"><svg viewBox="0 0 48 48" aria-hidden="true"><defs><radialGradient id="gIg2" cx="30%" cy="107%" r="150%"><stop offset="0" stop-color="#fdf497"/><stop offset=".08" stop-color="#fdf497"/><stop offset=".45" stop-color="#fd5949"/><stop offset=".6" stop-color="#d6249f"/><stop offset=".9" stop-color="#285AEB"/></radialGradient></defs><rect width="48" height="48" rx="12" fill="url(#gIg2)"/><rect x="11" y="11" width="26" height="26" rx="8" fill="none" stroke="#fff" stroke-width="3"/><circle cx="24" cy="24" r="6.5" fill="none" stroke="#fff" stroke-width="3"/><circle cx="31.6" cy="16.4" r="2" fill="#fff"/></svg></div><h4>אינסטגרם</h4><p>תמונות של עבודות, הבעלים והצוות, וסרטונים.</p></div>
+        <div class="card"><div class="ico-s"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1877F2"/><path d="M26.6 38V26.1h4l.6-4.7h-4.6v-3c0-1.4.4-2.3 2.3-2.3h2.5V12c-.4-.1-1.9-.2-3.6-.2-3.5 0-5.9 2.1-5.9 6.1v3.5h-4v4.7h4V38z" fill="#fff"/></svg></div><h4>פייסבוק</h4><p>פוסטים, ביקורות, ומודעות שרצו בעבר.</p></div>
+        <div class="card"><div class="ico-s"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#F2F5FA"/><circle cx="15" cy="24" r="3" fill="#434A60"/><circle cx="24" cy="24" r="3" fill="#434A60"/><circle cx="33" cy="24" r="3" fill="#434A60"/></svg></div><h4>כל נכס אחר</h4><p>ביקורות בגוגל, טיקטוק, יוטיוב.</p></div>
+      </div>
+      <div class="why"><b>בונוס:</b> הרבה פעמים כבר יש שם תכנים ותמונות גולמיות שאפשר לבנות מהן מודעות.</div>
+    </div></div>
+
+<div class="step" id="c4"><div class="sn">4</div><div class="sc">
+      <h3>מבקשים מה שחסר</h3>
+      <p class="txt">ארבעה דברים שחייבים לדעת לפני שמתחילים. רובם כבר באסטרטגיה ובתמלול. מה שחסר, שואלים בקבוצה. לא ברור? שואלים ביוזמה.</p>
+      <div class="g4">
+        <div class="card"><span class="kn">1</span><h4>תקציב</h4><p>כמה שמים על פרסום?</p></div>
+        <div class="card"><span class="kn">2</span><h4>איפה פרסם</h4><p>מה רץ עד היום, ומה קרה?</p></div>
+        <div class="card"><span class="kn">3</span><h4>למי מוכר</h4><p>מי הקונה, איפה, באיזה גיל?</p></div>
+        <div class="card"><span class="kn">4</span><h4>מה אנחנו עושים</h4><p>מטא? גוגל? דף נחיתה?</p></div>
+      </div>
+    </div></div>
+
+    <div class="step" id="c5"><div class="sn">5</div><div class="sc">
+      <h3>חומרים מהלקוח</h3>
+      <p class="txt">פותחים ללקוח תיקייה בדרייב. <b>הלקוח שולח תמונות גולמיות של העבודה שלו, ואנחנו בונים מהן את המודעות.</b> בונה פרגולות? מבקשים תמונות של פרגולות שהוא בנה.</p>
+      <div class="board">
+        <div class="lbl" style="margin-top:0">לקוח שמסדר ארונות</div>
+        <div class="rawflow">
+          <figure style="margin:0;display:grid;gap:6px"><div class="raw2"><figure><img src="assets/raw-before.jpg" alt="תמונה גולמית: ארון לפני" loading="lazy"><figcaption>לפני</figcaption></figure><figure><img src="assets/raw-after.jpg" alt="תמונה גולמית: ארון אחרי" loading="lazy"><figcaption>אחרי</figcaption></figure></div><figcaption><b style="color:var(--ink)">מה הלקוח שלח:</b> שתי תמונות מהטלפון</figcaption></figure>
+          <div class="bigarrow" aria-hidden="true">←</div>
+          <figure style="margin:0;display:grid;gap:6px"><img src="assets/closet-built.jpg" alt="המודעה שבנינו מהתמונות" style="border-radius:12px;border:1.5px solid var(--ink)" loading="lazy"><figcaption><b style="color:var(--ink)">מה בנינו:</b> מודעה לסידור ארונות</figcaption></figure>
+        </div>
+      </div>
+      <div class="board">
+        <div class="lbl" style="margin-top:0">לקוח שמאמן נוער לכושר קרבי: שלוש תמונות מהאינסטגרם שלו, ושלוש מודעות</div>
+        <div class="rawrow">
+          <div class="rr"><img class="raw" src="assets/y-raw-1.jpg" alt="תמונה גולמית 1" loading="lazy"><span class="dn" aria-hidden="true">↓</span><img class="ad" src="assets/y-ad-1.jpg" alt="המודעה שנבנתה 1" loading="lazy"></div>
+          <div class="rr"><img class="raw" src="assets/y-raw-2.jpg" alt="תמונה גולמית 2" loading="lazy"><span class="dn" aria-hidden="true">↓</span><img class="ad" src="assets/y-ad-2.jpg" alt="המודעה שנבנתה 2" loading="lazy"></div>
+          <div class="rr"><img class="raw" src="assets/y-raw-3.jpg" alt="תמונה גולמית 3" loading="lazy"><span class="dn" aria-hidden="true">↓</span><img class="ad" src="assets/y-ad-3.jpg" alt="המודעה שנבנתה 3" loading="lazy"></div>
+        </div>
+        <p class="foot" style="text-align:center">למעלה: מה הלקוח שלח. למטה: המודעה שבנינו מכל תמונה.</p>
+      </div>
+    </div></div>
+
+    <div class="step" id="c6"><div class="sn">6</div><div class="sc">
+      <h3>מחקר: כמה דברים במקביל</h3>
+      <p class="txt">אחרי שמכירים את הלקוח, יוצאים למחקר. אלה ארבעה דברים שעושים במקביל, ולא לפי סדר:</p>
+      <div class="board">
+        <div class="nd blue big">מחקר</div>
+        <div class="stem"></div>
+        <div class="brs n4" style="--n:4">
+          <div class="br"><div class="nd"><small>1</small>חשבון המודעות של הלקוח<small>מה רץ אצלו בעבר ומה עבד. יש דאטה? מסתמכים עליה.</small></div></div>
+          <div class="br"><div class="nd"><small>2</small>לקוחות דומים שלנו<small>היה לנו לקוח מאותו תחום? בודקים מה עבד אצלו.</small></div></div>
+          <div class="br"><div class="nd"><small>3</small>ספריית המודעות<small>רואים מה המתחרים מפרסמים עכשיו.</small></div></div>
+          <div class="br"><div class="nd soft"><small>4</small>Claude אוסף מתחרים<small>כ-30 קריאייטיבים של עסקים מאותו תחום, שנותנים מענה לאותו צורך.</small></div></div>
+        </div>
+      </div>
+      <div class="g2">
+        <figure class="shot"><img src="assets/adlib.jpg" alt="ספריית המודעות של מטא" loading="lazy"><figcaption><b style="color:var(--ink)">3. ספריית המודעות:</b> חיפוש ״הפעלת קרקס״ מראה כל מודעה שרצה עכשיו בנושא.</figcaption></figure>
+        <figure class="shot"><img src="assets/research-gallery.jpg" alt="ספריית קריאייטיבים ש-Claude בנה" loading="lazy"><figcaption><b style="color:var(--ink)">4. מה ש-Claude מחזיר:</b> דף עם מודעות של מתחרים, מסוננות לפי סוג. הדוגמה מתחום הגינון.</figcaption></figure>
+      </div>
+    </div></div>
+
+<div class="step" id="c7"><div class="sn">7</div><div class="sc">
+      <h3>קריאייטיב</h3>
+      <p class="punch">מודעה טובה עונה על ארבעה דברים בחצי שנייה.</p>
+      <div class="g4 four">
+        <div class="card"><span class="kn">1</span><h4>הצעה שקשה לסרב לה</h4><p>מחיר ברור, צעד ראשון קל, בלי סיכון.</p></div>
+        <div class="card"><span class="kn">2</span><h4>כותרת ברורה וממחישה</h4><p>יודעים מה מוכרים בלי לקרוא הכל.</p></div>
+        <div class="card"><span class="kn">3</span><h4>כפתור הנעה לפעולה</h4><p>אומר בדיוק מה לעשות עכשיו.</p></div>
+        <div class="card"><span class="kn">4</span><h4>רקע שמתאים למוצר</h4><p>התמונה מספרת את הסיפור לבד.</p></div>
+      </div>
+
+      <h4 class="sub-h">מודעות סטטיות שלנו שעבדו, ולמה</h4>
+      <div class="wb-index"><a href="#w1"><span class="wi-n">1</span><img src="assets/asaf.jpg" alt="" loading="lazy"><b>הפעלות לילדים</b><i>89 שיחות</i></a><a href="#w2"><span class="wi-n">2</span><img src="assets/elephant.jpg" alt="" loading="lazy"><b>הובלות</b><i>161 לידים</i></a><a href="#w3"><span class="wi-n">3</span><img src="assets/sambazon.jpg" alt="" loading="lazy"><b>אסאי קפוא</b><i>33 רכישות</i></a><a href="#w4"><span class="wi-n">4</span><img src="assets/w-realestate.jpg" alt="" loading="lazy"><b>נדל״ן</b><i>366 לידים</i></a><a href="#w5"><span class="wi-n">5</span><img src="assets/pergola.jpg" alt="" loading="lazy"><b>פרגולות</b><i>204 לידים</i></a><a href="#w6"><span class="wi-n">6</span><img src="assets/w-cleaning.jpg" alt="" loading="lazy"><b>ניקיון לפני אכלוס</b><i>33 לידים</i></a><a href="#w7"><span class="wi-n">7</span><img src="assets/fitness-1.jpg" alt="" loading="lazy"><b>סטודיו כושר</b><i>66 לידים</i></a><a href="#w8"><span class="wi-n">8</span><img src="assets/w-concert.jpg" alt="" loading="lazy"><b>כרטיסים להופעה</b><i>25 רכישות</i></a><a href="#w9"><span class="wi-n">9</span><img src="assets/w-textcard.jpg" alt="" loading="lazy"><b>שיווק לבעלי עסקים</b><i>14 לידים</i></a></div>
+      <p class="hs-hint"><span class="hs-demo" aria-hidden="true"></span>לחצו על המספרים שעל כל מודעה, או על הנקודות שלידה, כדי לראות למה היא עבדה.</p>
+
+      <div class="wbs">
+
+        <div class="wb" id="w1">
+          <div class="wb-img hsfig"><img src="assets/asaf.jpg" alt="מודעה להפעלת קרקס לילדים" loading="lazy">
+            <button type="button" class="hs n" style="left:70%;top:14%" data-t="כותרת ברורה" data-d="״הפעלת קרקס לילדים״. בחצי שנייה יודעים מה מוכרים.">1</button>
+            <button type="button" class="hs n" style="left:35%;top:81%" data-t="מחיר ברור" data-d="1,599 ₪. מי שמחפש יום הולדת יודע מיד אם זה בשבילו.">2</button>
+            <button type="button" class="hs n" style="left:57%;top:69%" data-t="בלי סיכון" data-d="״לא נהניתם? לא שילמתם״. מוריד את הפחד להתחייב.">3</button>
+            <button type="button" class="hs n" style="left:77%;top:69%" data-t="הוכחה" data-d="״1000+ ימי הולדת״. מספר אמיתי, ולא סתם ״הכי טוב״.">4</button>
+            <button type="button" class="hs n" style="left:30%;top:20%" data-t="אדם אמיתי, ורקע שמתאים" data-d="אסף עצמו, באוהל קרקס. רואים מי יגיע ואיך זה ייראה.">5</button>
+            <button type="button" class="hs n" style="left:57%;top:94%" data-t="כפתור" data-d="״שריינו תאריך״. אומר בדיוק מה לעשות עכשיו.">6</button>
+          </div>
+          <div class="wb-side">
+            <div class="wb-top"><span class="wb-num">1</span><span class="wb-niche">הפעלות לילדים</span><span class="wb-type">וואטסאפ</span></div>
+            <h4>הצעה מלאה בתמונה אחת</h4>
+            <div class="wb-res"><b>89</b><span>שיחות</span><i>19.7 ₪ לשיחה</i></div>
+            <div class="wb-pts"><button type="button" class="wpt" data-i="0"><b>1</b>כותרת</button><button type="button" class="wpt" data-i="1"><b>2</b>מחיר</button><button type="button" class="wpt" data-i="2"><b>3</b>בלי סיכון</button><button type="button" class="wpt" data-i="3"><b>4</b>הוכחה</button><button type="button" class="wpt" data-i="4"><b>5</b>אדם אמיתי</button><button type="button" class="wpt" data-i="5"><b>6</b>כפתור</button></div>
+          </div>
+        </div>
+
+        <div class="wb" id="w2">
+          <div class="wb-img hsfig"><img src="assets/elephant.jpg" alt="מודעת הובלות: תפסיקו להיות פראיירים" loading="lazy">
+            <button type="button" class="hs n" style="left:66%;top:11%" data-t="כותרת שתופסת בבטן" data-d="״תפסיקו להיות פראיירים!״ נוגעת בפחד הכי גדול במעבר דירה: לשלם יותר מדי.">1</button>
+            <button type="button" class="hs n" style="left:52%;top:44%" data-t="מחבר את הכאב לשם העסק" data-d="״ב-2026 עוברים דירה רק עם אלפנט!״">2</button>
+            <button type="button" class="hs n" style="left:72%;top:55%" data-t="רקע שמראה את השירות" data-d="משאית, מנוף, ארגזים וספה. רואים בדיוק מה מקבלים.">3</button>
+            <button type="button" class="hs n" style="left:45%;top:82%" data-t="שורת הוכחות" data-d="25 שנות ניסיון, 2500+ המלצות, צוות מנוסה.">4</button>
+            <button type="button" class="hs n" style="left:82%;top:95%" data-t="כפתור עם הבטחה" data-d="״לקבלת הצעת מחיר משתלמת״.">5</button>
+          </div>
+          <div class="wb-side">
+            <div class="wb-top"><span class="wb-num">2</span><span class="wb-niche">הובלות</span><span class="wb-type">טופס לידים</span></div>
+            <h4>כותרת בשפה של הלקוח</h4>
+            <div class="wb-res"><b>161</b><span>לידים</span><i>14 ₪ לליד</i></div>
+            <div class="wb-pts"><button type="button" class="wpt" data-i="0"><b>1</b>כותרת</button><button type="button" class="wpt" data-i="1"><b>2</b>שם העסק</button><button type="button" class="wpt" data-i="2"><b>3</b>רקע</button><button type="button" class="wpt" data-i="3"><b>4</b>הוכחות</button><button type="button" class="wpt" data-i="4"><b>5</b>כפתור</button></div>
+          </div>
+        </div>
+
+        <div class="wb" id="w3">
+          <div class="wb-img hsfig"><img src="assets/sambazon.jpg" alt="מודעה לאסאי קפוא: 6+2 מתנה" loading="lazy">
+            <button type="button" class="hs n" style="left:60%;top:11%" data-t="תיאור ישיר" data-d="״אסאי קפוא מוכן לאכילה״. אומרת בדיוק מה המוצר.">1</button>
+            <button type="button" class="hs n" style="left:66%;top:38%" data-t="השוואה למשהו מוכר" data-d="״ממש כמו גלידה״. מי שלא מכיר אסאי מבין מיד מה זה.">2</button>
+            <button type="button" class="hs n" style="left:47%;top:47%" data-t="הכמות בתמונה היא ההצעה" data-d="סופרים בתמונה 8 דליים, בדיוק כמו במבצע. רואים מה מקבלים.">3</button>
+            <button type="button" class="hs n" style="left:64%;top:61%" data-t="הצעה שקשה לסרב לה" data-d="״6+2 מתנה״. ענקית, ובצבע שקופץ מהרקע.">4</button>
+            <button type="button" class="hs n" style="left:63%;top:80%" data-t="המבצע במילים פשוטות" data-d="״8 יחידות במחיר של 6״. לא צריך לחשב.">5</button>
+            <button type="button" class="hs n" style="left:72%;top:88%" data-t="תשובות להתנגדויות" data-d="מוכן לאכילה בלי בלנדר, אורגני, סחר הוגן.">6</button>
+          </div>
+          <div class="wb-side">
+            <div class="wb-top"><span class="wb-num">3</span><span class="wb-niche">אסאי קפוא</span><span class="wb-type">רכישות באתר</span></div>
+            <h4>מבצע כמות, והכמות בתמונה</h4>
+            <div class="wb-res"><b>33</b><span>רכישות</span><i>49.9 ₪ לרכישה · כל שקל החזיר כ-6 ₪</i></div>
+            <div class="wb-pts"><button type="button" class="wpt" data-i="0"><b>1</b>כותרת</button><button type="button" class="wpt" data-i="1"><b>2</b>כמו גלידה</button><button type="button" class="wpt" data-i="2"><b>3</b>8 דליים</button><button type="button" class="wpt" data-i="3"><b>4</b>המבצע</button><button type="button" class="wpt" data-i="4"><b>5</b>במילים</button><button type="button" class="wpt" data-i="5"><b>6</b>התנגדויות</button></div>
+            <p class="wb-note">ביעד רכישות לא סופרים לידים. בודקים כמה כסף חזר על כל שקל בפרסום.</p>
+          </div>
+        </div>
+
+        <div class="wb" id="w4">
+          <div class="wb-img hsfig"><img src="assets/w-realestate.jpg" alt="מודעת נדל״ן בהרצליה פיתוח" loading="lazy">
+            <button type="button" class="hs n" style="left:74%;top:13%" data-t="כותרת: מה ואיפה" data-d="״אייקון מגורים חדש בהרצליה פיתוח״.">1</button>
+            <button type="button" class="hs n" style="left:27%;top:26%" data-t="מספר במקום תואר" data-d="״260 מטר מקו החוף״, במקום ״קרוב לים״.">2</button>
+            <button type="button" class="hs n" style="left:50%;top:50%" data-t="הדמיה בערב" data-d="הבניין מואר, עם צמחייה ואנשים. נראה כמו מקום שרוצים לגור בו.">3</button>
+            <button type="button" class="hs n" style="left:12%;top:84%" data-t="מפה" data-d="מראה את המרחק לים, ומוכיחה את המספר.">4</button>
+            <button type="button" class="hs n" style="left:70%;top:86%" data-t="כל היתרונות בשורה" data-d="ארבעה אייקונים: אדריכלות, מיקום, חוף ים, 260 מטר.">5</button>
+            <button type="button" class="hs n" style="left:63%;top:96%" data-t="כפתור רגוע" data-d="״לפרטים נוספים״. מתאים למוצר יקר שלא קונים בלחיצה.">6</button>
+          </div>
+          <div class="wb-side">
+            <div class="wb-top"><span class="wb-num">4</span><span class="wb-niche">נדל״ן</span><span class="wb-type">טופס לידים</span></div>
+            <h4>מספר שמוכר: 260 מטר מהים</h4>
+            <div class="wb-res"><b>366</b><span>לידים</span><i>25.6 ₪ לליד</i></div>
+            <div class="wb-pts"><button type="button" class="wpt" data-i="0"><b>1</b>כותרת</button><button type="button" class="wpt" data-i="1"><b>2</b>מספר</button><button type="button" class="wpt" data-i="2"><b>3</b>הדמיה</button><button type="button" class="wpt" data-i="3"><b>4</b>מפה</button><button type="button" class="wpt" data-i="4"><b>5</b>יתרונות</button><button type="button" class="wpt" data-i="5"><b>6</b>כפתור</button></div>
+          </div>
+        </div>
+
+        <div class="wb" id="w5">
+          <div class="wb-img hsfig"><img src="assets/pergola.jpg" alt="מודעה לפרגולות עץ" loading="lazy">
+            <button type="button" class="hs n" style="left:50%;top:26%" data-t="עבודה אמיתית" data-d="צילום של פרגולה שהלקוח באמת בנה, באור של ערב.">1</button>
+            <button type="button" class="hs n" style="left:94%;top:55%" data-t="תיאור ישיר" data-d="״פרגולות עץ בהתאמה אישית״. אומרת בדיוק מה המוצר, בלי לעטוף.">2</button>
+            <button type="button" class="hs n" style="left:86%;top:71%" data-t="מחיר ״החל מ-״" data-d="״החל מ-450 ₪ למ״ר״. מוריד את הפחד מ״כמה זה יעלה לי?״.">3</button>
+            <button type="button" class="hs n" style="left:50%;top:83%" data-t="תשובות להתנגדויות" data-d="התאמה אישית, כולל חומרים, 20 שנות ניסיון, זמינות ואחריות.">4</button>
+            <button type="button" class="hs n" style="left:74%;top:96%" data-t="כפתור בולט" data-d="״לפרטים נוספים״, בצבע שקופץ מהרקע הכהה.">5</button>
+          </div>
+          <div class="wb-side">
+            <div class="wb-top"><span class="wb-num">5</span><span class="wb-niche">פרגולות</span><span class="wb-type">טופס לידים</span></div>
+            <h4>תיאור ישיר ומחיר</h4>
+            <div class="wb-res"><b>204</b><span>לידים</span><i>17.3 ₪ לליד</i></div>
+            <div class="wb-pts"><button type="button" class="wpt" data-i="0"><b>1</b>עבודה אמיתית</button><button type="button" class="wpt" data-i="1"><b>2</b>תיאור</button><button type="button" class="wpt" data-i="2"><b>3</b>מחיר</button><button type="button" class="wpt" data-i="3"><b>4</b>התנגדויות</button><button type="button" class="wpt" data-i="4"><b>5</b>כפתור</button></div>
+          </div>
+        </div>
+
+        <div class="wb" id="w6">
+          <div class="wb-img hsfig"><img src="assets/w-cleaning.jpg" alt="מודעה לניקיון לפני אכלוס" loading="lazy">
+            <button type="button" class="hs n" style="left:61%;top:24%" data-t="כותרת ענקית" data-d="״ניקיון לפני אכלוס״. השירות עצמו, הכי גדול במודעה.">1</button>
+            <button type="button" class="hs n" style="left:57%;top:48%" data-t="פונה להתלבטות" data-d="״במחיר שלא ישאיר לכם את ההתלבטות!״">2</button>
+            <button type="button" class="hs n" style="left:55%;top:61%" data-t="מחיר בולט" data-d="״החל מ-1,599 ₪״. גדול, צהוב, ואי אפשר לפספס.">3</button>
+            <button type="button" class="hs n" style="left:71%;top:13%" data-t="זהות" data-d="״עסק של מילואימניק לניקיון!״. בונה אמון מיד.">4</button>
+            <button type="button" class="hs n" style="left:80%;top:42%" data-t="עובד אמיתי בעבודה" data-d="דירה חדשה ומוארת, ורואים איך עושים את העבודה.">5</button>
+            <button type="button" class="hs n" style="left:69%;top:95%" data-t="כפתור" data-d="״לקבלת הצעת מחיר״, מתחת לארבעה אייקונים של יתרונות.">6</button>
+          </div>
+          <div class="wb-side">
+            <div class="wb-top"><span class="wb-num">6</span><span class="wb-niche">ניקיון לפני אכלוס</span><span class="wb-type">טופס לידים</span></div>
+            <h4>מחיר וזהות</h4>
+            <div class="wb-res"><b>33</b><span>לידים</span><i>7.4 ₪ לליד</i></div>
+            <div class="wb-pts"><button type="button" class="wpt" data-i="0"><b>1</b>כותרת</button><button type="button" class="wpt" data-i="1"><b>2</b>התלבטות</button><button type="button" class="wpt" data-i="2"><b>3</b>מחיר</button><button type="button" class="wpt" data-i="3"><b>4</b>זהות</button><button type="button" class="wpt" data-i="4"><b>5</b>עובד</button><button type="button" class="wpt" data-i="5"><b>6</b>כפתור</button></div>
+          </div>
+        </div>
+
+        <div class="wb" id="w7">
+          <div class="wb-img hsfig"><img src="assets/fitness-1.jpg" alt="מודעה לסטודיו כושר" loading="lazy">
+            <button type="button" class="hs n" style="left:25%;top:23%" data-t="שאלה עם מספר" data-d="״עד 2,000 קלוריות ב-30 דקות?״ מספר שמפתיע ועוצר את הגלילה.">1</button>
+            <button type="button" class="hs n" style="left:53%;top:54%" data-t="עונה לספק" data-d="״כן, קראת נכון.״ עונה מיד למחשבה ״זה לא יכול להיות״.">2</button>
+            <button type="button" class="hs n" style="left:54%;top:70%" data-t="צעד ראשון קל" data-d="אימון ניסיון ב-69 ₪, ללא התחייבות.">3</button>
+            <button type="button" class="hs n" style="left:26%;top:60%" data-t="המכשיר בתמונה" data-d="רואים בדיוק מה מקבלים.">4</button>
+            <button type="button" class="hs n" style="left:25%;top:86%" data-t="מיקום" data-d="״אור יהודה״. מי שגר באזור יודע שזה בשבילו.">5</button>
+            <button type="button" class="hs n" style="left:56%;top:86%" data-t="כפתור" data-d="״השאירי פרטים״. פונה ישר לקהל של הסטודיו.">6</button>
+          </div>
+          <div class="wb-side">
+            <div class="wb-top"><span class="wb-num">7</span><span class="wb-niche">סטודיו כושר</span><span class="wb-type">טופס לידים</span></div>
+            <h4>שאלה מפתיעה וצעד ראשון זול</h4>
+            <div class="wb-res"><b>66</b><span>לידים</span><i>14.5 ₪ לליד</i></div>
+            <div class="wb-pts"><button type="button" class="wpt" data-i="0"><b>1</b>שאלה</button><button type="button" class="wpt" data-i="1"><b>2</b>ספק</button><button type="button" class="wpt" data-i="2"><b>3</b>הצעה</button><button type="button" class="wpt" data-i="3"><b>4</b>מכשיר</button><button type="button" class="wpt" data-i="4"><b>5</b>מיקום</button><button type="button" class="wpt" data-i="5"><b>6</b>כפתור</button></div>
+            <p class="wb-note">הבטחה בריאותית כמו ״2,000 קלוריות״ עלולה להידחות במטא. כדאי לבדוק לפני.</p>
+          </div>
+        </div>
+
+        <div class="wb" id="w8">
+          <div class="wb-img hsfig"><img src="assets/w-concert.jpg" alt="מודעה למכירת כרטיסים להופעה" loading="lazy">
+            <button type="button" class="hs n" style="left:25%;top:21%" data-t="דחיפות אמיתית" data-d="״כרטיסים אחרונים״. מי שמתלבט, קונה עכשיו.">1</button>
+            <button type="button" class="hs n" style="left:56%;top:25%" data-t="האמן בפעולה" data-d="מי שמכיר אותו מזהה מיד, ומי שלא, רואה את האווירה.">2</button>
+            <button type="button" class="hs n" style="left:86%;top:57%" data-t="מי, איפה ומתי" data-d="״אירוע ענק בחיפה: דרויש מגיע לשוק תלפיות״.">3</button>
+            <button type="button" class="hs n" style="left:90%;top:78%" data-t="כל הפרטים בשורה" data-d="שעה, תאריך ומקום. בלי לחפש.">4</button>
+            <button type="button" class="hs n" style="left:75%;top:87%" data-t="כפתור ישיר" data-d="״לרכישת כרטיסים״.">5</button>
+          </div>
+          <div class="wb-side">
+            <div class="wb-top"><span class="wb-num">8</span><span class="wb-niche">כרטיסים להופעה</span><span class="wb-type">רכישות באתר</span></div>
+            <h4>דחיפות וכל הפרטים</h4>
+            <div class="wb-res"><b>25</b><span>רכישות</span><i>49.7 ₪ לרכישה</i></div>
+            <div class="wb-pts"><button type="button" class="wpt" data-i="0"><b>1</b>דחיפות</button><button type="button" class="wpt" data-i="1"><b>2</b>האמן</button><button type="button" class="wpt" data-i="2"><b>3</b>כותרת</button><button type="button" class="wpt" data-i="3"><b>4</b>פרטים</button><button type="button" class="wpt" data-i="4"><b>5</b>כפתור</button></div>
+          </div>
+        </div>
+
+        <div class="wb" id="w9">
+          <div class="wb-img hsfig"><img src="assets/w-textcard.jpg" alt="כרטיס טקסט לבעלי עסקים בתחום הגינון" loading="lazy">
+            <button type="button" class="hs n" style="left:88%;top:35%" data-t="בלי תמונה בכלל" data-d="רק משפט אחד. בפיד מלא תמונות, כרטיס שקט כזה בולט.">1</button>
+            <button type="button" class="hs n" style="left:88%;top:45%" data-t="שם הנישה מודגש" data-d="״הגינון״. בעל עסק לגינון מרגיש שמדברים אליו.">2</button>
+            <button type="button" class="hs n" style="left:88%;top:54%" data-t="מה שהוא רוצה, מודגש" data-d="״לידים באופן קבוע״.">3</button>
+            <button type="button" class="hs n" style="left:58%;top:74%" data-t="חץ למטה" data-d="מוביל לטקסט ולכפתור שמתחת לתמונה.">4</button>
+          </div>
+          <div class="wb-side">
+            <div class="wb-top"><span class="wb-num">9</span><span class="wb-niche">שיווק לבעלי עסקים</span><span class="wb-type">טופס לידים</span></div>
+            <h4>כרטיס טקסט, בלי תמונה</h4>
+            <div class="wb-res"><b>14</b><span>לידים</span><i>16.3 ₪ לליד</i></div>
+            <div class="wb-pts"><button type="button" class="wpt" data-i="0"><b>1</b>בלי תמונה</button><button type="button" class="wpt" data-i="1"><b>2</b>הנישה</button><button type="button" class="wpt" data-i="2"><b>3</b>הרצון</button><button type="button" class="wpt" data-i="3"><b>4</b>חץ</button></div>
+            <p class="wb-note">מודעה של הסוכנות שלנו עצמה, לבעלי עסקים בתחום הגינון.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <h4 class="sub-h">הוק בהרבה סגנונות</h4>
+      <p class="txt"><b>הוק</b> הוא הפתיחה שעוצרת את הגלילה. לא תמיד צריך לעטוף: לפעמים הכי טוב פשוט לתאר את המוצר, עם תמונה טובה. לכל לקוח מנסים 2 עד 4 קריאייטיבים, כל אחד בזווית אחרת.</p>
+      <div class="hooks2">
+        <div class="hk2"><img src="assets/pergola.jpg" alt="" loading="lazy"><div><span class="s">1 · תיאור ישיר של המוצר</span><q>פרגולות עץ בהתאמה אישית</q><span class="n2">פרגולות</span></div></div>
+        <div class="hk2"><img src="assets/hamakom.jpg" alt="" loading="lazy"><div><span class="s">2 · מה מקבלים, מתי ואיפה</span><q>סדנת רקמה וצבעי מים</q><span class="n2">סדנאות יצירה</span></div></div>
+        <div class="hk2"><img src="assets/pair-even.jpg" alt="" loading="lazy"><div><span class="s">3 · כמות מוגבלת</span><q>רק 20 דירות בלב הפועם של ירושלים</q><span class="n2">נדל״ן</span></div></div>
+        <div class="hk2"><img src="assets/y-ad-1.jpg" alt="" loading="lazy"><div><span class="s">4 · חלום</span><q>סיירת. כמה אתם חולמים עליה?</q><span class="n2">כושר קרבי לנוער</span></div></div>
+        <div class="hk2"><img src="assets/pair-ice.jpg" alt="" loading="lazy"><div><span class="s">5 · כאב ומחיר</span><q>נמאס לך לשלם הרבה על קרח?</q><span class="n2">קרח לאירועים</span></div></div>
+        <div class="hk2"><img src="assets/ac.jpg" alt="" loading="lazy"><div><span class="s">6 · בעיה שלא ידעו עליה</span><q>האוויר בבית שלך מזוהם. ואתה לא רואה את זה</q><span class="n2">ניקוי מזגנים</span></div></div>
+        <div class="hk2"><img src="assets/tot.jpg" alt="" loading="lazy"><div><span class="s">7 · הצעה נועזת</span><q>אנחנו נסגור את המינוס לאחד מכם, על חשבוננו</q><span class="n2">ליווי כלכלי</span></div></div>
+        <div class="hk2"><img src="assets/amys.jpg" alt="" loading="lazy"><div><span class="s">8 · כאב מוכר</span><q>חלאס עם חוזים ל-3 שנים.</q><span class="n2">משרדים פרטיים</span></div></div>
+        <div class="hk2"><img src="assets/chosen.jpg" alt="" loading="lazy"><div><span class="s">9 · חדשות</span><q>מבזק: השבת בתל אביב מתאמנים עם DJ שארפ</q><span class="n2">אימון כדורסל</span></div></div>
+        <div class="hk2"><img src="assets/closet.jpg" alt="" loading="lazy"><div><span class="s">10 · אמירה ישירה</span><q>אני מסדרת לכם את הארונות.</q><span class="n2">סידור ארונות</span></div></div>
+      </div>
+    </div></div>
+
+<div class="step" id="c8"><div class="sn">8</div><div class="sc">
+      <h3>טקסטים</h3>
+      <p class="txt">לכל מודעה יש שלושה טקסטים, ולכל אחד תפקיד אחר. כותבים כמה גרסאות מכל אחד, ומטא מחליפה ביניהן.</p>
+      <div class="ann">
+        <div class="admock" style="justify-self:center">
+          <div class="hd"><div class="av"></div><div><div class="nm">ניקוי מזגנים</div><div class="spn">ממומן</div></div></div>
+          <div class="pt"><span class="mk">1</span>האוויר בבית שלך מזוהם.
+ואתה לא רואה את זה 😰 <span class="more">עוד</span></div>
+          <img src="assets/ac.jpg" alt="" loading="lazy">
+          <div class="ft"><div><div class="hl"><span class="mk">2</span>רוצים אוויר נקי בבית? לחצו כאן &gt;&gt;</div><div class="ds"><span class="mk">3</span>שורה קטנה שמשלימה</div></div><div class="cta">מידע נוסף</div></div>
+        </div>
+        <ol class="legend">
+          <li><span class="b">1</span><div><strong>טקסט ראשי</strong><p>מעל התמונה. רק השורות הראשונות מופיעות לפני ״עוד״, ולכן הן הכי חשובות.</p></div></li>
+          <li><span class="b">2</span><div><strong>כותרת</strong><p>מתחת לתמונה, מודגשת. משפט קצר שמזמין ללחוץ.</p></div></li>
+          <li><span class="b">3</span><div><strong>תיאור</strong><p>שורה קטנה, כמו אזור שירות. לא מופיעה בכל מקום.</p></div></li>
+        </ol>
+      </div>
+    </div></div>
+
+    <div class="step" id="c9"><div class="sn">9</div><div class="sc">
+      <h3>אישורים, ורק אז סטורי</h3>
+      <div class="board"><div class="flowh">
+        <div class="nd">גרפיקות וטקסטים</div><span class="ar">←</span>
+        <div class="nd soft">סשה או יאיר מאשרים</div><span class="ar">←</span>
+        <div class="nd soft">הלקוח מאשר</div><span class="ar">←</span>
+        <div class="nd blue">רק אז גרסת סטורי</div>
+      </div></div>
+      <p class="txt">כל גרסה עולה קרדיטים (היחידות שבהן משלמים על יצירת גרפיקות ב-AI). אם הלקוח מבקש שינוי בריבוע, לא זורקים סטורי שכבר הכנו.</p>
+      <p class="txt"><b>ככה נראים ריבוע וסטורי של אותה מודעה.</b> הסטורי נבנה מחדש לאורך, וכל מה שחשוב נכנס באמצע: למעלה ולמטה יש שם עסק, כפתורים ותגובות.</p>
+      <div class="pairs">
+        <div class="pair"><span class="pl">סידור ארונות</span><img src="assets/closet-built.jpg" alt="ריבוע" loading="lazy"><img src="assets/closet-built-story.jpg" alt="סטורי" loading="lazy"></div>
+        <div class="pair"><span class="pl">כושר קרבי לנוער</span><img src="assets/pair-yachdav.jpg" alt="ריבוע" loading="lazy"><img src="assets/pair-yachdav-story.jpg" alt="סטורי" loading="lazy"></div>
+        <div class="pair"><span class="pl">קרח לאירועים</span><img src="assets/pair-ice.jpg" alt="ריבוע" loading="lazy"><img src="assets/pair-ice-story.jpg" alt="סטורי" loading="lazy"></div>
+        <div class="pair"><span class="pl">נדל״ן</span><img src="assets/pair-even.jpg" alt="ריבוע" loading="lazy"><img src="assets/pair-even-story.jpg" alt="סטורי" loading="lazy"></div>
+      </div>
+    </div></div>
+
+    <div class="step" id="c10"><div class="sn">10</div><div class="sc">
+      <h3>השקה: מה יש בכל מסך במנהל המודעות</h3>
+      <p class="txt">מעלים רק מה שאושר. את ההעלאה עושים יחד בפעם הראשונה. כדי שיהיה ברור מה רואים, הנה קמפיין לידים אמיתי של לקוח שמסדר ארונות, רמה אחרי רמה.</p>
+      <ul class="check">
+        <li>הגרפיקות והטקסטים אושרו</li>
+        <li>יש גרסת סטורי לכל ריבוע</li>
+        <li>נבחר יעד: לידים (טופס או וואטסאפ) או רכישות</li>
+        <li>שתי סדרות: רחב ותחומי עניין</li>
+        <li>אם זה טופס: האוטומציה נבדקה עם ליד ניסיון</li>
+        <li>שמות ברורים לקמפיין, לסדרות ולמודעות</li>
+      </ul>
+      <p class="hs-hint"><span class="hs-demo" aria-hidden="true"></span>לחצו על הנקודות הכחולות שעל צילומי המסך, כדי לראות מה כל דבר.</p>
+
+      <div class="amlvl">
+        <h4 class="sub-h">רמה 1: הקמפיין</h4>
+        <p class="txt">כאן מחליטים בעיקר על <b>שם</b> ועל <b>תקציב</b>. המטרה נבחרת כשיוצרים את הקמפיין.</p>
+        <div class="hsfig"><img src="assets/am-campaign-edit.jpg" alt="מסך הקמפיין במנהל המודעות" loading="lazy">
+          <button type="button" class="hs" style="left:76.5%;top:8.5%" data-t="העץ בצד" data-d="קמפיין, שתי סדרות (תחומי עניין ורחב), ואותן מודעות בכל אחת. כל המבנה במבט אחד."></button>
+          <button type="button" class="hs" style="left:55.5%;top:12.8%" data-t="שם הקמפיין" data-d="לקוח, CBO, יעד ותאריך. מי שפותח את החשבון מבין בלי לשאול."></button>
+          <button type="button" class="hs" style="left:56.5%;top:33.8%" data-t="מטרת הקמפיין" data-d="כאן: לידים. נבחרת כשיוצרים את הקמפיין, וקובעת את כל השאר."></button>
+          <button type="button" class="hs" style="left:54.5%;top:52.7%" data-t="תקציב הקמפיין (CBO)" data-d="התקציב נקבע ברמת הקמפיין, ומטא מחלקת אותו לבד בין הסדרות."></button>
+          <button type="button" class="hs" style="left:43%;top:67.5%" data-t="תקציב יומי" data-d="כמה מוציאים ביום. כאן 30 ₪."></button>
+        </div>
+      </div>
+
+      <div class="amlvl">
+        <h4 class="sub-h">רמה 2: סדרת המודעות</h4>
+        <p class="txt">כאן מחליטים <b>לאן הליד הולך</b> ו<b>למי מראים</b>.</p>
+        <div class="hsgrid">
+          <figure><figcaption>לאן הליד הולך</figcaption><div class="hsfig"><img src="assets/am-adset-conv.jpg" alt="המרה" loading="lazy">
+            <button type="button" class="hs" style="left:73%;top:24.5%" data-t="מיקום ההמרה" data-d="טפסים מיידיים או וואטסאפ. בוחרים לפי מה שהלקוח מעדיף."></button>
+            <button type="button" class="hs" style="left:73%;top:36.8%" data-t="דף פייסבוק" data-d="הדף של הלקוח. המודעה יוצאת בשמו."></button>
+            <button type="button" class="hs" style="left:73.5%;top:58.8%" data-t="יעד ביצועים" data-d="מקסום מספר הלידים: מטא מחפשת כמה שיותר אנשים שימלאו טופס."></button>
+          </div></figure>
+          <figure><figcaption>איפה המודעות מופיעות</figcaption><div class="hsfig"><img src="assets/am-adset-place.jpg" alt="מיקומי מודעה" loading="lazy">
+            <button type="button" class="hs" style="left:76%;top:5%" data-t="מיקומי מודעה" data-d="אוטומטי (Advantage+). מטא בוחרת לבד בין פיד, סטורי ורילס, לפי מה שעובד."></button>
+          </div></figure>
+          <figure><figcaption>למי מראים: הסדרה הרחבה</figcaption><div class="hsfig"><img src="assets/am-adset-aud.jpg" alt="קהל בסדרה הרחבה" loading="lazy">
+            <button type="button" class="hs" style="left:82%;top:36%" data-t="מיקומים" data-d="ערים ורדיוס סביבן: איפה גרים הלקוחות של הלקוח. אפשר גם להוציא אזורים."></button>
+            <button type="button" class="hs" style="left:77%;top:65.7%" data-t="הצעה לקהל" data-d="קהלים שמורים, אם יש. בסדרה הרחבה בדרך כלל משאירים ריק."></button>
+          </div></figure>
+          <figure><figcaption>למי מראים: סדרת תחומי העניין</figcaption><div class="hsfig"><img src="assets/am-adset-int.jpg" alt="קהל בסדרת תחומי העניין" loading="lazy">
+            <button type="button" class="hs" style="left:86%;top:64.6%" data-t="גיל" data-d="כאן: 25 עד 53."></button>
+            <button type="button" class="hs" style="left:66%;top:80%" data-t="תחומי עניין" data-d="תחומי עניין שמתאימים לעסק. כאן: אמהות, ניקיון, ניהול משק הבית."></button>
+          </div></figure>
+        </div>
+      </div>
+
+      <div class="amlvl">
+        <h4 class="sub-h">רמה 3: המודעה</h4>
+        <p class="txt">כאן שמים <b>מה רואים</b>, ו<b>לאן זה מוביל</b>.</p>
+        <div class="hsfig" style="max-width:820px"><img src="assets/am-ad-top.jpg" alt="הגדרות המודעה" loading="lazy">
+          <button type="button" class="hs" style="left:28%;top:68%" data-t="תצוגה מקדימה" data-d="מה שהליד יראה. כאן רואים את הטופס שנפתח אחרי הלחיצה."></button>
+          <button type="button" class="hs" style="left:88%;top:44%" data-t="זהות" data-d="הדף והאינסטגרם שבשמם המודעה יוצאת."></button>
+          <button type="button" class="hs" style="left:89%;top:84.5%" data-t="פורמט" data-d="תמונה או סרטון אחד, או קרוסלה."></button>
+        </div>
+        <div class="hsgrid">
+          <figure><figcaption>הטקסטים</figcaption><div class="hsfig"><img src="assets/am-ad-text.jpg" alt="טקסטים במודעה" loading="lazy">
+            <button type="button" class="hs" style="left:65%;top:21%" data-t="טקסט ראשי" data-d="הטקסט שמעל התמונה."></button>
+            <button type="button" class="hs" style="left:16%;top:55%" data-t="גרסה נוספת" data-d="כותבים כמה גרסאות, ומטא מחליפה ביניהן."></button>
+            <button type="button" class="hs" style="left:80%;top:90%" data-t="כותרת" data-d="המשפט המודגש מתחת לתמונה."></button>
+          </div></figure>
+          <figure><figcaption>לאן זה מוביל</figcaption><div class="hsfig"><img src="assets/am-ad-dest.jpg" alt="יעד המודעה" loading="lazy">
+            <button type="button" class="hs" style="left:71%;top:15.4%" data-t="יעד" data-d="טופס מיידי: הטופס שנפתח אחרי הלחיצה."></button>
+            <button type="button" class="hs" style="left:58%;top:48%" data-t="הטופס שנבחר" data-d="טופס שהוכן מראש לקמפיין הזה."></button>
+            <button type="button" class="hs" style="left:43%;top:87%" data-t="חיבור ל-CRM" data-d="כל ליד עובר אוטומטית ל-CRM של הלקוח."></button>
+          </div></figure>
+        </div>
+      </div>
+
+      <div class="board"><div class="lbl" style="margin-top:0">מה קורה כשליד ממלא טופס (אוטומציית ״ליד אונבורדינג״)</div><div class="flowh">
+        <div class="nd">ליד ממלא טופס</div><span class="ar">←</span>
+        <div class="nd blue">האוטומציה</div><span class="ar">←</span>
+        <div class="nd">הלקוח מקבל הודעה<small>״קיבלת ליד חדש״</small></div><span class="ar">←</span>
+        <div class="nd">הליד נכנס ל-CRM<small>בנושן, שהלקוח מקבל מאיתנו</small></div>
+      </div></div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ PART D ============ -->
+<section class="part" id="d">
+  <div class="part-h"><div class="letter">ד</div><h2>אחרי ההשקה</h2></div>
+  <p class="part-sub">בודקים, מתקנים, ומדברים עם הלקוח.</p>
+  <ul class="pmap"><li><a href="#d1"><span class="pn">1</span>בודקים לפני שהלקוח שואל</a></li><li><a href="#d2"><span class="pn">2</span>מתי מחליפים קריאייטיב</a></li><li><a href="#d3"><span class="pn">3</span>הקשר עם הלקוח</a></li></ul>
+
+  <div class="topic" id="d1">
+    <h3><span class="n">1</span>בודקים לפני שהלקוח שואל</h3>
+    <p class="txt"><b>הגיע ליד?</b> עדיף לראות את זה לפני שהלקוח רואה. <b>מודעה שלוקחת הרבה תקציב בלי תוצאות</b>, כשאחרות כן מביאות? מכבים אותה.</p>
+    <div class="board"><div class="lbl" style="margin-top:0">המחשה</div><div class="spend">
+      <div class="sp"><b>מודעה 1</b><div class="track"><div class="fill w" style="width:60%">60% מהתקציב</div></div><span class="ld">2 לידים</span><span class="vd off">מכבים</span></div>
+      <div class="sp"><b>מודעה 2</b><div class="track"><div class="fill g" style="width:25%">25%</div></div><span class="ld">9 לידים</span><span class="vd on">משאירים</span></div>
+      <div class="sp"><b>מודעה 3</b><div class="track"><div class="fill g" style="width:15%">15%</div></div><span class="ld">6 לידים</span><span class="vd on">משאירים</span></div>
+    </div></div>
+  </div>
+
+  <div class="topic" id="d2">
+    <h3><span class="n">2</span>מתי מחליפים קריאייטיב</h3>
+    <p class="txt">אין תאריך תפוגה. <b>כל עוד עובד, לא נוגעים.</b> כשהביצועים יורדים, מבינים מה לא עובד, ומוסיפים או משנים.</p>
+  </div>
+
+  <div class="topic" id="d3">
+    <h3><span class="n">3</span>הקשר עם הלקוח</h3>
+    <p class="punch">הלקוח באחריותך. בחודש הראשון מדברים איתו כל יום.</p>
+    <div class="board"><div class="flowh">
+      <div class="nd blue">החודש הראשון<small>מדברים כל יום</small></div><span class="ar">←</span>
+      <div class="nd">אחר כך<small>קצב קבוע לכל לקוח, שנקבע ב-CRM</small></div><span class="ar">←</span>
+      <div class="nd">אחרי כל שיחה<small>מסמנים ב-CRM, והלקוח חוזר במחזור הבא</small></div>
+    </div></div>
+    <figure class="shot"><img src="assets/crm-today.jpg" alt="המסך לקוחות לתקשורת היום" loading="lazy"><figcaption>״לקוחות לתקשורת היום״ במסך הראשי של ה-CRM</figcaption></figure>
+    <p class="txt">אין תסריט לשיחה. מדברים לפי הביצועים, ושואלים את השאלות הנכונות: מה קרה מאז השיחה הקודמת? מה הצעד הבא?</p>
+  </div>
+</section>
+
+<!-- ============ GLOSSARY ============ -->
+<section class="part" id="gl">
+  <div class="part-h"><div class="letter" style="font-size:22px">א–ת</div><h2>מילון</h2></div>
+  <dl class="gloss" style="margin-top:16px">
+    <div><dt>מנהל המודעות</dt><dd>המקום שבו בונים, מעלים ובודקים קמפיינים במטא.</dd></div>
+    <div><dt>פורטפוליו עסקי</dt><dd>המקום בפייסבוק שמרכז את הנכסים: דפים, חשבונות מודעות ופיקסלים.</dd></div>
+    <div><dt>חשבון מודעות</dt><dd>המקום שבו רצים הקמפיינים, וממנו משלמים.</dd></div>
+    <div><dt>פיקסל</dt><dd>קוד באתר שמודד מה אנשים עושים אחרי הלחיצה.</dd></div>
+    <div><dt>ליד</dt><dd>אדם שהשאיר פרטים או פתח שיחה.</dd></div>
+    <div><dt>טופס לידים</dt><dd>טופס שנפתח בתוך פייסבוק או אינסטגרם.</dd></div>
+    <div><dt>שאלה מסננת</dt><dd>שאלה בטופס שעוזרת להבין אם הליד מתאים.</dd></div>
+    <div><dt>קמפיין</dt><dd>הרמה העליונה: המטרה, ולפעמים התקציב.</dd></div>
+    <div><dt>סדרת מודעות</dt><dd>הרמה האמצעית: למי מראים את המודעות.</dd></div>
+    <div><dt>CBO</dt><dd>התקציב ברמת הקמפיין. מטא מחלקת אותו לבד בין הסדרות.</dd></div>
+    <div><dt>רחב</dt><dd>רק מיקום וגיל. מטא מוצאת את האנשים.</dd></div>
+    <div><dt>תחומי עניין</dt><dd>מכוונים לפי מה שמעניין אנשים, למשל כושר.</dd></div>
+    <div><dt>שלב הלמידה</dt><dd>הימים הראשונים, שבהם מטא לומדת למי להראות.</dd></div>
+    <div><dt>הוק</dt><dd>הפתיחה שעוצרת את הגלילה.</dd></div>
+    <div><dt>עלות לליד</dt><dd>כמה כסף עלה כל ליד.</dd></div>
+    <div><dt>קרדיטים</dt><dd>היחידות שבהן משלמים על יצירת גרפיקות ב-AI.</dd></div>
+  </dl>
+  <div class="end"><img src="assets/logo-dark.png" alt="TripleBoost"><p>זה הבסיס. לכל שלב תהיה בהמשך הדרכה מעשית משלו. שאלות? פונים לסשה או ליאיר.</p></div>
+</section>
+
+</main>
+</div>
+<div id="lb" hidden><img alt=""></div>
+</div>
+
+<script>
+(function(){
+  var lb=document.getElementById('lb'), im=lb.querySelector('img');
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('.shot img'); if(!t) return;
+    im.src=t.currentSrc||t.src; im.alt=t.alt; lb.hidden=false;
+  });
+  lb.addEventListener('click',function(){ lb.hidden=true; });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') lb.hidden=true; });
+  var links=[].slice.call(document.querySelectorAll('#toc a'));
+  var map={}; links.forEach(function(a){ map[a.getAttribute('href').slice(1)]=a; });
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(en){ if(en.isIntersecting){ links.forEach(function(a){a.classList.remove('on');}); var a=map[en.target.id]; if(a) a.classList.add('on'); } });
+    },{rootMargin:'-20% 0px -70% 0px'});
+    Object.keys(map).forEach(function(id){ var el=document.getElementById(id); if(el) io.observe(el); });
+  }
+  var hsp=document.createElement('div'); hsp.id='hsp'; hsp.hidden=true; hsp.dir='rtl'; hsp.setAttribute('role','tooltip'); document.body.appendChild(hsp);
+  var hsCur=null, reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function hsSync(b,on){ var wb=b.closest('.wb'); if(!wb) return; var i=[].indexOf.call(wb.querySelectorAll('.hs'),b); var c=wb.querySelectorAll('.wpt')[i]; if(c) c.classList.toggle('on',on); }
+  function hsClose(){ hsp.hidden=true; if(hsCur){ hsCur.classList.remove('on'); hsSync(hsCur,false); } hsCur=null; }
+  function hsOpen(b){
+    if(hsCur){ hsCur.classList.remove('on'); hsSync(hsCur,false); }
+    hsCur=b; b.classList.add('on'); hsSync(b,true);
+    hsp.innerHTML='<b></b><span></span>'; hsp.querySelector('b').textContent=b.dataset.t||''; hsp.querySelector('span').textContent=b.dataset.d||'';
+    hsp.hidden=false;
+    var r=b.getBoundingClientRect(), w=hsp.offsetWidth, h=hsp.offsetHeight, vw=document.documentElement.clientWidth;
+    var left=Math.min(Math.max(16, r.left+r.width/2-w/2), vw-w-16);
+    var top=r.bottom+10; if(top+h>window.innerHeight-10) top=r.top-h-10;
+    hsp.style.left=(left+window.scrollX)+'px'; hsp.style.top=(top+window.scrollY)+'px';
+  }
+  document.addEventListener('click',function(e){
+    var c=e.target.closest('.wpt');
+    if(c){ e.stopPropagation(); var d=c.closest('.wb').querySelectorAll('.hs')[+c.dataset.i]; if(!d) return;
+      if(hsCur===d){ hsClose(); return; }
+      var r=d.getBoundingClientRect();
+      if(r.top<80||r.bottom>window.innerHeight-20){ d.scrollIntoView({block:'center',behavior:reduce?'auto':'smooth'}); setTimeout(function(){ hsOpen(d); },reduce?0:420); }
+      else hsOpen(d);
+      return; }
+    var b=e.target.closest('.hs');
+    if(b){ e.stopPropagation(); if(hsCur===b){ hsClose(); } else { hsOpen(b); } return; }
+    if(!e.target.closest('#hsp')) hsClose();
+  });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') hsClose(); });
+  var lastW=window.innerWidth; window.addEventListener('resize',function(){ if(window.innerWidth!==lastW){ lastW=window.innerWidth; hsClose(); } });
+})();
+</script>
+
+</html>

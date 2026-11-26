@@ -1,0 +1,148 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>מבחן סיום · TripleBoost</title>
+<link rel="icon" href="/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap">
+<style>
+:root{color-scheme:light;--paper:#FAFBFD;--soft:#F2F5FA;--ink:#0B1020;--ink-2:#434A60;--ink-3:#7A8196;--line:#E2E6EE;--dot:#D5DCE8;--blue:#0253FC;--blue-ink:#0142CC;--blue-soft:#EAF0FF;--good:#0F8F47;--good-soft:#E5F6EC;--bad:#D2343F;--bad-soft:#FCEBED;--amber-soft:#FFF4DE;--amber-ink:#8A5A00;--font:"Heebo",system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{margin:0}
+body{background:#fff;color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button,input,textarea{font:inherit;color:inherit}
+h1,h2,h3,p{margin:0}
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.top-in{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px 16px}
+.top img{height:24px;width:auto;display:block}
+.top .tt{font-weight:700;font-size:15px;color:var(--ink-2)}
+.top .sp{flex:1}
+.cnt{font-size:14px;font-weight:700;color:var(--ink-2);display:flex;align-items:center;gap:8px}
+.cnt .pb{width:110px;height:8px;border-radius:99px;background:var(--soft);overflow:hidden}
+.cnt .pb i{display:block;height:100%;background:var(--blue);transition:width .3s}
+.wrap{max-width:900px;margin:0 auto;padding:22px 16px 90px;display:grid;gap:18px}
+.hero{border-radius:24px;padding:28px;background:linear-gradient(160deg,#EEF3FF 0%,#FFFFFF 75%);border:1px solid var(--line);display:grid;gap:12px}
+.kick{font-size:14px;font-weight:700;color:var(--blue)}
+.hero h1{font-size:clamp(30px,5vw,44px);font-weight:900;line-height:1.15}
+.hero h1 span{color:var(--blue)}
+.hero p{color:var(--ink-2);font-size:17px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:14px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:5px 12px;color:var(--ink-2)}
+.sec{display:flex;gap:12px;align-items:center;margin-top:10px}
+.sec .lt{width:44px;height:44px;border-radius:12px;background:var(--ink);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center;flex:none}
+.sec h2{font-size:clamp(22px,3.4vw,28px);font-weight:900}
+.sec small{display:block;font-size:14px;color:var(--ink-3);font-weight:500}
+.q{border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;gap:12px;background:#fff;scroll-margin-top:80px}
+.q.miss{border-color:var(--bad);box-shadow:0 0 0 3px var(--bad-soft)}
+.q .qh{display:flex;gap:10px;align-items:baseline}
+.q .qh .n{color:var(--blue);font-weight:900;font-size:18px;flex:none}
+.q .qh p{font-weight:800;font-size:17px;line-height:1.45}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:10px;align-items:center;text-align:start;border:1.5px solid var(--ink);background:#fff;border-radius:12px;padding:10px 14px;font-size:16px;font-weight:600;box-shadow:3px 3px 0 var(--ink);cursor:pointer;width:100%}
+.opt .ol{flex:none;width:24px;height:24px;border-radius:7px;background:var(--soft);display:grid;place-items:center;font-size:13px;font-weight:800}
+.opt.on{background:var(--blue-soft);border-color:var(--blue-ink);box-shadow:3px 3px 0 var(--blue-ink)}
+.opt.on .ol{background:var(--blue);color:#fff}
+.hint{font-size:14px;color:var(--ink-3)}
+textarea{width:100%;min-height:150px;border:1.5px solid var(--ink);border-radius:12px;padding:12px 14px;font-size:16px;line-height:1.55;resize:vertical;background:#fff}
+textarea:focus{outline:2px solid var(--blue);outline-offset:1px}
+.board{background-color:var(--paper);background-image:radial-gradient(var(--dot) 1px,transparent 1.2px);background-size:18px 18px}
+.btn{border:1.5px solid var(--ink);background:#fff;border-radius:12px;padding:12px 22px;font-weight:800;font-size:17px;box-shadow:3px 3px 0 var(--ink);cursor:pointer}
+.btn.blue{background:var(--blue);border-color:var(--blue-ink);color:#fff;box-shadow:3px 3px 0 var(--blue-ink)}
+.btn:disabled{opacity:.5;cursor:default}
+.submitbar{position:sticky;bottom:0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:0 -16px}
+.err{color:var(--bad);font-size:15px;font-weight:700}
+.center{min-height:calc(100vh - 60px);display:grid;place-items:center;padding:24px 16px}
+.card{max-width:540px;width:100%;border-radius:24px;padding:30px 26px;background:linear-gradient(160deg,#EEF3FF 0%,#FFFFFF 75%);border:1px solid var(--line);display:grid;gap:14px;justify-items:center;text-align:center}
+.card h1{font-size:clamp(26px,5vw,36px);font-weight:900;line-height:1.2}
+.card p{color:var(--ink-2)}
+.gbtn{display:flex;gap:10px;align-items:center;border:1.5px solid var(--ink);background:#fff;border-radius:12px;padding:12px 22px;font-weight:800;font-size:17px;box-shadow:3px 3px 0 var(--ink);cursor:pointer}
+.gbtn svg{width:22px;height:22px}
+.spin{width:36px;height:36px;border-radius:50%;border:4px solid var(--soft);border-top-color:var(--blue);animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.score{font-size:clamp(56px,12vw,84px);font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+.score small{font-size:.35em;color:var(--ink-3);font-weight:700}
+.badge{border-radius:99px;padding:6px 16px;font-weight:900;font-size:17px}
+.badge.ok{background:var(--good-soft);color:var(--good)}
+.badge.no{background:var(--bad-soft);color:var(--bad)}
+.stats{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 16px;display:grid}
+.stat b{font-size:24px;font-weight:900;font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--ink-3)}
+.fb{border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:grid;gap:6px;background:#fff;text-align:start}
+.fb .h{display:flex;justify-content:space-between;gap:10px;font-weight:800}
+.fb .h b{color:var(--blue-ink);white-space:nowrap}
+.fb p{color:var(--ink-2);font-size:15px}
+.who{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--ink-2)}
+.who img{width:26px;height:26px;border-radius:50%}
+@media (max-width:560px){.top .tt,.who span{display:none}.hero{padding:22px 18px}}
+</style></head><body>
+<header class="top"><div class="top-in"><img src="../logo-dark.png" alt="TripleBoost"><span class="tt">מבחן סיום · קורס הכשרה</span><span class="sp"></span><div class="cnt" id="cnt" hidden><span id="cntTxt"></span><div class="pb"><i id="cntBar"></i></div></div><div class="who" id="who" hidden></div></div></header>
+<div id="app"><div class="center"><div class="spin"></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
+<script src="questions.js"></script>
+<script>
+const SB=supabase.createClient('https://bbupowzicprgtfltyepd.supabase.co','sb_publishable_no7KUvhAdID-VYLP8jSzlg_C3CDEiG7',{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const E=window.EXAM, app=document.getElementById('app'), LET=['א','ב','ג','ד'];
+const DKEY='tb-exam-draft';
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const G='<svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
+let draft={mc:{},open:{}};
+try{const r=localStorage.getItem(DKEY); if(r) draft=Object.assign(draft,JSON.parse(r));}catch(e){}
+const saveDraft=()=>{try{localStorage.setItem(DKEY,JSON.stringify(draft));}catch(e){}};
+function center(html){ app.innerHTML='<div class="center"><div class="card">'+html+'</div></div>'; }
+
+(async function(){
+  let {data:{session}}=await SB.auth.getSession();
+  if(!session){ await new Promise(r=>setTimeout(r,400)); session=(await SB.auth.getSession()).data.session; }
+  if(location.search.includes('code=')) history.replaceState(null,'',location.pathname);
+  if(!session){
+    center('<img src="../logo-dark.png" alt="" style="height:30px;width:auto"><span class="kick">מבחן סיום</span><h1>נכנסים עם אותו חשבון Google של הקורס</h1><p>כך נדע שסיימת את הקורס, ונשמור את התשובות שלך.</p><button class="gbtn" id="g">'+G+'כניסה עם Google</button>');
+    document.getElementById('g').onclick=()=>SB.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+'/course/exam/',queryParams:{prompt:'select_account'}}});
+    return;
+  }
+  const md=session.user.user_metadata||{}, who=document.getElementById('who');
+  who.innerHTML=(md.avatar_url?'<img src="'+esc(md.avatar_url)+'" alt="" referrerpolicy="no-referrer">':'')+'<span>'+esc(md.full_name||session.user.email)+'</span>'; who.hidden=false;
+  const {data,error}=await SB.functions.invoke('courseExam',{body:{action:'status'}});
+  if(error){ center('<h1>משהו השתבש</h1><p>נסו לרענן את הדף בעוד רגע.</p>'); return; }
+  if(data.result) return showResult(data.result);
+  if(!data.finished){ center('<span class="kick">עוד לא</span><h1>המבחן נפתח אחרי שמסיימים את הקורס</h1><p>צריך לסמן את כל 25 השיעורים כ״סיימתי״. אחרי זה המבחן יישלח אליך גם בוואטסאפ.</p><a class="btn blue" href="../" style="text-decoration:none">לקורס ←</a>'); return; }
+  showExam();
+})();
+
+function showExam(){
+  const total=E.mc.length+E.open.length;
+  app.innerHTML='<div class="wrap">'
+   +'<section class="hero"><span class="kick">קורס הכשרה · מטא</span><h1>מבחן <span>סיום</span></h1><p>'+E.mc.length+' שאלות אמריקאיות ו-'+E.open.length+' שאלות פתוחות. ציון עובר: '+E.pass+'. אפשר להגיש פעם אחת, אז כדאי לעבור על הכל לפני ההגשה. בסוף המבחן נשלח לצוות TripleBoost. התשובות נשמרות בדפדפן תוך כדי, כך שאפשר לצאת ולחזור.</p>'
+   +'<div class="chips"><span>אמריקאיות: '+E.mc_points+' נק׳ לשאלה</span><span>פתוחות: עד '+E.open_points+' נק׳ לשאלה</span><span>בערך 20 דקות</span></div></section>'
+   +'<div class="sec"><span class="lt">א</span><div><h2>שאלות אמריקאיות</h2><small>תשובה אחת נכונה בכל שאלה</small></div></div>'
+   +E.mc.map((q,i)=>'<div class="q" id="'+q.id+'"><div class="qh"><span class="n">'+(i+1)+'.</span><p>'+esc(q.q)+'</p></div><div class="opts">'+q.o.map((o,k)=>'<button type="button" class="opt'+(draft.mc[q.id]===k?' on':'')+'" data-q="'+q.id+'" data-k="'+k+'"><span class="ol">'+LET[k]+'</span>'+esc(o)+'</button>').join('')+'</div></div>').join('')
+   +'<div class="sec"><span class="lt">ב</span><div><h2>שאלות פתוחות</h2><small>עונים במילים שלך. נבדק לפי התוכן, לא לפי ניסוח</small></div></div>'
+   +E.open.map((q,i)=>'<div class="q board" id="'+q.id+'"><div class="qh"><span class="n">'+(E.mc.length+i+1)+'.</span><p>'+esc(q.q)+'</p></div>'+(q.hint?'<span class="hint">'+esc(q.hint)+'</span>':'')+'<textarea data-o="'+q.id+'" placeholder="התשובה שלך…">'+esc(draft.open[q.id]||'')+'</textarea></div>').join('')
+   +'<div class="submitbar"><span class="err" id="err" hidden></span><span class="sp"></span><button class="btn blue" id="sub">הגשת המבחן</button></div></div>';
+  const cnt=()=>{ const n=E.mc.filter(q=>draft.mc[q.id]!==undefined).length+E.open.filter(q=>(draft.open[q.id]||'').trim().length>=3).length;
+    document.getElementById('cntTxt').textContent=n+'/'+total+' נענו'; document.getElementById('cntBar').style.width=(n/total*100)+'%'; document.getElementById('cnt').hidden=false; return n; };
+  cnt();
+  app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{ draft.mc[b.dataset.q]=+b.dataset.k; saveDraft();
+    b.parentNode.querySelectorAll('.opt').forEach(x=>x.classList.toggle('on',x===b)); document.getElementById(b.dataset.q).classList.remove('miss'); cnt(); });
+  app.querySelectorAll('textarea').forEach(t=>t.oninput=()=>{ draft.open[t.dataset.o]=t.value; saveDraft(); if(t.value.trim().length>=3) document.getElementById(t.dataset.o).classList.remove('miss'); cnt(); });
+  document.getElementById('sub').onclick=async()=>{
+    const err=document.getElementById('err');
+    const miss=[...E.mc.filter(q=>draft.mc[q.id]===undefined),...E.open.filter(q=>(draft.open[q.id]||'').trim().length<3)];
+    app.querySelectorAll('.q').forEach(x=>x.classList.toggle('miss',miss.some(m=>m.id===x.id)));
+    if(miss.length){ err.textContent='יש עוד '+miss.length+' שאלות בלי תשובה'; err.hidden=false; document.getElementById(miss[0].id).scrollIntoView({behavior:'smooth',block:'center'}); return; }
+    if(!confirm('להגיש את המבחן? אחרי ההגשה אי אפשר לשנות תשובות.')) return;
+    center('<div class="spin"></div><h1>שולחים את המבחן…</h1><p>זה לוקח בערך חצי דקה.</p>');
+    document.getElementById('cnt').hidden=true; window.scrollTo({top:0});
+    const {data,error}=await SB.functions.invoke('courseExam',{body:{action:'submit',mc:draft.mc,open:draft.open}});
+    if(error||!data||!data.result){ showExam(); const e=document.getElementById('err'); e.textContent='ההגשה לא הצליחה. התשובות שמורות, נסו שוב.'; e.hidden=false; return; }
+    try{localStorage.removeItem(DKEY);}catch(e){}
+    showResult(data.result);
+  };
+}
+
+function showResult(r){
+  document.getElementById('cnt').hidden=true;
+  center('<img src="../logo-dark.png" alt="" style="height:30px;width:auto"><div style="font-size:64px;line-height:1">🎓</div><span class="kick">מבחן סיום</span><h1>סיימת את המבחן!</h1><p>המבחן נשלח לצוות TripleBoost.<br>תודה, ונהיה בקשר.</p>');
+}
+</script>
+</body></html>

@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>התיאטרון שלנו | הופעות לייב</title>
+<meta property="og:title" content="התיאטרון שלנו | הופעות לייב">
+<meta property="og:description" content="כל ההופעות בדף אחד: הוצאה על פרסום, הכנסות, כרטיסים ועלות לכרטיס — לייב, TripleBoost">
+<link rel="icon" href="/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700&family=IBM+Plex+Sans+Hebrew:wght@400;500;600&display=swap">
+<style>
+:root {
+  --bg: #f4f6fb; --surface: #ffffff; --fg: #111a33; --muted: #5b6480; --line: #e0e5f0;
+  --accent: #1a3cff; --accent-2: #12b8ea; --accent-soft: #e8edff;
+  --good: #14804f; --good-soft: #e3f4ec; --warn: #b26a00; --warn-soft: #fbf0dc; --bad: #b42318; --bad-soft: #fde8e6;
+  --f-display: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--f-body); font-size: 15px; line-height: 1.6;
+  padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 26px; }
+h1, h2 { font-family: var(--f-display); margin: 0; line-height: 1.25; text-wrap: balance; }
+h1 { font-size: clamp(24px, 4vw, 34px); font-weight: 700; }
+h2 { font-size: 20px; font-weight: 600; }
+p { margin: 0; }
+.num { font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; display: inline-block; }
+section { display: flex; flex-direction: column; gap: 14px; }
+section[hidden] { display: none; }
+
+.top { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.top-band { height: 6px; background: linear-gradient(90deg, var(--accent-2), var(--accent)); }
+.top-in { padding: 22px 26px 24px; display: flex; flex-direction: column; gap: 16px; }
+.brand { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.brand .tb { height: 30px; width: auto; }
+.brand .client-word { font-family: var(--f-display); font-weight: 700; font-size: 24px; line-height: 1; }
+.title-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
+.meta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.live { display: inline-flex; align-items: center; gap: 7px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 0 rgba(20,128,79,.5); animation: pulse 2s infinite; }
+@keyframes pulse { 70% { box-shadow: 0 0 0 8px rgba(20,128,79,0); } 100% { box-shadow: 0 0 0 0 rgba(20,128,79,0); } }
+@media (prefers-reduced-motion: reduce) { .dot { animation: none; } }
+
+.kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 15px 16px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.kpi .l { font-size: 13px; color: var(--muted); }
+.kpi .v { font-family: var(--f-display); font-size: 26px; font-weight: 700; }
+.kpi .h { font-size: 12.5px; color: var(--muted); }
+.kpi.hero { background: linear-gradient(135deg, var(--accent), #2a6cff 60%, var(--accent-2)); border-color: transparent; color: #fff; }
+.kpi.hero .l, .kpi.hero .h { color: rgba(255,255,255,.85); }
+
+.bar-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tabs button {
+  font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+  padding: 7px 16px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); color: var(--fg);
+}
+.tabs button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tabs button:focus-visible, .shows tbody tr:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+.search { font: inherit; font-size: 14px; padding: 7px 14px; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); min-width: 220px; }
+
+.tbl { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { padding: 10px 10px; text-align: start; white-space: nowrap; vertical-align: middle; }
+thead th { font-size: 12.5px; color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--line); background: var(--surface); position: sticky; top: 0; }
+thead tr.grp th { font-size: 12px; font-weight: 600; color: var(--fg); border-bottom: 0; padding-bottom: 0; }
+thead tr.grp th.g-hall { color: var(--good); } thead tr.grp th.g-meta { color: var(--accent); }
+th.c, td.c { text-align: center; }
+.inp {
+  width: 74px; font: inherit; font-size: 14px; padding: 5px 8px; border: 1px dashed #b3bedf; border-radius: 8px;
+  background: #fbfcff; color: var(--fg); text-align: center; font-variant-numeric: tabular-nums; direction: ltr;
+  transition: border-color .15s, background-color .15s;
+}
+.inp::placeholder { color: #a0a8c0; }
+.inp:hover { border-color: var(--accent); }
+.inp:focus { outline: 2px solid var(--accent-2); outline-offset: 1px; border-style: solid; background: #fff; }
+.inp.saving { opacity: .55; }
+.inp.saved { border: 1px solid var(--good); background: var(--good-soft); }
+.inp.err { border: 1px solid var(--bad); background: var(--bad-soft); }
+.inp::-webkit-outer-spin-button, .inp::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.inp[type=number] { -moz-appearance: textfield; appearance: textfield; }
+tr.total .inp-sum { display: inline-block; min-width: 74px; text-align: center; }
+tbody td { border-bottom: 1px solid var(--line); }
+td.n, th.n { text-align: end; font-variant-numeric: tabular-nums; }
+td.n span, .ltr { direction: ltr; unicode-bidi: isolate; }
+.shows tbody tr.row { cursor: pointer; }
+.shows tbody tr.row:hover td { background: #f8f9fd; }
+tr.past td { color: var(--muted); }
+tr.total td { font-weight: 600; background: var(--accent-soft); }
+.date b { font-family: var(--f-display); font-weight: 600; font-size: 15px; }
+.date small { color: var(--muted); display: block; font-size: 12px; line-height: 1.2; }
+.show { white-space: normal; min-width: 250px; } /* room for name + campaign label on one line */
+.show b { font-weight: 600; display: block; }
+.show small { color: var(--muted); font-size: 12.5px; display: block; line-height: 1.3; }
+.sep { border-inline-start: 1px solid var(--line); }
+.dash { color: #b7bdd0; }
+.fillcell { min-width: 118px; }
+.fbar { display: flex; align-items: center; gap: 8px; }
+.fbar .track { flex: 1; height: 10px; background: var(--bg); border-radius: 5px; overflow: hidden; min-width: 60px; }
+.fbar .fill { height: 100%; border-radius: 5px; background: linear-gradient(270deg, var(--accent-2), var(--accent)); }
+.fbar .pct { font-size: 12.5px; color: var(--muted); min-width: 38px; text-align: end; }
+.good { color: var(--good); font-weight: 600; } .warn { color: var(--warn); font-weight: 600; } .bad { color: var(--bad); font-weight: 600; }
+.days { min-width: 88px; }
+.dpill {
+  display: inline-block; min-width: 78px; white-space: nowrap; text-align: center;
+  font-size: 12.5px; font-weight: 600; padding: 3px 10px; border-radius: 99px;
+  background: var(--accent-soft); color: var(--accent);
+}
+.dpill.today { background: var(--good); color: #fff; }
+.dpill.soon { background: var(--warn-soft); color: var(--warn); }
+.dpill.past { background: var(--bg); color: var(--muted); font-weight: 500; }
+.cst {
+  display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; vertical-align: 1px;
+  font-family: var(--f-body); font-size: 11.5px; font-weight: 600; line-height: 1.5;
+  padding: 1px 9px; border-radius: 99px; margin-inline-start: 8px; background: var(--bg); color: var(--muted);
+}
+.cst::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.cst.on { background: var(--good-soft); color: var(--good); }
+.cst.on::before { animation: pulse 2s infinite; box-shadow: 0 0 0 0 rgba(20,128,79,.5); }
+.cst.scheduled { background: var(--accent-soft); color: var(--accent); }
+.cst.off { background: #eef0f5; color: #5b6480; }
+.cst.none { background: transparent; color: #a3aac0; font-weight: 500; padding-inline: 0; }
+.cst.none::before { display: none; }
+.cst.sm { margin-inline-start: 0; }
+@media (prefers-reduced-motion: reduce) { .cst.on::before { animation: none; } }
+tr.detail td { background: #fafbfe; white-space: normal; padding: 12px 18px 16px; }
+.detail-in { display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; }
+.detail-in table { font-size: 13px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.detail-in a { color: var(--accent); }
+.note { color: var(--muted); font-size: 12.5px; }
+.state { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 30px; text-align: center; color: var(--muted); }
+.legend { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; }
+.legend b { color: var(--fg); font-weight: 600; }
+footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
+
+@media (max-width: 1000px) { .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 600px) {
+  body { padding-block: 16px 40px; }
+  .top-in { padding: 16px 16px 18px; }
+  .brand .tb { height: 24px; } .brand .client-word { font-size: 20px; }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpi .v { font-size: 21px; }
+  .search { min-width: 0; width: 100%; }
+  .shows th:first-child, .shows td:first-child { position: sticky; inset-inline-start: 0; background: var(--surface); z-index: 1; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="top-band"></div>
+    <div class="top-in">
+      <div class="brand">
+        <span class="client-word">התיאטרון שלנו</span>
+        <img class="tb" src="/logo.png" alt="TripleBoost">
+      </div>
+      <div class="title-row">
+        <div>
+          <h1>כל ההופעות — לייב</h1>
+          <p class="note">כמה הוצאנו על פרסום, כמה הכנסנו, כמה כרטיסים נמכרו וכמה עלה לנו כל כרטיס — לכל הופעה</p>
+        </div>
+        <div class="meta">
+          <span class="live"><span class="dot" aria-hidden="true"></span> מתעדכן אוטומטית</span>
+          <span id="upd">טוען…</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section aria-label="סיכום">
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <section aria-label="ההופעות">
+    <div class="bar-row">
+      <div class="tabs" role="group" aria-label="סינון הופעות">
+        <button type="button" data-f="upcoming" aria-pressed="true">קרובות</button>
+        <button type="button" data-f="meta" aria-pressed="false">עם קמפיין</button>
+        <button type="button" data-f="past" aria-pressed="false">עברו</button>
+        <button type="button" data-f="all" aria-pressed="false">הכל</button>
+      </div>
+      <input class="search" id="q" type="search" placeholder="חיפוש הצגה / עיר / אולם" aria-label="חיפוש">
+    </div>
+    <div class="tbl"><table class="shows" id="shows"></table></div>
+    <p class="note">את מספר המקומות באולם ואת מחיר הכרטיס הממוצע מקלידים ישר בטבלה, וזה נשמר לכולם. לחיצה על שורה פותחת את הקמפיינים של ההופעה.</p>
+  </section>
+
+  <section id="gen-sec" hidden>
+    <h2>קמפיינים כלליים (לא של הופעה אחת)</h2>
+    <div class="tbl"><table id="gen"></table></div>
+  </section>
+
+  <div class="legend">
+    <span><b>מקומות באולם</b> ו<b>מחיר כרטיס ממוצע</b> — מקלידים בטבלה לכל הופעה, ונשמר אוטומטית. כל עוד לא הוקלד מחיר ממוצע, החישוב לפי מחיר הכרטיס הרגיל באתר (מופיע באפור בתיבה).</span>
+    <span><b>הכנסות</b> ו<b>רכישות</b> — לפי מטא: ההכנסות וההזמנות שמטא מייחסת לקמפיינים של ההופעה. רכישה אחת = אדם אחד שרכש, ויכולים להיות בה כמה כרטיסים.</span>
+    <span><b>כרטיסים שנמכרו</b> = הכנסות ÷ מחיר כרטיס ממוצע. <b>עלות לכרטיס</b> = הוצאה על פרסום ÷ כרטיסים שנמכרו — <span class="bad">אדום</span> כשהיא גבוהה ממחיר הכרטיס, <span class="good">ירוק</span> בכל מקרה אחר.</span>
+    <span><b>תפוסה מהפרסום</b> = כרטיסים שנמכרו ÷ מקומות באולם. נספרים רק כרטיסים שהגיעו מהקמפיינים, לא מכירות מערוצים אחרים.</span>
+    <span><b>קמפיין דולק / כבוי</b> — המצב במטא עכשיו, מתעדכן כל 10 דקות. <span class="good">דולק</span> = הקמפיין פעיל ויש בו קבוצת מודעות שרצה. <b>מתוזמן</b> = יתחיל לרוץ בהמשך. <b>כבוי</b> = מושהה או הסתיים.</span>
+    <span>חשיפות, קליקים, ROAS ועלות לרכישה — בלחיצה על השורה.</span>
+    <span>קמפיין משויך להופעה לפי שם ההצגה והתאריך בשם הקמפיין (למשל "CBO | הברווזון המכוער | רמת גן 28.11").</span>
+  </div>
+
+  <footer>
+    <span>TripleBoost · נתונים: אתר התיאטרון, SmartTicket, Meta Ads</span>
+    <span id="foot"></span>
+  </footer>
+</div>
+
+<script>
+const API = "https://bbupowzicprgtfltyepd.supabase.co/functions/v1/showsLive?c=shelanu";
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmt = (n, d = 0) => n == null || isNaN(n) ? null : Number(n).toLocaleString("he-IL", { minimumFractionDigits: d, maximumFractionDigits: d });
+const ils = (n, d = 0) => n == null ? null : "₪" + fmt(n, d);
+const cell = (v) => v == null ? '<span class="dash">—</span>' : `<span>${v}</span>`;
+const DAYS = ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "שבת"];
+const dateLabel = (iso) => { const [y, m, d] = iso.split("-").map(Number); return `${d}.${m}`; };
+const dayLabel = (iso) => { const [y, m, d] = iso.split("-").map(Number); const w = new Date(Date.UTC(y, m - 1, d)).getUTCDay(); return w === 6 ? "שבת" : "יום " + DAYS[w]; };
+const todayIso = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jerusalem" }).format(new Date());
+const daysTo = (iso) => Math.round((Date.parse(iso) - Date.parse(todayIso())) / 86400000);
+// Days until the show: today (green), up to a week (orange), later (blue), already happened (grey).
+function daysPill(iso) {
+  const d = daysTo(iso);
+  if (d === 0) return '<span class="dpill today">היום</span>';
+  if (d === 1) return '<span class="dpill soon">מחר</span>';
+  if (d > 1) return `<span class="dpill${d <= 7 ? " soon" : ""}">עוד <span class="num">${fmt(d)}</span> ימים</span>`;
+  if (d === -1) return '<span class="dpill past">אתמול</span>';
+  return `<span class="dpill past">לפני <span class="num">${fmt(-d)}</span> ימים</span>`;
+}
+// Campaign state in Meta right now (from the fn, refreshed every 10 min). null = status unknown → no label.
+const CST = { on: "קמפיין דולק", scheduled: "קמפיין מתוזמן", off: "קמפיין כבוי", none: "אין קמפיין" };
+const CST_SHORT = { on: "דולק", scheduled: "מתוזמן", off: "כבוי" };
+function campaignBadge(state) { return state && CST[state] ? `<span class="cst ${state}">${CST[state]}</span>` : ""; }
+function campaignCell(state) { return state && CST_SHORT[state] ? `<span class="cst sm ${state}">${CST_SHORT[state]}</span>` : '<span class="dash">—</span>'; }
+const when = (iso) => iso ? new Date(iso).toLocaleString("he-IL", { timeZone: "Asia/Jerusalem", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
+
+let data = null, filter = "upcoming", open = new Set(), pending = false;
+const justSaved = new Map();
+try { const f = localStorage.getItem("shelanu-filter"); if (f) filter = f; } catch {}
+
+// Red only when a ticket cost more to sell than its price (cost per ticket > ticket price, i.e. ROAS < 1). Everything else is green.
+function cptClass(v, price) { if (v == null || !price) return ""; return v > price ? "bad" : "good"; }
+function roasClass(v) { if (v == null) return ""; return v < 1 ? "bad" : "good"; }
+
+function kpis(t) {
+  const k = (l, v, h, hero) => `<div class="kpi${hero ? " hero" : ""}"><span class="l">${l}</span><span class="v"><span class="num">${v ?? "—"}</span></span><span class="h">${h || ""}</span></div>`;
+  $("#kpis").innerHTML = [
+    k("עלות לכרטיס", ils(t.cost_per_ticket_all, 1), "הוצאה על פרסום ÷ כרטיסים", true),
+    k("הופעות קרובות", fmt(t.upcoming), "לפי לוח ההופעות באתר"),
+    k("הוצאה על פרסום", ils(t.meta_spend), "במטא, מספטמבר"),
+    k("הכנסות", ils(t.meta_revenue), t.roas != null ? `לפי מטא · ROAS ${fmt(t.roas, 2)}` : "לפי מטא"),
+    k("רכישות", fmt(t.meta_purchases), "אנשים שרכשו"),
+    k("כרטיסים שנמכרו", fmt(t.tickets_all), "הכנסות ÷ מחיר כרטיס ממוצע"),
+  ].join("");
+}
+
+function visible() {
+  const q = $("#q").value.trim();
+  return data.shows.filter((s) => {
+    if (filter === "upcoming" && s.past) return false;
+    if (filter === "past" && !s.past) return false;
+    if (filter === "meta" && !s.meta) return false;
+    if (q && !`${s.show} ${s.city} ${s.venue}`.includes(q)) return false;
+    return true;
+  }).sort((a, b) => filter === "past" ? (b.date + b.time).localeCompare(a.date + a.time) : 0);
+}
+
+function fillBar(tickets, capacity) {
+  if (!capacity || tickets == null) return '<span class="dash">—</span>';
+  const p = (tickets * 100) / capacity;
+  return `<div class="fbar"><div class="track"><div class="fill" style="width:${Math.min(100, p)}%"></div></div><span class="pct num">${fmt(p)}%</span></div>`;
+}
+
+// The two numbers the team types per show: seats in the hall and the average ticket price.
+function inputs(s) {
+  const fl = (f) => (justSaved.get(s.key + "|" + f) || 0) > Date.now() - 2500 ? " saved" : "";
+  const label = `${s.show} ${dateLabel(s.date)}`;
+  return `<td class="c sep"><input class="inp${fl("capacity")}" type="number" inputmode="numeric" min="1" max="20000" step="1" data-k="${esc(s.key)}" data-f="capacity" value="${s.capacity ?? ""}" placeholder="הקלידו" aria-label="מקומות באולם — ${esc(label)}"></td>
+    <td class="c"><input class="inp${fl("price")}" type="number" inputmode="decimal" min="1" max="2000" step="any" data-k="${esc(s.key)}" data-f="price" value="${s.price_typed ? s.price : ""}" placeholder="${s.site_price ? "₪" + fmt(s.site_price) : "₪"}" aria-label="מחיר כרטיס ממוצע — ${esc(label)}" title="${s.site_price ? "ריק = מחיר רגיל באתר " + ils(s.site_price) : ""}"></td>`;
+}
+
+function row(s) {
+  const m = s.meta;
+  const where = [s.city, s.venue].filter(Boolean).join(" · ");
+  const r = `<tr class="row${s.past ? " past" : ""}" tabindex="0" data-k="${esc(s.key)}" aria-expanded="${open.has(s.key)}">
+    <td class="date"><b class="num">${dateLabel(s.date)}</b><small>${dayLabel(s.date)}${s.time ? " · " + esc(s.time) : ""}</small></td>
+    <td class="c days">${daysPill(s.date)}</td>
+    <td class="show"><b>${esc(s.show)}${campaignBadge(s.campaign)}</b><small>${esc(where)}</small></td>
+    ${inputs(s)}
+    <td class="n sep">${cell(m ? ils(m.spend) : null)}</td>
+    <td class="n">${cell(m ? ils(m.revenue) : null)}</td>
+    <td class="n">${cell(m ? fmt(m.purchases) : null)}</td>
+    <td class="n">${cell(m && m.tickets != null ? fmt(m.tickets) : null)}</td>
+    <td class="n"><span class="${cptClass(m?.cost_per_ticket, s.price)}" title="${s.price ? "מחיר כרטיס " + ils(s.price) : ""}">${m?.cost_per_ticket != null ? ils(m.cost_per_ticket, 1) : '<span class="dash">—</span>'}</span></td>
+    <td class="fillcell">${fillBar(m ? m.tickets : null, s.capacity)}</td>
+  </tr>`;
+  if (!open.has(s.key)) return r;
+  const camps = m ? `<table><thead><tr><th>קמפיין</th><th>מצב</th><th class="n">חשיפות</th><th class="n">קליקים</th><th class="n">הוצאה</th><th class="n">רכישות</th><th class="n">הכנסות</th><th>רץ</th></tr></thead><tbody>${m.campaigns.map((c) =>
+    `<tr><td><bdi>${esc(c.name)}</bdi></td><td>${campaignCell(c.on)}</td><td class="n"><span>${fmt(c.impressions)}</span></td><td class="n"><span>${fmt(c.link_clicks)}</span></td><td class="n"><span>${ils(c.spend)}</span></td><td class="n"><span>${fmt(c.purchases)}</span></td><td class="n"><span>${ils(c.revenue)}</span></td><td class="${c.unspent ? "" : "ltr"}">${c.unspent ? "טרם רץ" : `${dateLabel(c.first)}–${dateLabel(c.last)}`}</td></tr>`).join("")}</tbody></table>`
+    : '<p>אין קמפיין במטא להופעה הזו.</p>';
+  const facts = [
+    s.site_price ? `מחיר כרטיס רגיל באתר ${ils(s.site_price)}` : null,
+    s.price_typed ? `מחיר ממוצע שהוקלד ${ils(s.price, s.price % 1 ? 2 : 0)}` : null,
+    m ? `${fmt(m.impressions)} חשיפות · ${fmt(m.link_clicks)} קליקים` : null,
+    m?.cost_per_purchase != null ? `עלות לרכישה ${ils(m.cost_per_purchase, 1)}` : null,
+    m?.roas != null ? `ROAS ${fmt(m.roas, 2)}` : null,
+    m?.spend_7d ? `הוצאה ב-7 ימים ${ils(m.spend_7d)}` : null,
+    s.link ? `<a href="${esc(s.link)}" target="_blank" rel="noopener">לעמוד הכרטיסים ↗</a>` : null,
+  ].filter(Boolean).join(" · ");
+  return r + `<tr class="detail"><td colspan="11"><div class="detail-in">${facts ? `<p>${facts}</p>` : ""}${camps}</div></td></tr>`;
+}
+
+function table() {
+  const list = visible();
+  const head = `<thead>
+    <tr class="grp"><th colspan="3"></th><th colspan="2" class="sep c g-hall">האולם — להקלדה</th><th colspan="6" class="sep g-meta">פרסום ותוצאות</th></tr>
+    <tr><th>תאריך</th><th class="c">עוד כמה ימים</th><th>הצגה · עיר · אולם</th><th class="c sep">מקומות באולם</th><th class="c">מחיר כרטיס ממוצע</th>
+    <th class="n sep">הוצאה על פרסום</th><th class="n">הכנסות</th><th class="n">רכישות</th><th class="n">כרטיסים שנמכרו</th><th class="n">עלות לכרטיס</th><th>תפוסה מהפרסום</th></tr></thead>`;
+  if (!list.length) { $("#shows").innerHTML = head + '<tbody><tr><td colspan="11" class="state">אין הופעות להצגה</td></tr></tbody>'; return; }
+  const sum = (f, l = list) => l.reduce((a, s) => a + (f(s) || 0), 0);
+  const sp = sum((s) => s.meta?.spend), tk = sum((s) => s.meta?.tickets), rv = sum((s) => s.meta?.revenue);
+  const withCap = list.filter((s) => s.capacity);
+  const cap = sum((s) => s.capacity, withCap);
+  const tot = `<tr class="total"><td colspan="3">סה״כ · ${fmt(list.length)} הופעות</td><td class="c sep"><span class="inp-sum num">${cap ? fmt(cap) : "—"}</span></td><td></td>
+    <td class="n sep"><span>${ils(sp)}</span></td><td class="n"><span>${ils(rv)}</span></td><td class="n"><span>${fmt(sum((s) => s.meta?.purchases))}</span></td><td class="n"><span>${fmt(tk)}</span></td><td class="n"><span>${tk ? ils(sp / tk, 1) : "—"}</span></td>
+    <td class="fillcell">${cap ? fillBar(sum((s) => s.meta?.tickets, withCap), cap) : '<span class="dash">—</span>'}</td></tr>`;
+  $("#shows").innerHTML = head + `<tbody>${list.map(row).join("")}${tot}</tbody>`;
+}
+
+function general(g) {
+  $("#gen-sec").hidden = !g.campaigns.length;
+  if (!g.campaigns.length) return;
+  $("#gen").innerHTML = `<thead><tr><th>קמפיין</th><th>מצב</th><th class="n">חשיפות</th><th class="n">קליקים</th><th class="n">הוצאה</th><th class="n">רכישות</th><th class="n">הכנסות</th><th class="n">ROAS</th><th>פעיל לאחרונה</th></tr></thead><tbody>${g.campaigns.map((c) =>
+    `<tr><td><bdi>${esc(c.name)}</bdi></td><td>${campaignCell(c.on)}</td><td class="n"><span>${fmt(c.impressions)}</span></td><td class="n"><span>${fmt(c.link_clicks)}</span></td><td class="n"><span>${ils(c.spend)}</span></td><td class="n"><span>${fmt(c.purchases)}</span></td><td class="n"><span>${ils(c.revenue)}</span></td><td class="n"><span>${c.spend ? fmt(c.revenue / c.spend, 2) : "—"}</span></td><td class="ltr">${dateLabel(c.last)}</td></tr>`).join("")}</tbody>`;
+}
+
+function render() {
+  // Don't rebuild the table under someone who is typing in it; render when they leave the field.
+  if (document.activeElement?.matches?.("#shows .inp")) { pending = true; return; }
+  pending = false;
+  kpis(data.totals); table(); general(data.general);
+  $("#upd").textContent = `מטא: ${when(data.meta_updated_at)} · מצב קמפיינים: ${when(data.status_updated_at)} · לוח הופעות: ${when(data.board_updated_at)}`;
+  $("#foot").textContent = `עודכן ${when(new Date().toISOString())}`;
+  document.querySelectorAll(".tabs button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.f === filter)));
+}
+
+async function load() {
+  try {
+    const r = await fetch(API, { cache: "no-store" });
+    const j = await r.json();
+    if (!r.ok || j.error) throw new Error(j.error || r.status);
+    data = j; render();
+  } catch (e) {
+    if (!data) $("#shows").innerHTML = '<tbody><tr><td class="state">לא הצלחנו לטעון את הנתונים. ננסה שוב בעוד דקה.</td></tr></tbody>';
+  }
+}
+
+async function save(inp) {
+  const key = inp.dataset.k, field = inp.dataset.f;
+  const s = data?.shows.find((x) => x.key === key);
+  if (!s) return;
+  const raw = inp.value.trim();
+  const v = inp.validity.badInput ? NaN : raw === "" ? null : Number(raw);
+  const cur = field === "capacity" ? s.capacity : (s.price_typed ? s.price : null);
+  if (v === cur) return;
+  inp.classList.remove("err", "saved"); inp.removeAttribute("aria-invalid");
+  const max = field === "capacity" ? 20000 : 2000;
+  if (v != null && (!isFinite(v) || v < 1 || v > max || (field === "capacity" && !Number.isInteger(v)))) {
+    inp.classList.add("err"); inp.setAttribute("aria-invalid", "true");
+    inp.title = field === "capacity" ? "מספר שלם בין 1 ל-20,000" : "מחיר בין ₪1 ל-₪2,000";
+    return;
+  }
+  inp.classList.add("saving");
+  try {
+    const r = await fetch(API + "&src=hall", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ key, [field]: v }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) throw new Error(j.error || r.status);
+    inp.classList.remove("saving"); inp.classList.add("saved");
+    justSaved.set(key + "|" + field, Date.now());
+    await load();
+  } catch (e) {
+    inp.classList.remove("saving"); inp.classList.add("err"); inp.title = "לא נשמר — נסו שוב";
+  }
+}
+
+document.querySelector(".tabs").addEventListener("click", (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  filter = b.dataset.f; try { localStorage.setItem("shelanu-filter", filter); } catch {}
+  if (data) render();
+});
+$("#q").addEventListener("input", () => data && table());
+const toggle = (tr) => { const k = tr.dataset.k; open.has(k) ? open.delete(k) : open.add(k); table(); };
+$("#shows").addEventListener("click", (e) => { if (e.target.closest("a, input")) return; const tr = e.target.closest("tr.row"); if (tr) toggle(tr); });
+$("#shows").addEventListener("keydown", (e) => {
+  const inp = e.target.closest(".inp");
+  if (inp) { if (e.key === "Enter") { e.preventDefault(); inp.blur(); } return; }
+  const tr = e.target.closest("tr.row"); if (tr && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); toggle(tr); }
+});
+$("#shows").addEventListener("change", (e) => { const inp = e.target.closest(".inp"); if (inp) save(inp); });
+$("#shows").addEventListener("focusout", (e) => {
+  if (!pending || e.relatedTarget?.matches?.("#shows .inp")) return;
+  setTimeout(() => { if (pending && data) render(); }, 0);
+});
+
+load();
+setInterval(load, 120000);
+</script>
+</body>
+</html>
