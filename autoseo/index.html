@@ -97,7 +97,7 @@ button { font: inherit; color: inherit; }
 .card h2 { margin: 0 0 2px; font-size: 13px; font-weight: 650; color: var(--ink-strong); }
 .card .hint { margin: 0 0 10px; color: var(--muted); font-size: 12px; }
 .grid { display: grid; gap: 12px; }
-.g-hero { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); margin-bottom: 12px; }
+.g-hero { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 12px; }
 .g-kpi { grid-template-columns: repeat(auto-fill, minmax(178px, 1fr)); margin-bottom: 12px; }
 .g-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 12px; }
 .g-2 > .tablecard .scroll { max-height: 340px; }
@@ -108,7 +108,8 @@ button { font: inherit; color: inherit; }
 .mrr-label { font-weight: 650; color: var(--ink-strong); text-decoration: underline dotted var(--muted); text-underline-offset: 4px; }
 .mrr-val { font-size: 34px; font-weight: 700; color: var(--ink-strong); letter-spacing: -0.02em; line-height: 1.1; margin: 6px 0 2px; }
 .mrr-sub { color: var(--ink-2); }
-.now-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }
+.now-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px 16px; }
+.now-card { margin-bottom: 12px; }
 .now-list .k { color: var(--ink-2); font-size: 12px; }
 .now-list .v { font-size: 20px; font-weight: 700; color: var(--ink-strong); }
 .now-list .s { color: var(--muted); font-size: 12px; }
@@ -175,6 +176,7 @@ td.n, th.n { text-align: end; }
   </div>
   <div class="filters">
     <div class="seg" id="seg" role="group" aria-label="תקופה">
+      <button data-p="mtd" title="מתחילת החודש הנוכחי ועד היום">החודש</button>
       <button data-p="7">7 ימים</button>
       <button data-p="30" aria-pressed="true">30 ימים</button>
       <button data-p="90">90 ימים</button>
@@ -188,17 +190,24 @@ td.n, th.n { text-align: end; }
 
   <div class="grid g-hero">
     <div class="card">
+      <div class="mrr-top"><span class="mrr-label" title="כל מה שחנויות שילמו בתקופה שבחרת: מנויים ומאמרים נוספים, לפני העמלה של שופיפיי">מחזור בתקופה</span><span id="revDelta"></span></div>
+      <div class="mrr-val num" id="revVal">—</div>
+      <div class="mrr-sub" id="revSub"></div>
+      <div class="legend" id="revHeroLegend" style="margin-top:10px"></div>
+      <div class="chart" id="cRevHero"></div>
+    </div>
+    <div class="card">
       <div class="mrr-top"><span class="mrr-label" title="הכנסה חודשית קבועה: סכום המנויים בתשלום שפעילים עכשיו, במחיר המחירון, בלי חיובי מאמרים נוספים">MRR</span><span id="mrrDelta"></span></div>
       <div class="mrr-val num" id="mrrVal">—</div>
       <div class="mrr-sub" id="mrrSub"></div>
       <div class="legend" id="mrrLegend" style="margin-top:10px"></div>
       <div class="chart" id="cMrr"></div>
     </div>
-    <div class="card">
-      <h2>המצב עכשיו</h2>
-      <p class="hint">נכון לעדכון האחרון</p>
-      <div class="now-list" id="now"></div>
-    </div>
+  </div>
+  <div class="card now-card">
+    <h2>המצב עכשיו</h2>
+    <p class="hint">נכון לעדכון האחרון, בלי קשר לתקופה שנבחרה</p>
+    <div class="now-list" id="now"></div>
   </div>
 
   <div class="grid g-kpi" id="kpis"></div>
@@ -304,11 +313,20 @@ const at = (k, i) => (i < 0 ? 0 : P.series[k][i]);
 function range() {
   const N = P.days.length, end = N - 1;
   const launch = Math.max(0, P.days.indexOf(P.launch_day));
-  let start;
-  if (state.period === "all") start = launch;
-  else start = Math.max(0, end - Number(state.period) + 1);
+  let start, prev;
+  if (state.period === "all") { start = launch; prev = null; }
+  else if (state.period === "mtd") {
+    // this month so far, against the same days of last month
+    const ym = P.days[end].slice(0, 7), [y, m] = ym.split("-").map(Number);
+    start = Math.max(0, P.days.indexOf(ym + "-01"));
+    const pm = m === 1 ? `${y - 1}-12` : `${y}-${String(m - 1).padStart(2, "0")}`;
+    const a = P.days.indexOf(pm + "-01");
+    prev = a < 0 ? null : { a, b: Math.min(start - 1, a + (end - start)) };
+  } else {
+    start = Math.max(0, end - Number(state.period) + 1);
+    prev = { a: start - (end - start + 1), b: start - 1 };
+  }
   const len = end - start + 1;
-  const prev = state.period === "all" ? null : { a: start - len, b: start - 1 };
   return { start, end, len, prev: prev && prev.a >= launch ? prev : null };
 }
 function buckets(r) {
@@ -424,7 +442,7 @@ function lineChart(id, labels, series, fmt, tickFmt, height = 220) {
 }
 
 // bar chart: labels[], series[{name,color,values}], stacked → stacks (negatives stack downward), else grouped
-function barChart(id, labels, series, fmt, tickFmt, { stacked = true, height = 220, totalName } = {}) {
+function barChart(id, labels, series, fmt, tickFmt, { stacked = true, height = 220, totalName, extra } = {}) {
   const box = $(id); box.replaceChildren();
   const W = box.clientWidth || 600, H = height, L = 46, R = 8, T = 8, B = 24;
   const n = labels.length;
@@ -476,6 +494,7 @@ function barChart(id, labels, series, fmt, tickFmt, { stacked = true, height = 2
       g.style.opacity = 0.85;
       const rows = series.map((s) => ({ name: s.name, color: s.color, value: fmt(s.values[i]) }));
       if (totalName) rows.push({ name: totalName, color: "transparent", value: fmt(series.reduce((t, s) => t + s.values[i], 0)) });
+      if (extra) rows.push(...extra(i));
       showTip(evt, labels[i].long, rows);
     });
     g.addEventListener("pointerleave", () => { g.style.opacity = 1; hideTip(); });
@@ -518,7 +537,20 @@ function ago(iso) {
 function render() {
   const r = range(), bs = buckets(r), last = P.days.length - 1;
   const C = { s1: css("--s1"), s2: css("--s2"), s3: css("--s3"), s4: css("--s4"), s5: css("--s5"), muted: css("--muted"), bad: css("--bad") };
-  $("range").textContent = `${dLabel(P.days[r.start], true)} – ${dLabel(P.days[r.end], true)}` + (r.prev ? " · מול התקופה שלפני" : "");
+  $("range").textContent = `${dLabel(P.days[r.start], true)} – ${dLabel(P.days[r.end], true)}` +
+    (r.prev ? (state.period === "mtd" ? " · מול אותם ימים בחודש הקודם" : " · מול התקופה שלפני") : "");
+
+  // hero: turnover in the selected period
+  const gross = (a, b) => sum("rev_gross", a, b);
+  const rev = (a, b) => sum("rev_sub", a, b) + sum("rev_usage", a, b) + sum("rev_adj", a, b);
+  const g = gross(r.start, r.end), gPrev = r.prev ? gross(r.prev.a, r.prev.b) : null;
+  $("revVal").textContent = usd(g, 2);
+  $("revDelta").replaceChildren(gPrev != null ? delta(g, gPrev) || "" : "");
+  $("revSub").replaceChildren(el("span", {},
+    "נטו אחרי עמלות: ", numSpan(usd(rev(r.start, r.end), 2)),
+    " · מנויים ", numSpan(usd(sum("rev_sub", r.start, r.end))),
+    " · מאמרים נוספים ", numSpan(usd(sum("rev_usage", r.start, r.end))),
+    gPrev != null ? el("span", {}, " · לפני: ", numSpan(usd(gPrev, 2))) : ""));
   ["revUnit", "instUnit", "movUnit"].forEach((id) => ($(id).textContent = unitName(r)));
 
   // hero MRR
@@ -545,11 +577,10 @@ function render() {
 
   // KPIs for the period
   const pr = r.prev;
-  const rev = (a, b) => sum("rev_sub", a, b) + sum("rev_usage", a, b) + sum("rev_adj", a, b);
   const conv = (a, b) => { const c = sum("cohort_installs", a, b); return c ? (sum("cohort_paid", a, b) / c) * 100 : NaN; };
   const churnRate = (a, b) => { const base = at("paying", a - 1) + sum("new_paid", a, b); return base ? (sum("churned_paid", a, b) / base) * 100 : NaN; };
   const tiles = [
-    ["הכנסה נטו", "כל מה שנכנס בתקופה אחרי עמלות שופיפיי", (a, b) => rev(a, b), usd, true],
+    ["מחזור ממוצע ליום", "המחזור בתקופה חלקי מספר הימים בה", (a, b) => gross(a, b) / (b - a + 1), (v) => usd(v, 2), true],
     ["הכנסה ממנויים", "חיובי התוכניות החודשיות והשנתיות", (a, b) => sum("rev_sub", a, b), usd, true],
     ["הכנסה ממאמרים נוספים", "חיובי שימוש: מאמרים מעבר למכסה", (a, b) => sum("rev_usage", a, b), usd, true],
     ["התקנות", "כל התקנה בתקופה, כולל חנויות שחזרו", (a, b) => sum("installs", a, b), int, true],
@@ -575,6 +606,10 @@ function render() {
   // bucketed charts
   const bl = bs.map((b) => ({ short: b.label, long: b.long }));
   const per = (k) => bs.map((b) => sum(k, b.a, b.b));
+  const grossPer = per("rev_gross"), netPer = bs.map((b) => rev(b.a, b.b));
+  legend("revHeroLegend", [{ name: "מחזור לפי " + unitName(r), color: C.s1 }]);
+  barChart("cRevHero", bl, [{ name: "מחזור", color: C.s1, values: grossPer }], (v) => usd(v, 2), usdShort,
+    { height: 190, extra: (i) => [{ name: "נטו אחרי עמלות", color: "transparent", value: usd(netPer[i], 2) }] });
   const revSeries = [
     { name: "מנויים", color: C.s1, values: per("rev_sub") },
     { name: "מאמרים נוספים", color: C.s2, values: per("rev_usage") },
@@ -694,7 +729,7 @@ function init() {
   $("foot").textContent =
     "הנתונים מגיעים מממשק הפרטנרס של שופיפיי ומתעדכנים לבד פעמיים ביום (05:00 ו-17:00). כפתור \"רענון\" מושך את הנתונים מחדש, ואחרי כדקה מרעננים את הדף. " +
     "MRR הוא מחיר המחירון של המנויים בתשלום שפעילים עכשיו (מנוי שנתי מחולק ב-12), בלי חיובי מאמרים נוספים. " +
-    "הכנסה היא נטו, אחרי העמלה של שופיפיי. הימים נספרים לפי שעון UTC.";
+    "מחזור הוא כל מה שהחנויות שילמו, לפני העמלה של שופיפיי. הכנסה נטו היא מה שנשאר אחרי העמלה. \"החודש\" הוא מה-1 בחודש ועד היום, מול אותם ימים בחודש הקודם. הימים נספרים לפי שעון UTC.";
   $("seg").addEventListener("click", (e) => {
     const b = e.target.closest("[data-p]"); if (!b || !P) return;
     state.period = b.dataset.p;
