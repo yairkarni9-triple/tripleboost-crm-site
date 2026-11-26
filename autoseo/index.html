@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Auto Blogs Agent · נתונים</title>
+<style>
+:root {
+  color-scheme: light;
+  --page: #f1f1f1;
+  --surface: #ffffff;
+  --surface-2: #f7f7f7;
+  --ink: #303030;
+  --ink-strong: #1a1a1a;
+  --ink-2: #616161;
+  --muted: #8a8a8a;
+  --line: #ebebeb;
+  --grid: #f0f0f0;
+  --border: #e3e3e3;
+  --shadow: 0 1px 0 rgba(26, 26, 26, 0.07), 0 1px 0 rgba(204, 204, 204, 0.5) inset, 0 -1px 0 rgba(0, 0, 0, 0.04) inset;
+  --topbar: #1a1a1a;
+  --s1: #2a78d6;
+  --s2: #eb6834;
+  --s3: #1baf7a;
+  --s4: #eda100;
+  --s5: #e87ba4;
+  --good: #29845a;
+  --good-wash: #cdfee1;
+  --bad: #c70a24;
+  --bad-wash: #fee9e8;
+  --press: #e3e3e3;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --surface-2: #222221;
+    --ink: #e3e3e3;
+    --ink-strong: #f0efec;
+    --ink-2: #b5b5b5;
+    --muted: #898781;
+    --line: #2c2c2a;
+    --grid: #262625;
+    --border: #2c2c2a;
+    --shadow: none;
+    --topbar: #000;
+    --s1: #3987e5;
+    --s2: #d95926;
+    --s3: #199e70;
+    --s4: #c98500;
+    --s5: #d55181;
+    --good: #4fd08c;
+    --good-wash: rgba(79, 208, 140, 0.12);
+    --bad: #f27d73;
+    --bad-wash: rgba(242, 125, 115, 0.12);
+    --press: #333;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--page); color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  font-size: 13px; line-height: 1.45; -webkit-font-smoothing: antialiased;
+}
+.num { direction: ltr; unicode-bidi: isolate; font-variant-numeric: tabular-nums; }
+button { font: inherit; color: inherit; }
+
+/* top bar */
+.topbar { background: var(--topbar); color: #e3e3e3; height: 56px; display: flex; align-items: center; padding: 0 20px; gap: 12px; }
+.topbar .logo { width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg, #2a78d6, #1baf7a); display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 14px; }
+.topbar .app { font-weight: 650; font-size: 14px; color: #fff; }
+.topbar .sub { color: #b5b5b5; font-size: 12px; }
+.topbar .sp { flex: 1; }
+.topbar .upd { color: #b5b5b5; font-size: 12px; }
+
+.wrap { max-width: 1240px; margin: 0 auto; padding: 20px 20px 72px; }
+.head { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 8px 16px; margin-bottom: 14px; }
+.head h1 { margin: 0; font-size: 20px; font-weight: 700; color: var(--ink-strong); }
+.head p { margin: 2px 0 0; color: var(--ink-2); }
+.head .sp { flex: 1; }
+
+/* filters */
+.filters { position: sticky; top: 0; z-index: 6; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 0; margin-bottom: 6px; background: var(--page); }
+.seg { display: inline-flex; background: var(--surface); border-radius: 10px; box-shadow: var(--shadow); border: 1px solid var(--border); padding: 2px; }
+.seg button { border: 0; background: transparent; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 550; color: var(--ink-2); }
+.seg button:hover { background: var(--surface-2); }
+.seg button[aria-pressed="true"] { background: var(--press); color: var(--ink-strong); font-weight: 650; }
+.range { color: var(--ink-2); font-size: 12px; }
+.btn { border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-weight: 600; }
+.btn:hover { background: var(--surface-2); }
+
+/* cards */
+.card { background: var(--surface); border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); padding: 16px; min-width: 0; }
+.card h2 { margin: 0 0 2px; font-size: 13px; font-weight: 650; color: var(--ink-strong); }
+.card .hint { margin: 0 0 10px; color: var(--muted); font-size: 12px; }
+.grid { display: grid; gap: 12px; }
+.g-hero { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); margin-bottom: 12px; }
+.g-kpi { grid-template-columns: repeat(auto-fill, minmax(178px, 1fr)); margin-bottom: 12px; }
+.g-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 12px; }
+.g-2 > .tablecard .scroll { max-height: 340px; }
+@media (max-width: 900px) { .g-hero, .g-2 { grid-template-columns: minmax(0, 1fr); } }
+
+/* hero */
+.mrr-top { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.mrr-label { font-weight: 650; color: var(--ink-strong); text-decoration: underline dotted var(--muted); text-underline-offset: 4px; }
+.mrr-val { font-size: 34px; font-weight: 700; color: var(--ink-strong); letter-spacing: -0.02em; line-height: 1.1; margin: 6px 0 2px; }
+.mrr-sub { color: var(--ink-2); }
+.now-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }
+.now-list .k { color: var(--ink-2); font-size: 12px; }
+.now-list .v { font-size: 20px; font-weight: 700; color: var(--ink-strong); }
+.now-list .s { color: var(--muted); font-size: 12px; }
+
+/* kpi tiles */
+.kpi .k { color: var(--ink-2); font-weight: 550; text-decoration: underline dotted var(--line); text-underline-offset: 4px; }
+.kpi .v { font-size: 22px; font-weight: 700; color: var(--ink-strong); margin: 6px 0 4px; letter-spacing: -0.01em; }
+.delta { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 600; padding: 1px 6px; border-radius: 6px; }
+.delta.good { color: var(--good); background: var(--good-wash); }
+.delta.bad { color: var(--bad); background: var(--bad-wash); }
+.delta.flat { color: var(--ink-2); background: var(--surface-2); }
+.kpi .was { color: var(--muted); font-size: 12px; margin-inline-start: 4px; }
+
+/* charts */
+.chart { position: relative; width: 100%; direction: ltr; }
+.chart svg { display: block; width: 100%; overflow: visible; }
+.chart .axis text { fill: var(--muted); font-size: 11px; }
+.chart .gridline { stroke: var(--grid); stroke-width: 1; }
+.chart .zero { stroke: var(--line); stroke-width: 1; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0 0 8px; color: var(--ink-2); font-size: 12px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-end: 5px; vertical-align: -1px; }
+.legend i.ln { height: 2px; width: 14px; border-radius: 1px; vertical-align: 3px; }
+.tip { position: absolute; pointer-events: none; z-index: 5; background: var(--surface); color: var(--ink); border: 1px solid var(--border); box-shadow: 0 4px 14px rgba(0,0,0,.12); border-radius: 10px; padding: 8px 10px; font-size: 12px; min-width: 150px; direction: rtl; display: none; }
+.tip .t { color: var(--ink-2); margin-bottom: 4px; }
+.tip .row { display: flex; align-items: center; gap: 8px; justify-content: space-between; }
+.tip .row span:first-child { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+.tip .row b { color: var(--ink-strong); }
+.tip .key { width: 12px; height: 2px; border-radius: 1px; display: inline-block; }
+
+/* tables */
+table { width: 100%; border-collapse: collapse; }
+th { text-align: start; font-weight: 600; color: var(--ink-2); font-size: 12px; padding: 8px 8px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+td { padding: 9px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tr:last-child td { border-bottom: 0; }
+td.n, th.n { text-align: end; }
+.tablecard { padding: 0; overflow: hidden; }
+.tablecard .ttl { padding: 14px 16px 10px; }
+.tablecard .scroll { overflow-x: auto; max-height: 460px; overflow-y: auto; }
+.badge { display: inline-block; padding: 1px 8px; border-radius: 8px; font-size: 12px; font-weight: 550; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; }
+.badge.g { background: var(--good-wash); color: var(--good); }
+.badge.r { background: var(--bad-wash); color: var(--bad); }
+.badge.b { background: rgba(42, 120, 214, .12); color: var(--s1); }
+.dom { color: var(--muted); font-size: 12px; }
+.bar-cell { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+.bar-cell .track { width: 90px; height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
+.bar-cell .fill { height: 100%; background: var(--s1); border-radius: 3px; }
+.empty { color: var(--muted); padding: 20px; text-align: center; }
+.foot { color: var(--muted); font-size: 12px; margin-top: 18px; line-height: 1.7; }
+.loading { opacity: .55; transition: opacity .2s; }
+.err { max-width: 520px; margin: 80px auto; text-align: center; color: var(--ink-2); font-size: 15px; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">A</div>
+  <div><div class="app">Auto Blogs Agent AI Blog Posts</div><div class="sub">נתוני האפליקציה משופיפיי</div></div>
+  <div class="sp"></div>
+  <div class="upd" id="upd"></div>
+</div>
+<div class="wrap" id="app">
+  <div class="head">
+    <div><h1>סקירה כללית</h1><p id="sub">טוען נתונים…</p></div>
+    <div class="sp"></div>
+  </div>
+  <div class="filters">
+    <div class="seg" id="seg" role="group" aria-label="תקופה">
+      <button data-p="7">7 ימים</button>
+      <button data-p="30" aria-pressed="true">30 ימים</button>
+      <button data-p="90">90 ימים</button>
+      <button data-p="365">12 חודשים</button>
+      <button data-p="all">מאז ההשקה</button>
+    </div>
+    <span class="range" id="range"></span>
+    <span style="flex:1"></span>
+    <button class="btn" id="refresh" title="מושך עכשיו את הנתונים האחרונים משופיפיי">רענון</button>
+  </div>
+
+  <div class="grid g-hero">
+    <div class="card">
+      <div class="mrr-top"><span class="mrr-label" title="הכנסה חודשית קבועה: סכום המנויים בתשלום שפעילים עכשיו, במחיר המחירון, בלי חיובי מאמרים נוספים">MRR</span><span id="mrrDelta"></span></div>
+      <div class="mrr-val num" id="mrrVal">—</div>
+      <div class="mrr-sub" id="mrrSub"></div>
+      <div class="legend" id="mrrLegend" style="margin-top:10px"></div>
+      <div class="chart" id="cMrr"></div>
+    </div>
+    <div class="card">
+      <h2>המצב עכשיו</h2>
+      <p class="hint">נכון לעדכון האחרון</p>
+      <div class="now-list" id="now"></div>
+    </div>
+  </div>
+
+  <div class="grid g-kpi" id="kpis"></div>
+
+  <div class="grid g-2">
+    <div class="card">
+      <h2>הכנסה נטו</h2>
+      <p class="hint">מה שנכנס בפועל אחרי עמלות שופיפיי, לפי <span id="revUnit"></span></p>
+      <div class="legend" id="revLegend"></div>
+      <div class="chart" id="cRev"></div>
+    </div>
+    <div class="card">
+      <h2>תנועות MRR</h2>
+      <p class="hint">מאיפה הגיע ולאן הלך ה-MRR, לפי <span id="movUnit"></span></p>
+      <div class="legend" id="movLegend"></div>
+      <div class="chart" id="cMov"></div>
+    </div>
+  </div>
+
+  <div class="grid g-2">
+    <div class="card">
+      <h2>התקנות והסרות</h2>
+      <p class="hint">לפי <span id="instUnit"></span></p>
+      <div class="legend" id="instLegend"></div>
+      <div class="chart" id="cInst"></div>
+    </div>
+    <div class="card">
+      <h2>חנויות מותקנות</h2>
+      <p class="hint">כמה חנויות מחזיקות את האפליקציה בסוף כל יום</p>
+      <div class="legend" id="baseLegend"></div>
+      <div class="chart" id="cBase"></div>
+    </div>
+  </div>
+
+  <div class="grid g-2">
+    <div class="card">
+      <h2>מנויים בתשלום</h2>
+      <p class="hint">כמה חנויות משלמות על תוכנית, בסוף כל יום</p>
+      <div class="legend" id="payLegend"></div>
+      <div class="chart" id="cPay"></div>
+    </div>
+    <div class="card tablecard">
+      <div class="ttl"><h2>תוכניות</h2><p class="hint" style="margin:0">חנויות מותקנות לפי התוכנית שלהן עכשיו</p></div>
+      <div class="scroll"><table id="tPlans"></table></div>
+    </div>
+  </div>
+
+  <div class="grid g-2">
+    <div class="card tablecard">
+      <div class="ttl"><h2>למה מסירים</h2><p class="hint" style="margin:0" id="reasonsHint"></p></div>
+      <div class="scroll"><table id="tReasons"></table></div>
+    </div>
+    <div class="card tablecard">
+      <div class="ttl"><h2>פעילות אחרונה</h2><p class="hint" style="margin:0">התקנות, הסרות ושינויי תוכנית</p></div>
+      <div class="scroll"><table id="tRecent"></table></div>
+    </div>
+  </div>
+
+  <div class="card tablecard">
+    <div class="ttl"><h2>הלקוחות שהכניסו הכי הרבה</h2><p class="hint" style="margin:0">הכנסה נטו מאז ההשקה</p></div>
+    <div class="scroll"><table id="tTop"></table></div>
+  </div>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+// Lives at crm.tripleboost.net/autoseo/#<key>. The key stays in the hash (never in server logs) and goes to the
+// autoseoStats edge function as a header. The data comes from the Shopify Partner API and refreshes every 12 hours.
+const FN = "https://bbupowzicprgtfltyepd.supabase.co/functions/v1/autoseoStats";
+const KEY_STORE = "autoseo-board-key";
+let P = null;
+const state = { period: "30" };
+
+// ---------- helpers ----------
+const $ = (id) => document.getElementById(id);
+function el(tag, attrs = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v; else if (k === "style") n.style.cssText = v; else if (k === "title") n.title = v; else n.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) n.append(c.nodeType ? c : document.createTextNode(String(c)));
+  return n;
+}
+const usd = (v, d) => {
+  const a = Math.abs(v), dec = d ?? (a < 100 && a % 1 ? 2 : 0);
+  return (v < 0 ? "−" : "") + "$" + a.toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec });
+};
+const usdShort = (v) => {
+  const a = Math.abs(v), s = v < 0 ? "−" : "";
+  return a >= 1000 ? s + "$" + (a / 1000).toLocaleString("en-US", { maximumFractionDigits: 1 }) + "K" : s + "$" + Math.round(a);
+};
+const int = (v) => Math.round(v).toLocaleString("en-US");
+const pct = (v, d = 1) => (isFinite(v) ? v.toLocaleString("en-US", { maximumFractionDigits: d, minimumFractionDigits: 0 }) + "%" : "—");
+const numSpan = (t) => el("span", { class: "num" }, t);
+const MONTHS = ["ינו׳", "פבר׳", "מרץ", "אפר׳", "מאי", "יוני", "יולי", "אוג׳", "ספט׳", "אוק׳", "נוב׳", "דצמ׳"];
+const dLabel = (s, withYear) => { const [y, m, d] = s.split("-").map(Number); return `${d} ${MONTHS[m - 1]}` + (withYear ? ` ${String(y).slice(2)}` : ""); };
+const mLabel = (s) => { const [y, m] = s.split("-").map(Number); return `${MONTHS[m - 1]} ${String(y).slice(2)}`; };
+const sum = (k, a, b) => { let t = 0; const arr = P.series[k]; for (let i = Math.max(0, a); i <= b; i++) t += arr[i] || 0; return t; };
+const at = (k, i) => (i < 0 ? 0 : P.series[k][i]);
+
+// ---------- period ----------
+function range() {
+  const N = P.days.length, end = N - 1;
+  const launch = Math.max(0, P.days.indexOf(P.launch_day));
+  let start;
+  if (state.period === "all") start = launch;
+  else start = Math.max(0, end - Number(state.period) + 1);
+  const len = end - start + 1;
+  const prev = state.period === "all" ? null : { a: start - len, b: start - 1 };
+  return { start, end, len, prev: prev && prev.a >= launch ? prev : null };
+}
+function buckets(r) {
+  const out = [];
+  if (r.len <= 31) {
+    for (let i = r.start; i <= r.end; i++) out.push({ a: i, b: i, label: dLabel(P.days[i]), long: dLabel(P.days[i], true) });
+  } else if (r.len <= 120) {
+    for (let b = r.end; b >= r.start; b -= 7) {
+      const a = Math.max(r.start, b - 6);
+      out.unshift({ a, b, label: dLabel(P.days[a]), long: `${dLabel(P.days[a])} – ${dLabel(P.days[b], true)}` });
+    }
+  } else {
+    let a = r.start;
+    for (let i = r.start; i <= r.end; i++) {
+      if (i === r.end || P.days[i + 1].slice(0, 7) !== P.days[i].slice(0, 7)) {
+        out.push({ a, b: i, label: mLabel(P.days[i]), long: mLabel(P.days[i]) + (a !== i && (P.days[a].slice(8) !== "01" || i === r.end) ? ` (${dLabel(P.days[a])}–${dLabel(P.days[i])})` : "") });
+        a = i + 1;
+      }
+    }
+  }
+  return out;
+}
+const unitName = (r) => (r.len <= 31 ? "יום" : r.len <= 120 ? "שבוע" : "חודש");
+
+// ---------- deltas ----------
+function delta(cur, prev, goodWhenUp = true, kind = "pct") {
+  if (prev == null) return null;
+  let text, dir;
+  if (kind === "pts") { const d = cur - prev; dir = Math.sign(Math.round(d * 10)); text = (d >= 0 ? "+" : "−") + Math.abs(d).toFixed(1) + " נק׳"; }
+  else if (prev === 0) { if (cur === 0) { dir = 0; text = "0%"; } else return el("span", { class: "delta " + ((cur > 0) === goodWhenUp ? "good" : "bad") }, cur > 0 ? "↑ חדש" : "↓"); }
+  else { const d = ((cur - prev) / Math.abs(prev)) * 100; dir = Math.sign(Math.round(d)); text = Math.abs(d) >= 1000 ? ">999%" : Math.abs(Math.round(d)) + "%"; }
+  if (!dir) return el("span", { class: "delta flat" }, "— " + text.replace(/^[+−]/, ""));
+  const good = (dir > 0) === goodWhenUp;
+  return el("span", { class: "delta " + (good ? "good" : "bad"), title: good ? "שיפור מול התקופה הקודמת" : "ירידה מול התקופה הקודמת" }, (dir > 0 ? "↑ " : "↓ "), numSpan(kind === "pts" ? text.replace(/^[+−]/, "") : text));
+}
+
+// ---------- charts ----------
+const tipEl = () => { let t = document.querySelector(".tip.g"); if (!t) { t = el("div", { class: "tip g" }); document.body.append(t); } return t; };
+function showTip(evt, title, rows) {
+  const t = tipEl();
+  t.replaceChildren(el("div", { class: "t" }, title), ...rows.map((r) =>
+    el("div", { class: "row" }, el("span", {}, el("i", { class: "key", style: `background:${r.color}` }), r.name), el("b", { class: "num" }, r.value))));
+  t.style.display = "block";
+  const w = t.offsetWidth, h = t.offsetHeight;
+  let x = evt.pageX + 14, y = evt.pageY - h - 10;
+  if (x + w > window.scrollX + document.documentElement.clientWidth - 8) x = evt.pageX - w - 14;
+  if (y < window.scrollY + 4) y = evt.pageY + 14;
+  t.style.left = x + "px"; t.style.top = y + "px";
+}
+const hideTip = () => { tipEl().style.display = "none"; };
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const SVGNS = "http://www.w3.org/2000/svg";
+const S = (tag, attrs = {}) => { const n = document.createElementNS(SVGNS, tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); return n; };
+function niceTicks(min, max, count = 4) {
+  if (min === max) { max = min + 1; }
+  const span = max - min, step0 = span / count, mag = Math.pow(10, Math.floor(Math.log10(step0)));
+  const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => s >= step0);
+  const lo = Math.floor(min / step) * step, hi = Math.ceil(max / step) * step;
+  const out = []; for (let v = lo; v <= hi + step / 2; v += step) out.push(Math.round(v * 1e6) / 1e6);
+  return out;
+}
+function legend(id, items, line) {
+  $(id).replaceChildren(...items.map((s) => el("span", {}, el("i", { class: line ? "ln" : "", style: `background:${s.color}` }), s.name)));
+}
+
+// line chart: labels[], series[{name,color,values,area}], fmt, tickFmt
+function lineChart(id, labels, series, fmt, tickFmt, height = 220) {
+  const box = $(id); box.replaceChildren();
+  const W = box.clientWidth || 600, H = height, L = 46, R = 8, T = 8, B = 24;
+  const all = series.flatMap((s) => s.values);
+  const ticks = niceTicks(Math.min(0, ...all), Math.max(...all, 0.0001));
+  const y0 = ticks[0], y1 = ticks[ticks.length - 1];
+  const n = labels.length;
+  const X = (i) => L + (n === 1 ? (W - L - R) / 2 : (i * (W - L - R)) / (n - 1));
+  const Y = (v) => T + (1 - (v - y0) / (y1 - y0)) * (H - T - B);
+  const svg = S("svg", { viewBox: `0 0 ${W} ${H}`, height: H, role: "img" });
+  const ax = S("g", { class: "axis" });
+  for (const t of ticks) {
+    ax.append(S("line", { x1: L, x2: W - R, y1: Y(t), y2: Y(t), class: t === 0 ? "zero" : "gridline" }));
+    const tx = S("text", { x: L - 8, y: Y(t) + 4, "text-anchor": "end" }); tx.textContent = tickFmt(t); ax.append(tx);
+  }
+  const every = Math.max(1, Math.ceil(n / Math.max(2, Math.floor((W - L - R) / 70))));
+  for (let i = 0; i < n; i += every) {
+    const tx = S("text", { x: X(i), y: H - 6, "text-anchor": i === 0 ? "start" : "middle" }); tx.textContent = labels[i].short; ax.append(tx);
+  }
+  svg.append(ax);
+  for (const s of series) {
+    const pts = s.values.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`);
+    if (s.area) {
+      const gid = id + "g" + series.indexOf(s);
+      const grad = S("linearGradient", { id: gid, x1: 0, x2: 0, y1: 0, y2: 1 });
+      grad.append(S("stop", { offset: "0", "stop-color": s.color, "stop-opacity": "0.18" }), S("stop", { offset: "1", "stop-color": s.color, "stop-opacity": "0" }));
+      const defs = S("defs"); defs.append(grad); svg.append(defs);
+      svg.append(S("path", { d: `M${X(0)},${Y(Math.max(y0, 0))}L${pts.join("L")}L${X(n - 1)},${Y(Math.max(y0, 0))}Z`, fill: `url(#${gid})` }));
+    }
+    svg.append(S("path", { d: "M" + pts.join("L"), fill: "none", stroke: s.color, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round", "stroke-dasharray": s.dash || "" }));
+  }
+  const cross = S("line", { y1: T, y2: H - B, stroke: css("--muted"), "stroke-width": 1, "stroke-dasharray": "3 3", visibility: "hidden" });
+  const dots = series.map((s) => S("circle", { r: 4, fill: s.color, stroke: css("--surface"), "stroke-width": 2, visibility: "hidden" }));
+  svg.append(cross, ...dots);
+  const hit = S("rect", { x: L, y: T, width: W - L - R, height: H - T - B, fill: "transparent", tabindex: 0 });
+  const move = (evt) => {
+    const rect = svg.getBoundingClientRect(), px = ((evt.clientX - rect.left) / rect.width) * W;
+    const i = Math.max(0, Math.min(n - 1, Math.round(((px - L) / (W - L - R)) * (n - 1))));
+    cross.setAttribute("x1", X(i)); cross.setAttribute("x2", X(i)); cross.setAttribute("visibility", "visible");
+    series.forEach((s, k) => { dots[k].setAttribute("cx", X(i)); dots[k].setAttribute("cy", Y(s.values[i])); dots[k].setAttribute("visibility", "visible"); });
+    showTip(evt, labels[i].long, series.map((s) => ({ name: s.name, color: s.color, value: fmt(s.values[i]) })));
+  };
+  hit.addEventListener("pointermove", move);
+  hit.addEventListener("pointerleave", () => { hideTip(); cross.setAttribute("visibility", "hidden"); dots.forEach((d) => d.setAttribute("visibility", "hidden")); });
+  svg.append(hit);
+  box.append(svg);
+}
+
+// bar chart: labels[], series[{name,color,values}], stacked → stacks (negatives stack downward), else grouped
+function barChart(id, labels, series, fmt, tickFmt, { stacked = true, height = 220, totalName } = {}) {
+  const box = $(id); box.replaceChildren();
+  const W = box.clientWidth || 600, H = height, L = 46, R = 8, T = 8, B = 24;
+  const n = labels.length;
+  let lo = 0, hi = 0;
+  for (let i = 0; i < n; i++) {
+    if (stacked) {
+      let p = 0, m = 0; for (const s of series) { const v = s.values[i]; if (v >= 0) p += v; else m += v; }
+      hi = Math.max(hi, p); lo = Math.min(lo, m);
+    } else for (const s of series) { hi = Math.max(hi, s.values[i]); lo = Math.min(lo, s.values[i]); }
+  }
+  const ticks = niceTicks(lo, hi || 1);
+  const y0 = ticks[0], y1 = ticks[ticks.length - 1];
+  const Y = (v) => T + (1 - (v - y0) / (y1 - y0)) * (H - T - B);
+  const band = (W - L - R) / n, gap = Math.min(10, band * 0.28);
+  const svg = S("svg", { viewBox: `0 0 ${W} ${H}`, height: H, role: "img" });
+  const ax = S("g", { class: "axis" });
+  for (const t of ticks) {
+    ax.append(S("line", { x1: L, x2: W - R, y1: Y(t), y2: Y(t), class: t === 0 ? "zero" : "gridline" }));
+    const tx = S("text", { x: L - 8, y: Y(t) + 4, "text-anchor": "end" }); tx.textContent = tickFmt(t); ax.append(tx);
+  }
+  const every = Math.max(1, Math.ceil(n / Math.max(2, Math.floor((W - L - R) / 62))));
+  for (let i = 0; i < n; i += every) {
+    const tx = S("text", { x: L + band * i + band / 2, y: H - 6, "text-anchor": "middle" }); tx.textContent = labels[i].short; ax.append(tx);
+  }
+  svg.append(ax);
+  const surface = css("--surface");
+  for (let i = 0; i < n; i++) {
+    const g = S("g", { tabindex: 0 });
+    const x0 = L + band * i + gap / 2, bw = band - gap;
+    if (stacked) {
+      let p = 0, m = 0;
+      for (const s of series) {
+        const v = s.values[i]; if (!v) continue;
+        const a = v >= 0 ? p : m, b = a + v;
+        if (v >= 0) p = b; else m = b;
+        const yTop = Y(Math.max(a, b)), h = Math.max(0, Math.abs(Y(a) - Y(b)) - 1);
+        g.append(S("rect", { x: x0, y: yTop + (v >= 0 ? 1 : 0), width: Math.max(1, bw), height: Math.max(h, 0.5), rx: Math.min(3, bw / 3), fill: s.color, stroke: surface, "stroke-width": 0 }));
+      }
+    } else {
+      const k = series.length, sw = (bw - (k - 1) * 2) / k;
+      series.forEach((s, j) => {
+        const v = s.values[i]; const yTop = Y(Math.max(0, v)), h = Math.abs(Y(v) - Y(0));
+        g.append(S("rect", { x: x0 + j * (sw + 2), y: yTop, width: Math.max(1, sw), height: Math.max(h, v ? 1 : 0), rx: Math.min(3, sw / 3), fill: s.color }));
+      });
+    }
+    const hit = S("rect", { x: L + band * i, y: T, width: band, height: H - T - B, fill: "transparent" });
+    g.append(hit);
+    g.addEventListener("pointermove", (evt) => {
+      g.style.opacity = 0.85;
+      const rows = series.map((s) => ({ name: s.name, color: s.color, value: fmt(s.values[i]) }));
+      if (totalName) rows.push({ name: totalName, color: "transparent", value: fmt(series.reduce((t, s) => t + s.values[i], 0)) });
+      showTip(evt, labels[i].long, rows);
+    });
+    g.addEventListener("pointerleave", () => { g.style.opacity = 1; hideTip(); });
+    svg.append(g);
+  }
+  box.append(svg);
+}
+
+// ---------- render ----------
+// The merchant's answer arrives in the store's language; group the common ones in Hebrew.
+const REASONS = [
+  [/^$/, "לא ציינו סיבה"],
+  [/scheduled_cancellation/i, "ביטול מתוזמן"],
+  [/testing multiple|plusieurs|mehrere|varias|meerdere|più app|test/i, "בודקים כמה אפליקציות"],
+  [/not using|n'utilise|nicht (mehr )?genutzt|non (la )?uso|no (la )?uso|pas utilis|not needed/i, "לא משתמשים באפליקציה כרגע"],
+  [/expensive|cher|teuer|cost|car[oa]|precio/i, "יקר מדי"],
+  [/not satisfied|limited or missing|missing features|fonctionnalit|funktionen/i, "חסרות יכולות / לא מרוצים"],
+  [/not working|compatible|fonctionne pas|funktioniert nicht|non funziona/i, "לא עובד או לא מתאים לחנות"],
+  [/clos|pausing|fermeture|schlie|chiusura|cierre|pause/i, "החנות נסגרת או בהפסקה"],
+  [/hard to set up|difficult|schwierig|difficile/i, "קשה להקים או להשתמש"],
+  [/^(other|autre|altro|andere|otro|outro)/i, "אחר"],
+];
+const reasonHe = (r) => { for (const [re, he] of REASONS) if (re.test(r || "")) return he; return r; };
+const EVENT_HE = {
+  RELATIONSHIP_INSTALLED: ["התקנה", "b"], RELATIONSHIP_UNINSTALLED: ["הסרה", "r"],
+  RELATIONSHIP_DEACTIVATED: ["החנות נסגרה", ""], RELATIONSHIP_REACTIVATED: ["החנות נפתחה מחדש", ""],
+  SUBSCRIPTION_CHARGE_ACTIVATED: ["הפעיל תוכנית", "g"], SUBSCRIPTION_CHARGE_CANCELED: ["ביטל תוכנית", "r"],
+  SUBSCRIPTION_CHARGE_EXPIRED: ["אישור תוכנית פג", ""], SUBSCRIPTION_CHARGE_DECLINED: ["דחה את החיוב", ""],
+  SUBSCRIPTION_CHARGE_FROZEN: ["המנוי הוקפא", ""], SUBSCRIPTION_CHARGE_UNFROZEN: ["המנוי חודש", "g"],
+  SUBSCRIPTION_CAPPED_AMOUNT_UPDATED: ["עדכן תקרת חיוב", ""], CREDIT_APPLIED: ["זיכוי", ""],
+};
+const planHe = (p) => (p === "Free" ? "חינם" : p);
+function ago(iso) {
+  const m = (Date.now() - Date.parse(iso)) / 60000;
+  if (m < 60) return `לפני ${Math.max(1, Math.round(m))} דק׳`;
+  if (m < 1440) return `לפני ${Math.round(m / 60)} שע׳`;
+  const d = Math.round(m / 1440); return d === 1 ? "אתמול" : `לפני ${d} ימים`;
+}
+
+function render() {
+  const r = range(), bs = buckets(r), last = P.days.length - 1;
+  const C = { s1: css("--s1"), s2: css("--s2"), s3: css("--s3"), s4: css("--s4"), s5: css("--s5"), muted: css("--muted"), bad: css("--bad") };
+  $("range").textContent = `${dLabel(P.days[r.start], true)} – ${dLabel(P.days[r.end], true)}` + (r.prev ? " · מול התקופה שלפני" : "");
+  ["revUnit", "instUnit", "movUnit"].forEach((id) => ($(id).textContent = unitName(r)));
+
+  // hero MRR
+  const mrrNow = at("mrr", last), mrrStart = at("mrr", r.start - 1);
+  $("mrrVal").textContent = usd(mrrNow, 2);
+  const cmp = state.period !== "all";
+  $("mrrDelta").replaceChildren(cmp ? delta(mrrNow, mrrStart) || "" : "");
+  $("mrrSub").replaceChildren(cmp ? el("span", {}, "בתחילת התקופה: ", numSpan(usd(mrrStart, 2)), " · ARR: ", numSpan(usd(mrrNow * 12, 0))) : el("span", {}, "ARR: ", numSpan(usd(mrrNow * 12, 0))));
+  const dayLabels = []; for (let i = r.start; i <= r.end; i++) dayLabels.push({ short: r.len > 400 ? mLabel(P.days[i]) : dLabel(P.days[i]), long: dLabel(P.days[i], true) });
+  const mrrVals = P.series.mrr.slice(r.start, r.end + 1);
+  legend("mrrLegend", [{ name: "MRR בסוף כל יום", color: C.s1 }], true);
+  lineChart("cMrr", dayLabels, [{ name: "MRR", color: C.s1, values: mrrVals, area: true }], (v) => usd(v, 2), usdShort, 190);
+
+  // now
+  const paying = at("paying", last);
+  const life = P.totals.lifetime_net;
+  const pz = P.plans.find((p) => p.plan === "Free");
+  $("now").replaceChildren(
+    nowItem("מנויים משלמים", int(paying), pz ? `ועוד ${int(pz.shops)} בתוכנית החינמית` : ""),
+    nowItem("הכנסה ממוצעת למשלם", paying ? usd(mrrNow / paying, 2) : "—", "לחודש (ARPU)"),
+    nowItem("חנויות מותקנות", int(at("installed", last)), `${int(at("open_installed", last))} מהן חנויות פתוחות`),
+    nowItem("נכנס מאז ההשקה", usd(life, 0), "נטו, מנויים ומאמרים נוספים"),
+  );
+
+  // KPIs for the period
+  const pr = r.prev;
+  const rev = (a, b) => sum("rev_sub", a, b) + sum("rev_usage", a, b) + sum("rev_adj", a, b);
+  const conv = (a, b) => { const c = sum("cohort_installs", a, b); return c ? (sum("cohort_paid", a, b) / c) * 100 : NaN; };
+  const churnRate = (a, b) => { const base = at("paying", a - 1) + sum("new_paid", a, b); return base ? (sum("churned_paid", a, b) / base) * 100 : NaN; };
+  const tiles = [
+    ["הכנסה נטו", "כל מה שנכנס בתקופה אחרי עמלות שופיפיי", (a, b) => rev(a, b), usd, true],
+    ["הכנסה ממנויים", "חיובי התוכניות החודשיות והשנתיות", (a, b) => sum("rev_sub", a, b), usd, true],
+    ["הכנסה ממאמרים נוספים", "חיובי שימוש: מאמרים מעבר למכסה", (a, b) => sum("rev_usage", a, b), usd, true],
+    ["התקנות", "כל התקנה בתקופה, כולל חנויות שחזרו", (a, b) => sum("installs", a, b), int, true],
+    ["הסרות", "חנויות שהסירו את האפליקציה", (a, b) => sum("uninstalls", a, b), int, false],
+    ["התקנות נטו", "התקנות פחות הסרות", (a, b) => sum("installs", a, b) - sum("uninstalls", a, b), (v) => (v > 0 ? "+" : "") + int(v), true, "abs"],
+    ["משלמים חדשים", "חנויות שהתחילו לשלם בפעם הראשונה", (a, b) => sum("new_paid", a, b), int, true],
+    ["משלמים שעזבו", "מנויים בתשלום שהסתיימו", (a, b) => sum("churned_paid", a, b), int, false],
+    ["שינוי נטו ב-MRR", "MRR שנוסף (חדשים, שדרוגים, חזרו) פחות MRR שאבד (עזבו, שנמוכים)", (a, b) => ["mrr_new", "mrr_expansion", "mrr_reactivation", "mrr_contraction", "mrr_churn"].reduce((t, k) => t + sum(k, a, b), 0), (v) => (v > 0 ? "+" : "") + usd(v), true, "abs$"],
+    ["המרה לתשלום", "מתוך החנויות שהתקינו בפעם הראשונה בתקופה: כמה כבר שילמו. חנויות שהתקינו לאחרונה עוד לא הספיקו", conv, (v) => pct(v), true, "pts"],
+    ["מאמרים נוספים שחויבו", "כמה פעמים חנויות שילמו על מאמר מעבר למכסה", (a, b) => sum("usage_count", a, b), int, true],
+    ["נטישת משלמים", "משלמים שעזבו מתוך המשלמים שהיו בתקופה", churnRate, (v) => pct(v), false, "pts"],
+  ];
+  $("kpis").replaceChildren(...tiles.map(([k, hint, f, fmt, upGood, kind]) => {
+    const cur = f(r.start, r.end), prev = pr ? f(pr.a, pr.b) : null;
+    let d = null;
+    if (prev != null && isFinite(cur) && isFinite(prev)) d = kind === "abs" || kind === "abs$" ? deltaAbs(cur, prev, upGood, kind === "abs$" ? (v) => usd(v) : int) : delta(cur, prev, upGood, kind === "pts" ? "pts" : "pct");
+    return el("div", { class: "card kpi" },
+      el("div", { class: "k", title: hint }, k),
+      el("div", { class: "v num" }, isFinite(cur) ? fmt(cur) : "—"),
+      el("div", {}, d || el("span", { class: "delta flat" }, r.prev ? "אין להשוות" : "כל התקופה"), prev != null && isFinite(prev) ? el("span", { class: "was" }, "לפני: ", numSpan(fmt(prev))) : ""));
+  }));
+
+  // bucketed charts
+  const bl = bs.map((b) => ({ short: b.label, long: b.long }));
+  const per = (k) => bs.map((b) => sum(k, b.a, b.b));
+  const revSeries = [
+    { name: "מנויים", color: C.s1, values: per("rev_sub") },
+    { name: "מאמרים נוספים", color: C.s2, values: per("rev_usage") },
+    { name: "החזרים והתאמות", color: C.s5, values: per("rev_adj") },
+  ];
+  legend("revLegend", revSeries);
+  barChart("cRev", bl, revSeries, (v) => usd(v, 2), usdShort, { totalName: "סה״כ" });
+
+  const instSeries = [{ name: "התקנות", color: C.s1, values: per("installs") }, { name: "הסרות", color: C.s2, values: per("uninstalls") }];
+  legend("instLegend", instSeries);
+  barChart("cInst", bl, instSeries, int, (v) => int(v), { stacked: false });
+
+  const movSeries = [
+    { name: "חדשים", color: C.s1, values: per("mrr_new") },
+    { name: "שדרוגים", color: C.s3, values: per("mrr_expansion") },
+    { name: "חזרו לשלם", color: C.s4, values: per("mrr_reactivation") },
+    { name: "שנמוכים", color: C.s5, values: per("mrr_contraction") },
+    { name: "עזבו", color: C.s2, values: per("mrr_churn") },
+  ];
+  legend("movLegend", movSeries);
+  barChart("cMov", bl, movSeries, (v) => usd(v, 2), usdShort, { totalName: "שינוי נטו" });
+
+  const baseSeries = [
+    { name: "חנויות מותקנות", color: C.s1, values: P.series.installed.slice(r.start, r.end + 1) },
+    { name: "מהן חנויות פתוחות", color: C.s3, values: P.series.open_installed.slice(r.start, r.end + 1) },
+  ];
+  legend("baseLegend", baseSeries, true);
+  lineChart("cBase", dayLabels, baseSeries, int, (v) => int(v));
+  const paySeries = [{ name: "משלמים", color: C.s1, values: P.series.paying.slice(r.start, r.end + 1), area: true }];
+  $("payLegend").replaceChildren();
+  lineChart("cPay", dayLabels, paySeries, int, (v) => int(v));
+
+  renderPlans(mrrNow);
+  renderReasons(r);
+  renderTop();
+  renderRecent();
+}
+function deltaAbs(cur, prev, upGood, fmt = int) {
+  const d = cur - prev; if (Math.abs(d) < 0.005) return el("span", { class: "delta flat" }, "— 0");
+  const good = (d > 0) === upGood;
+  return el("span", { class: "delta " + (good ? "good" : "bad") }, d > 0 ? "↑ " : "↓ ", numSpan(fmt(Math.abs(d))));
+}
+function nowItem(k, v, s) { return el("div", {}, el("div", { class: "k" }, k), el("div", { class: "v num" }, v), el("div", { class: "s" }, s)); }
+
+function renderPlans(mrrNow) {
+  const t = $("tPlans");
+  const rows = P.plans.slice().sort((a, b) => b.mrr - a.mrr || b.shops - a.shops);
+  t.replaceChildren(
+    el("thead", {}, el("tr", {}, el("th", {}, "תוכנית"), el("th", { class: "n" }, "חנויות"), el("th", { class: "n" }, "משלמים"), el("th", { class: "n" }, "MRR"))),
+    el("tbody", {}, rows.map((p) => el("tr", {},
+      el("td", {}, el("b", {}, planHe(p.plan))),
+      el("td", { class: "n num" }, int(p.shops)),
+      el("td", { class: "n num" }, int(p.paying)),
+      el("td", { class: "n" }, el("div", { class: "bar-cell" }, el("span", { class: "num" }, usd(p.mrr, 2)),
+        el("span", { class: "track" }, el("span", { class: "fill", style: `display:block;width:${mrrNow ? (p.mrr / mrrNow) * 100 : 0}%` }))))))),
+  );
+  const noPlan = Math.max(0, P.series.installed[P.days.length - 1] - P.plans.reduce((a, p) => a + p.shops, 0));
+  if (noPlan) t.querySelector("tbody").append(el("tr", {}, el("td", {}, el("span", { class: "dom" }, "לא אישרו אף תוכנית")), el("td", { class: "n num" }, int(noPlan)), el("td", { class: "n num" }, "0"), el("td", { class: "n" }, el("div", { class: "bar-cell" }, el("span", { class: "num" }, "$0.00"), el("span", { class: "track" })))));
+}
+function renderReasons(r) {
+  const counts = new Map();
+  let total = 0;
+  for (const [i, reason] of P.uninstall_reasons) if (i >= r.start && i <= r.end) { const h = reasonHe(reason); counts.set(h, (counts.get(h) || 0) + 1); total++; }
+  $("reasonsHint").textContent = `${int(total)} הסרות בתקופה, לפי מה שהסוחר סימן`;
+  const rows = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  $("tReasons").replaceChildren(rows.length
+    ? el("tbody", {}, rows.map(([k, v]) => el("tr", {}, el("td", {}, k), el("td", { class: "n" }, el("div", { class: "bar-cell" }, el("span", { class: "num" }, `${int(v)} · ${pct((v / total) * 100, 0)}`), el("span", { class: "track" }, el("span", { class: "fill", style: `display:block;background:var(--s2);width:${(v / rows[0][1]) * 100}%` })))))))
+    : el("tbody", {}, el("tr", {}, el("td", { class: "empty" }, "אין הסרות בתקופה"))));
+}
+function renderTop() {
+  $("tTop").replaceChildren(
+    el("thead", {}, el("tr", {}, el("th", {}, "חנות"), el("th", {}, "עכשיו"), el("th", { class: "n" }, "MRR"), el("th", { class: "n" }, "נכנס סה״כ"))),
+    el("tbody", {}, P.top_shops.map((x) => el("tr", {},
+      el("td", {}, el("div", {}, x.name || x.shop), el("div", { class: "dom num" }, x.shop.replace(".myshopify.com", ""))),
+      el("td", {}, !x.installed ? el("span", { class: "badge r" }, "הסירו") : x.closed ? el("span", { class: "badge" }, "החנות סגורה") : x.mrr > 0 ? el("span", { class: "badge g" }, planHe(x.plan)) : el("span", { class: "badge" }, planHe(x.plan || "בלי תוכנית"))),
+      el("td", { class: "n num" }, x.mrr ? usd(x.mrr, 2) : "—"),
+      el("td", { class: "n num" }, usd(x.revenue, 2))))),
+  );
+}
+function renderRecent() {
+  $("tRecent").replaceChildren(el("tbody", {}, P.recent.slice(0, 60).map((e) => {
+    const [he, cls] = EVENT_HE[e.type] || [e.type, ""];
+    let detail = "";
+    if (e.type === "SUBSCRIPTION_CHARGE_ACTIVATED" || e.type === "SUBSCRIPTION_CHARGE_CANCELED") detail = planHe(e.plan) + (e.amount ? ` · ${usd(e.amount, 2)}` : "");
+    if (e.type === "RELATIONSHIP_UNINSTALLED" && e.reason) detail = reasonHe(e.reason);
+    return el("tr", {},
+      el("td", {}, el("span", { class: "badge " + cls }, he), detail ? el("div", { class: "dom" }, detail) : ""),
+      el("td", {}, el("div", {}, e.name || e.shop), el("div", { class: "dom num" }, e.shop.replace(".myshopify.com", ""))),
+      el("td", { class: "n dom", title: new Date(e.t).toLocaleString("he-IL") }, ago(e.t)));
+  })));
+}
+
+// ---------- load ----------
+function boardKey() {
+  const fromHash = decodeURIComponent(location.hash.slice(1));
+  try { if (fromHash) localStorage.setItem(KEY_STORE, fromHash); return fromHash || localStorage.getItem(KEY_STORE) || ""; } catch { return fromHash; }
+}
+function fail(msg) { $("app").replaceChildren(el("div", { class: "err" }, msg)); }
+async function load(refresh = false) {
+  const key = boardKey();
+  if (!key) return fail("הקישור לא מלא. פותחים את הקישור המלא שקיבלת.");
+  document.body.classList.add("loading");
+  let res;
+  try { res = await fetch(FN + (refresh ? "?refresh=1" : ""), { headers: { "x-board-key": key }, cache: "no-store" }); }
+  catch { document.body.classList.remove("loading"); if (!P) fail("אין חיבור. מנסים שוב בעוד רגע."); return; }
+  document.body.classList.remove("loading");
+  if (res.status === 403) { try { localStorage.removeItem(KEY_STORE); } catch {} return fail("אין גישה. פותחים את הקישור המלא שקיבלת."); }
+  const data = await res.json();
+  if (!data.days) return fail("הנתונים עוד נאספים. נסו שוב בעוד כמה דקות.");
+  P = data;
+  const upd = new Date(P.generated_at);
+  $("upd").textContent = `עודכן ${upd.toLocaleDateString("he-IL", { day: "numeric", month: "numeric" })} ${upd.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}`;
+  $("sub").textContent = `${int(P.totals.shops)} חנויות התקינו מאז ההשקה ב-13.6.2025`;
+  render();
+}
+function init() {
+  $("foot").textContent =
+    "הנתונים מגיעים מממשק הפרטנרס של שופיפיי ומתעדכנים לבד פעמיים ביום (05:00 ו-17:00). כפתור \"רענון\" מושך את הנתונים מחדש, ואחרי כדקה מרעננים את הדף. " +
+    "MRR הוא מחיר המחירון של המנויים בתשלום שפעילים עכשיו (מנוי שנתי מחולק ב-12), בלי חיובי מאמרים נוספים. " +
+    "הכנסה היא נטו, אחרי העמלה של שופיפיי. הימים נספרים לפי שעון UTC.";
+  $("seg").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-p]"); if (!b || !P) return;
+    state.period = b.dataset.p;
+    document.querySelectorAll("#seg button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    render();
+  });
+  $("refresh").addEventListener("click", async () => {
+    $("refresh").disabled = true; $("refresh").textContent = "מושך משופיפיי…";
+    await load(true);
+    setTimeout(async () => { await load(); $("refresh").disabled = false; $("refresh").textContent = "רענון"; }, 45000);
+  });
+  // Charts are drawn to the card's pixel width; redraw when the width changes.
+  let rt, lastW = 0;
+  new ResizeObserver(() => {
+    const w = $("cMrr").clientWidth;
+    if (!P || Math.abs(w - lastW) < 2) return;
+    lastW = w; clearTimeout(rt); rt = setTimeout(render, 120);
+  }).observe(document.body);
+  load();
+}
+init();
+</script>
+</body>
+</html>
