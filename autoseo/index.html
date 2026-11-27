@@ -98,7 +98,22 @@ button { font: inherit; color: inherit; }
 .card .hint { margin: 0 0 10px; color: var(--muted); font-size: 12px; }
 .grid { display: grid; gap: 12px; }
 .g-hero { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 12px; }
-.g-kpi { grid-template-columns: repeat(auto-fill, minmax(178px, 1fr)); margin-bottom: 12px; }
+.g-kpi { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 12px; }
+@media (max-width: 900px) { .g-kpi { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin: 4px 0 10px; }
+.tabs button { border: 0; background: transparent; padding: 10px 16px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--ink-2); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tabs button:hover { color: var(--ink-strong); }
+.tabs button[aria-selected="true"] { color: var(--ink-strong); border-bottom-color: var(--ink-strong); }
+section[data-tab][hidden] { display: none; }
+.funnel { display: flex; flex-direction: column; gap: 12px; }
+.funnel .row { display: grid; grid-template-columns: 150px minmax(0, 1fr) 110px; align-items: center; gap: 10px; }
+.funnel .lbl { color: var(--ink-2); }
+.funnel .bar { height: 26px; border-radius: 6px; background: var(--surface-2); overflow: hidden; }
+.funnel .bar span { display: block; height: 100%; border-radius: 6px; background: var(--s1); }
+.funnel .val { text-align: end; font-weight: 650; color: var(--ink-strong); }
+.funnel .val small { color: var(--muted); font-weight: 500; margin-inline-start: 4px; }
+.soon { border: 1px dashed var(--border); background: var(--surface-2); border-radius: 12px; padding: 18px; color: var(--ink-2); line-height: 1.7; }
+.soon ul { margin: 8px 0 0; padding-inline-start: 18px; }
 .g-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 12px; }
 .g-2 > .tablecard .scroll { max-height: 340px; }
 @media (max-width: 900px) { .g-hero, .g-2 { grid-template-columns: minmax(0, 1fr); } }
@@ -188,88 +203,137 @@ td.n, th.n { text-align: end; }
     <button class="btn" id="refresh" title="מושך עכשיו את הנתונים האחרונים משופיפיי">רענון</button>
   </div>
 
-  <div class="grid g-hero">
-    <div class="card">
-      <div class="mrr-top"><span class="mrr-label" title="כל מה שחנויות שילמו בתקופה שבחרת: מנויים ומאמרים נוספים, לפני העמלה של שופיפיי">מחזור בתקופה</span><span id="revDelta"></span></div>
-      <div class="mrr-val num" id="revVal">—</div>
-      <div class="mrr-sub" id="revSub"></div>
-      <div class="legend" id="revHeroLegend" style="margin-top:10px"></div>
-      <div class="chart" id="cRevHero"></div>
-    </div>
-    <div class="card">
-      <div class="mrr-top"><span class="mrr-label" title="הכנסה חודשית קבועה: סכום המנויים בתשלום שפעילים עכשיו, במחיר המחירון, בלי חיובי מאמרים נוספים">MRR</span><span id="mrrDelta"></span></div>
-      <div class="mrr-val num" id="mrrVal">—</div>
-      <div class="mrr-sub" id="mrrSub"></div>
-      <div class="legend" id="mrrLegend" style="margin-top:10px"></div>
-      <div class="chart" id="cMrr"></div>
-    </div>
-  </div>
-  <div class="card now-card">
-    <h2>המצב עכשיו</h2>
-    <p class="hint">נכון לעדכון האחרון, בלי קשר לתקופה שנבחרה</p>
-    <div class="now-list" id="now"></div>
-  </div>
+  <nav class="tabs" id="tabs" role="tablist">
+    <button role="tab" data-t="money" aria-selected="true">כסף</button>
+    <button role="tab" data-t="users" aria-selected="false">משתמשים</button>
+    <button role="tab" data-t="blogs" aria-selected="false">בלוגים</button>
+  </nav>
 
-  <div class="grid g-kpi" id="kpis"></div>
-
-  <div class="grid g-2">
-    <div class="card">
-      <h2>הכנסה נטו</h2>
-      <p class="hint">מה שנכנס בפועל אחרי עמלות שופיפיי, לפי <span id="revUnit"></span></p>
-      <div class="legend" id="revLegend"></div>
-      <div class="chart" id="cRev"></div>
+  <section data-tab="money">
+    <div class="grid g-hero">
+      <div class="card">
+        <div class="mrr-top"><span class="mrr-label" title="כל מה שחנויות שילמו בתקופה שבחרת: מנויים ומאמרים נוספים, לפני העמלה של שופיפיי">מחזור בתקופה</span><span id="revDelta"></span></div>
+        <div class="mrr-val num" id="revVal">—</div>
+        <div class="mrr-sub" id="revSub"></div>
+        <div class="legend" id="revHeroLegend" style="margin-top:10px"></div>
+        <div class="chart" id="cRevHero"></div>
+      </div>
+      <div class="card">
+        <div class="mrr-top"><span class="mrr-label" title="הכנסה חודשית קבועה: סכום המנויים בתשלום שפעילים עכשיו, במחיר המחירון, בלי חיובי מאמרים נוספים">MRR</span><span id="mrrDelta"></span></div>
+        <div class="mrr-val num" id="mrrVal">—</div>
+        <div class="mrr-sub" id="mrrSub"></div>
+        <div class="legend" id="mrrLegend" style="margin-top:10px"></div>
+        <div class="chart" id="cMrr"></div>
+      </div>
     </div>
-    <div class="card">
-      <h2>תנועות MRR</h2>
-      <p class="hint">מאיפה הגיע ולאן הלך ה-MRR, לפי <span id="movUnit"></span></p>
-      <div class="legend" id="movLegend"></div>
-      <div class="chart" id="cMov"></div>
+    <div class="card now-card">
+      <h2>המצב עכשיו</h2>
+      <p class="hint">נכון לעדכון האחרון, בלי קשר לתקופה שנבחרה</p>
+      <div class="now-list" id="nowMoney"></div>
     </div>
-  </div>
-
-  <div class="grid g-2">
-    <div class="card">
-      <h2>התקנות והסרות</h2>
-      <p class="hint">לפי <span id="instUnit"></span></p>
-      <div class="legend" id="instLegend"></div>
-      <div class="chart" id="cInst"></div>
+    <div class="grid g-kpi" id="kpiMoney"></div>
+    <div class="grid g-2">
+      <div class="card">
+        <h2>הכנסה נטו לפי סוג</h2>
+        <p class="hint">מה שנכנס בפועל אחרי עמלות שופיפיי, לפי <span class="unit"></span></p>
+        <div class="legend" id="revLegend"></div>
+        <div class="chart" id="cRev"></div>
+      </div>
+      <div class="card">
+        <h2>תנועות MRR</h2>
+        <p class="hint">מאיפה הגיע ולאן הלך ה-MRR, לפי <span class="unit"></span></p>
+        <div class="legend" id="movLegend"></div>
+        <div class="chart" id="cMov"></div>
+      </div>
     </div>
-    <div class="card">
-      <h2>חנויות מותקנות</h2>
-      <p class="hint">כמה חנויות מחזיקות את האפליקציה בסוף כל יום</p>
-      <div class="legend" id="baseLegend"></div>
-      <div class="chart" id="cBase"></div>
+    <div class="grid g-2">
+      <div class="card">
+        <h2>מנויים בתשלום</h2>
+        <p class="hint">כמה חנויות משלמות על תוכנית, בסוף כל יום</p>
+        <div class="chart" id="cPay"></div>
+      </div>
+      <div class="card tablecard">
+        <div class="ttl"><h2>תוכניות</h2><p class="hint" style="margin:0">חנויות מותקנות לפי התוכנית שלהן עכשיו</p></div>
+        <div class="scroll"><table id="tPlans"></table></div>
+      </div>
     </div>
-  </div>
-
-  <div class="grid g-2">
-    <div class="card">
-      <h2>מנויים בתשלום</h2>
-      <p class="hint">כמה חנויות משלמות על תוכנית, בסוף כל יום</p>
-      <div class="legend" id="payLegend"></div>
-      <div class="chart" id="cPay"></div>
+    <div class="card tablecard" style="margin-bottom:12px">
+      <div class="ttl"><h2>כמה כל לקוח משלם</h2><p class="hint" style="margin:0" id="custHint"></p></div>
+      <div class="scroll"><table id="tCust"></table></div>
     </div>
     <div class="card tablecard">
-      <div class="ttl"><h2>תוכניות</h2><p class="hint" style="margin:0">חנויות מותקנות לפי התוכנית שלהן עכשיו</p></div>
-      <div class="scroll"><table id="tPlans"></table></div>
+      <div class="ttl"><h2>הלקוחות שהכניסו הכי הרבה</h2><p class="hint" style="margin:0">הכנסה נטו מאז ההשקה, כולל חנויות שכבר הסירו</p></div>
+      <div class="scroll"><table id="tTop"></table></div>
     </div>
-  </div>
+  </section>
 
-  <div class="grid g-2">
-    <div class="card tablecard">
-      <div class="ttl"><h2>למה מסירים</h2><p class="hint" style="margin:0" id="reasonsHint"></p></div>
-      <div class="scroll"><table id="tReasons"></table></div>
+  <section data-tab="users" hidden>
+    <div class="card now-card">
+      <h2>המצב עכשיו</h2>
+      <p class="hint">נכון לעדכון האחרון, בלי קשר לתקופה שנבחרה</p>
+      <div class="now-list" id="nowUsers"></div>
     </div>
-    <div class="card tablecard">
-      <div class="ttl"><h2>פעילות אחרונה</h2><p class="hint" style="margin:0">התקנות, הסרות ושינויי תוכנית</p></div>
-      <div class="scroll"><table id="tRecent"></table></div>
+    <div class="grid g-kpi" id="kpiUsers"></div>
+    <div class="grid g-2">
+      <div class="card">
+        <h2>מה קורה לחנות אחרי שהיא מתקינה</h2>
+        <p class="hint" id="funnelHint"></p>
+        <div class="funnel" id="funnel"></div>
+      </div>
+      <div class="card tablecard">
+        <div class="ttl"><h2>כמה זמן החזיקו לפני שהסירו</h2><p class="hint" style="margin:0" id="lifeHint"></p></div>
+        <div class="scroll"><table id="tLife"></table></div>
+      </div>
     </div>
-  </div>
+    <div class="grid g-2">
+      <div class="card">
+        <h2>התקנות והסרות</h2>
+        <p class="hint">לפי <span class="unit"></span></p>
+        <div class="legend" id="instLegend"></div>
+        <div class="chart" id="cInst"></div>
+      </div>
+      <div class="card">
+        <h2>חנויות מותקנות</h2>
+        <p class="hint">כמה חנויות מחזיקות את האפליקציה בסוף כל יום</p>
+        <div class="legend" id="baseLegend"></div>
+        <div class="chart" id="cBase"></div>
+      </div>
+    </div>
+    <div class="grid g-2">
+      <div class="card tablecard">
+        <div class="ttl"><h2>למה מסירים</h2><p class="hint" style="margin:0" id="reasonsHint"></p></div>
+        <div class="scroll"><table id="tReasons"></table></div>
+      </div>
+      <div class="card tablecard">
+        <div class="ttl"><h2>פעילות אחרונה</h2><p class="hint" style="margin:0">התקנות, הסרות ושינויי תוכנית</p></div>
+        <div class="scroll"><table id="tRecent"></table></div>
+      </div>
+    </div>
+  </section>
 
-  <div class="card tablecard">
-    <div class="ttl"><h2>הלקוחות שהכניסו הכי הרבה</h2><p class="hint" style="margin:0">הכנסה נטו מאז ההשקה</p></div>
-    <div class="scroll"><table id="tTop"></table></div>
-  </div>
+  <section data-tab="blogs" hidden>
+    <div class="grid g-kpi" id="kpiBlogs"></div>
+    <div class="grid g-2">
+      <div class="card">
+        <h2>מאמרים נוספים שחויבו</h2>
+        <p class="hint">מאמרים מעבר למכסה של התוכנית, שהחנות שילמה עליהם, לפי <span class="unit"></span></p>
+        <div class="chart" id="cUsage"></div>
+      </div>
+      <div class="card">
+        <h2>עוד לא מחובר: הבלוגים עצמם</h2>
+        <div class="soon">
+          הנתונים על הבלוגים עצמם נמצאים במסד הנתונים של האפליקציה, לא בשופיפיי. כשנחבר אליו גישת קריאה בלבד, יופיע כאן:
+          <ul>
+            <li>כמה בלוגים נוצרו היום ובכל תקופה, ובכמה חנויות</li>
+            <li>איך נוצרו: אוטומטית על ידי הסוכן או ידנית על ידי הסוחר</li>
+            <li>על מה התבססו: נישה, מוצר או Search Console</li>
+            <li>כמה פורסמו וכמה נשארו טיוטה, ובאילו שפות</li>
+            <li>כמה חנויות נכנסות לאפליקציה בפועל</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <div class="foot" id="foot"></div>
 </div>
@@ -280,7 +344,14 @@ td.n, th.n { text-align: end; }
 const FN = "https://bbupowzicprgtfltyepd.supabase.co/functions/v1/autoseoStats";
 const KEY_STORE = "autoseo-board-key";
 let P = null;
-const state = { period: "30" };
+const TABS = ["money", "users", "blogs"];
+const state = { period: "30", tab: TABS.includes(new URLSearchParams(location.search).get("tab")) ? new URLSearchParams(location.search).get("tab") : "money" };
+function showTab(t) {
+  state.tab = t;
+  document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.t === t)));
+  document.querySelectorAll("section[data-tab]").forEach((s) => (s.hidden = s.dataset.tab !== t));
+  const u = new URL(location.href); u.searchParams.set("tab", t); history.replaceState(null, "", u);
+}
 
 // ---------- helpers ----------
 const $ = (id) => document.getElementById(id);
@@ -508,9 +579,10 @@ function barChart(id, labels, series, fmt, tickFmt, { stacked = true, height = 2
 const REASONS = [
   [/^$/, "לא ציינו סיבה"],
   [/scheduled_cancellation/i, "ביטול מתוזמן"],
-  [/testing multiple|plusieurs|mehrere|varias|meerdere|più app|test/i, "בודקים כמה אפליקציות"],
-  [/not using|n'utilise|nicht (mehr )?genutzt|non (la )?uso|no (la )?uso|pas utilis|not needed/i, "לא משתמשים באפליקציה כרגע"],
-  [/expensive|cher|teuer|cost|car[oa]|precio/i, "יקר מדי"],
+  [/testing multiple|plusieurs|mehrere|varias|meerdere|più app|több alkalmazás|test|测试|テスト/i, "בודקים כמה אפליקציות"],
+  [/niet tevreden/i, "חסרות יכולות / לא מרוצים"],
+  [/not using|n'utilise|nicht (mehr )?genutzt|non (la )?uso|no (la )?uso|pas utilis|not needed|gebruik.*niet|不使用|使用していない/i, "לא משתמשים באפליקציה כרגע"],
+  [/expensive|cher|teuer|cost|car[oa]|precio|duur|太贵|高い/i, "יקר מדי"],
   [/not satisfied|limited or missing|missing features|fonctionnalit|funktionen/i, "חסרות יכולות / לא מרוצים"],
   [/not working|compatible|fonctionne pas|funktioniert nicht|non funziona/i, "לא עובד או לא מתאים לחנות"],
   [/clos|pausing|fermeture|schlie|chiusura|cierre|pause/i, "החנות נסגרת או בהפסקה"],
@@ -534,15 +606,39 @@ function ago(iso) {
   const d = Math.round(m / 1440); return d === 1 ? "אתמול" : `לפני ${d} ימים`;
 }
 
+function kpiTiles(id, r, tiles) {
+  $(id).replaceChildren(...tiles.map(([k, hint, f, fmt, upGood, kind]) => {
+    const cur = f(r.start, r.end), prev = r.prev && kind !== "now" ? f(r.prev.a, r.prev.b) : null;
+    let d = null;
+    if (prev != null && isFinite(cur) && isFinite(prev)) d = kind === "abs" || kind === "abs$" ? deltaAbs(cur, prev, upGood, kind === "abs$" ? (v) => usd(v) : int) : delta(cur, prev, upGood, kind === "pts" ? "pts" : "pct");
+    return el("div", { class: "card kpi" },
+      el("div", { class: "k", title: hint }, k),
+      el("div", { class: "v num" }, isFinite(cur) ? fmt(cur) : "—"),
+      el("div", {}, d || el("span", { class: "delta flat" }, kind === "now" ? "30 הימים האחרונים" : r.prev ? "אין להשוות" : "כל התקופה"), prev != null && isFinite(prev) ? el("span", { class: "was" }, "לפני: ", numSpan(fmt(prev))) : ""));
+  }));
+}
+const gross = (a, b) => sum("rev_gross", a, b);
+const rev = (a, b) => sum("rev_sub", a, b) + sum("rev_usage", a, b) + sum("rev_adj", a, b);
+const ratio = (num, den) => (a, b) => { const d = sum(den, a, b); return d ? (sum(num, a, b) / d) * 100 : NaN; };
+
 function render() {
-  const r = range(), bs = buckets(r), last = P.days.length - 1;
-  const C = { s1: css("--s1"), s2: css("--s2"), s3: css("--s3"), s4: css("--s4"), s5: css("--s5"), muted: css("--muted"), bad: css("--bad") };
+  const r = range(), bs = buckets(r);
   $("range").textContent = `${dLabel(P.days[r.start], true)} – ${dLabel(P.days[r.end], true)}` +
     (r.prev ? (state.period === "mtd" ? " · מול אותם ימים בחודש הקודם" : " · מול התקופה שלפני") : "");
+  document.querySelectorAll(".unit").forEach((n) => (n.textContent = unitName(r)));
+  const ctx = {
+    r, bs, last: P.days.length - 1,
+    C: { s1: css("--s1"), s2: css("--s2"), s3: css("--s3"), s4: css("--s4"), s5: css("--s5") },
+    bl: bs.map((b) => ({ short: b.label, long: b.long })),
+    per: (k) => bs.map((b) => sum(k, b.a, b.b)),
+    dayLabels: [],
+  };
+  for (let i = r.start; i <= r.end; i++) ctx.dayLabels.push({ short: r.len > 400 ? mLabel(P.days[i]) : dLabel(P.days[i]), long: dLabel(P.days[i], true) });
+  ({ money: renderMoney, users: renderUsers, blogs: renderBlogs })[state.tab](ctx);
+}
 
+function renderMoney({ r, last, C, bl, per, dayLabels }) {
   // hero: turnover in the selected period
-  const gross = (a, b) => sum("rev_gross", a, b);
-  const rev = (a, b) => sum("rev_sub", a, b) + sum("rev_usage", a, b) + sum("rev_adj", a, b);
   const g = gross(r.start, r.end), gPrev = r.prev ? gross(r.prev.a, r.prev.b) : null;
   $("revVal").textContent = usd(g, 2);
   $("revDelta").replaceChildren(gPrev != null ? delta(g, gPrev) || "" : "");
@@ -551,7 +647,10 @@ function render() {
     " · מנויים ", numSpan(usd(sum("rev_sub", r.start, r.end))),
     " · מאמרים נוספים ", numSpan(usd(sum("rev_usage", r.start, r.end))),
     gPrev != null ? el("span", {}, " · לפני: ", numSpan(usd(gPrev, 2))) : ""));
-  ["revUnit", "instUnit", "movUnit"].forEach((id) => ($(id).textContent = unitName(r)));
+  const grossPer = per("rev_gross"), netPer = ctxNet(per);
+  legend("revHeroLegend", [{ name: "מחזור לפי " + unitName(r), color: C.s1 }]);
+  barChart("cRevHero", bl, [{ name: "מחזור", color: C.s1, values: grossPer }], (v) => usd(v, 2), usdShort,
+    { height: 190, extra: (i) => [{ name: "נטו אחרי עמלות", color: "transparent", value: usd(netPer[i], 2) }] });
 
   // hero MRR
   const mrrNow = at("mrr", last), mrrStart = at("mrr", r.start - 1);
@@ -559,57 +658,33 @@ function render() {
   const cmp = state.period !== "all";
   $("mrrDelta").replaceChildren(cmp ? delta(mrrNow, mrrStart) || "" : "");
   $("mrrSub").replaceChildren(cmp ? el("span", {}, "בתחילת התקופה: ", numSpan(usd(mrrStart, 2)), " · ARR: ", numSpan(usd(mrrNow * 12, 0))) : el("span", {}, "ARR: ", numSpan(usd(mrrNow * 12, 0))));
-  const dayLabels = []; for (let i = r.start; i <= r.end; i++) dayLabels.push({ short: r.len > 400 ? mLabel(P.days[i]) : dLabel(P.days[i]), long: dLabel(P.days[i], true) });
-  const mrrVals = P.series.mrr.slice(r.start, r.end + 1);
   legend("mrrLegend", [{ name: "MRR בסוף כל יום", color: C.s1 }], true);
-  lineChart("cMrr", dayLabels, [{ name: "MRR", color: C.s1, values: mrrVals, area: true }], (v) => usd(v, 2), usdShort, 190);
+  lineChart("cMrr", dayLabels, [{ name: "MRR", color: C.s1, values: P.series.mrr.slice(r.start, r.end + 1), area: true }], (v) => usd(v, 2), usdShort, 190);
 
   // now
   const paying = at("paying", last);
-  const life = P.totals.lifetime_net;
-  const pz = P.plans.find((p) => p.plan === "Free");
-  $("now").replaceChildren(
-    nowItem("מנויים משלמים", int(paying), pz ? `ועוד ${int(pz.shops)} בתוכנית החינמית` : ""),
-    nowItem("הכנסה ממוצעת למשלם", paying ? usd(mrrNow / paying, 2) : "—", "לחודש (ARPU)"),
-    nowItem("חנויות מותקנות", int(at("installed", last)), `${int(at("open_installed", last))} מהן חנויות פתוחות`),
-    nowItem("נכנס מאז ההשקה", usd(life, 0), "נטו, מנויים ומאמרים נוספים"),
+  const payers30 = P.customers.filter((x) => x.rev30 > 0);
+  const rev30 = payers30.reduce((t, x) => t + x.rev30, 0);
+  $("nowMoney").replaceChildren(
+    nowItem("מנויים משלמים", int(paying), "חנויות עם תוכנית בתשלום פעילה"),
+    nowItem("ARPU", paying ? usd(mrrNow / paying, 2) : "—", "MRR ממוצע לכל מנוי משלם"),
+    nowItem("ממוצע לחנות משלמת", payers30.length ? usd(rev30 / payers30.length, 2) : "—", `נטו ב-30 יום, כולל מאמרים נוספים (${int(payers30.length)} חנויות)`),
+    nowItem("ARR", usd(mrrNow * 12, 0), "MRR כפול 12"),
+    nowItem("נכנס מאז ההשקה", usd(P.totals.lifetime_net, 0), "נטו, מנויים ומאמרים נוספים"),
   );
 
-  // KPIs for the period
-  const pr = r.prev;
-  const conv = (a, b) => { const c = sum("cohort_installs", a, b); return c ? (sum("cohort_paid", a, b) / c) * 100 : NaN; };
   const churnRate = (a, b) => { const base = at("paying", a - 1) + sum("new_paid", a, b); return base ? (sum("churned_paid", a, b) / base) * 100 : NaN; };
-  const tiles = [
+  kpiTiles("kpiMoney", r, [
     ["מחזור ממוצע ליום", "המחזור בתקופה חלקי מספר הימים בה", (a, b) => gross(a, b) / (b - a + 1), (v) => usd(v, 2), true],
-    ["הכנסה ממנויים", "חיובי התוכניות החודשיות והשנתיות", (a, b) => sum("rev_sub", a, b), usd, true],
-    ["הכנסה ממאמרים נוספים", "חיובי שימוש: מאמרים מעבר למכסה", (a, b) => sum("rev_usage", a, b), usd, true],
-    ["התקנות", "כל התקנה בתקופה, כולל חנויות שחזרו", (a, b) => sum("installs", a, b), int, true],
-    ["הסרות", "חנויות שהסירו את האפליקציה", (a, b) => sum("uninstalls", a, b), int, false],
-    ["התקנות נטו", "התקנות פחות הסרות", (a, b) => sum("installs", a, b) - sum("uninstalls", a, b), (v) => (v > 0 ? "+" : "") + int(v), true, "abs"],
+    ["הכנסה ממנויים", "נטו, חיובי התוכניות החודשיות והשנתיות", (a, b) => sum("rev_sub", a, b), usd, true],
+    ["הכנסה ממאמרים נוספים", "נטו, חיובים על מאמרים מעבר למכסה", (a, b) => sum("rev_usage", a, b), usd, true],
+    ["שינוי נטו ב-MRR", "MRR שנוסף (חדשים, שדרוגים, חזרו) פחות MRR שאבד (עזבו, שנמוכים)", (a, b) => ["mrr_new", "mrr_expansion", "mrr_reactivation", "mrr_contraction", "mrr_churn"].reduce((t, k) => t + sum(k, a, b), 0), (v) => (v > 0 ? "+" : "") + usd(v), true, "abs$"],
     ["משלמים חדשים", "חנויות שהתחילו לשלם בפעם הראשונה", (a, b) => sum("new_paid", a, b), int, true],
     ["משלמים שעזבו", "מנויים בתשלום שהסתיימו", (a, b) => sum("churned_paid", a, b), int, false],
-    ["שינוי נטו ב-MRR", "MRR שנוסף (חדשים, שדרוגים, חזרו) פחות MRR שאבד (עזבו, שנמוכים)", (a, b) => ["mrr_new", "mrr_expansion", "mrr_reactivation", "mrr_contraction", "mrr_churn"].reduce((t, k) => t + sum(k, a, b), 0), (v) => (v > 0 ? "+" : "") + usd(v), true, "abs$"],
-    ["המרה לתשלום", "מתוך החנויות שהתקינו בפעם הראשונה בתקופה: כמה כבר שילמו. חנויות שהתקינו לאחרונה עוד לא הספיקו", conv, (v) => pct(v), true, "pts"],
-    ["מאמרים נוספים שחויבו", "כמה פעמים חנויות שילמו על מאמר מעבר למכסה", (a, b) => sum("usage_count", a, b), int, true],
     ["נטישת משלמים", "משלמים שעזבו מתוך המשלמים שהיו בתקופה", churnRate, (v) => pct(v), false, "pts"],
-  ];
-  $("kpis").replaceChildren(...tiles.map(([k, hint, f, fmt, upGood, kind]) => {
-    const cur = f(r.start, r.end), prev = pr ? f(pr.a, pr.b) : null;
-    let d = null;
-    if (prev != null && isFinite(cur) && isFinite(prev)) d = kind === "abs" || kind === "abs$" ? deltaAbs(cur, prev, upGood, kind === "abs$" ? (v) => usd(v) : int) : delta(cur, prev, upGood, kind === "pts" ? "pts" : "pct");
-    return el("div", { class: "card kpi" },
-      el("div", { class: "k", title: hint }, k),
-      el("div", { class: "v num" }, isFinite(cur) ? fmt(cur) : "—"),
-      el("div", {}, d || el("span", { class: "delta flat" }, r.prev ? "אין להשוות" : "כל התקופה"), prev != null && isFinite(prev) ? el("span", { class: "was" }, "לפני: ", numSpan(fmt(prev))) : ""));
-  }));
+    ["MRR שאבד", "MRR של מנויים שעזבו או ירדו לתוכנית זולה יותר", (a, b) => -(sum("mrr_churn", a, b) + sum("mrr_contraction", a, b)), (v) => usd(v), false],
+  ]);
 
-  // bucketed charts
-  const bl = bs.map((b) => ({ short: b.label, long: b.long }));
-  const per = (k) => bs.map((b) => sum(k, b.a, b.b));
-  const grossPer = per("rev_gross"), netPer = bs.map((b) => rev(b.a, b.b));
-  legend("revHeroLegend", [{ name: "מחזור לפי " + unitName(r), color: C.s1 }]);
-  barChart("cRevHero", bl, [{ name: "מחזור", color: C.s1, values: grossPer }], (v) => usd(v, 2), usdShort,
-    { height: 190, extra: (i) => [{ name: "נטו אחרי עמלות", color: "transparent", value: usd(netPer[i], 2) }] });
   const revSeries = [
     { name: "מנויים", color: C.s1, values: per("rev_sub") },
     { name: "מאמרים נוספים", color: C.s2, values: per("rev_usage") },
@@ -617,11 +692,6 @@ function render() {
   ];
   legend("revLegend", revSeries);
   barChart("cRev", bl, revSeries, (v) => usd(v, 2), usdShort, { totalName: "סה״כ" });
-
-  const instSeries = [{ name: "התקנות", color: C.s1, values: per("installs") }, { name: "הסרות", color: C.s2, values: per("uninstalls") }];
-  legend("instLegend", instSeries);
-  barChart("cInst", bl, instSeries, int, (v) => int(v), { stacked: false });
-
   const movSeries = [
     { name: "חדשים", color: C.s1, values: per("mrr_new") },
     { name: "שדרוגים", color: C.s3, values: per("mrr_expansion") },
@@ -631,22 +701,84 @@ function render() {
   ];
   legend("movLegend", movSeries);
   barChart("cMov", bl, movSeries, (v) => usd(v, 2), usdShort, { totalName: "שינוי נטו" });
+  lineChart("cPay", dayLabels, [{ name: "משלמים", color: C.s1, values: P.series.paying.slice(r.start, r.end + 1), area: true }], int, (v) => int(v));
 
+  renderPlans(mrrNow);
+  renderCustomers();
+  renderTop();
+}
+const ctxNet = (per) => { const a = per("rev_sub"), b = per("rev_usage"), c = per("rev_adj"); return a.map((v, i) => v + b[i] + c[i]); };
+
+function renderUsers({ r, last, C, bl, per, dayLabels }) {
+  const installed = at("installed", last), open = at("open_installed", last);
+  const free = (P.plans.find((p) => p.plan === "Free") || {}).shops || 0;
+  const none = P.never_approved_now ?? 0;
+  $("nowUsers").replaceChildren(
+    nowItem("חנויות מותקנות", int(installed), `${int(open)} מהן חנויות פתוחות`),
+    nowItem("בלי תוכנית פעילה", int(none), `${pct((none / installed) * 100, 0)} מהמותקנות: אין להן אף תוכנית, גם לא החינמית`),
+    nowItem("בתוכנית החינמית", int(free), `${pct((free / installed) * 100, 0)} מהמותקנות`),
+    nowItem("משלמות", int(at("paying", last)), `${pct((at("paying", last) / installed) * 100, 1)} מהמותקנות`),
+  );
+  const growth = (a, b) => { const base = at("installed", a - 1); return base ? ((sum("installs", a, b) - sum("uninstalls", a, b)) / base) * 100 : NaN; };
+  kpiTiles("kpiUsers", r, [
+    ["התקנות", "כל התקנה בתקופה, כולל חנויות שחזרו", (a, b) => sum("installs", a, b), int, true],
+    ["חנויות חדשות", "חנויות שהתקינו בפעם הראשונה", (a, b) => sum("first_installs", a, b), int, true],
+    ["הסרות", "חנויות שהסירו את האפליקציה", (a, b) => sum("uninstalls", a, b), int, false],
+    ["צמיחה בתקופה", "התקנות פחות הסרות, מתוך החנויות שהיו מותקנות בתחילת התקופה", growth, (v) => (v > 0 ? "+" : "") + pct(v), true, "pts"],
+    ["אישרו תוכנית", "מתוך החנויות החדשות בתקופה: כמה אישרו תוכנית כלשהי, כולל החינמית", ratio("cohort_approved", "cohort_installs"), (v) => pct(v), true, "pts"],
+    ["הסירו תוך 24 שעות", "מתוך החנויות החדשות בתקופה: כמה הסירו ביום הראשון", ratio("cohort_bounce", "cohort_installs"), (v) => pct(v), false, "pts"],
+    ["המרה לתשלום", "מתוך החנויות החדשות בתקופה: כמה כבר שילמו. חנויות שהתקינו לאחרונה עוד לא הספיקו", ratio("cohort_paid", "cohort_installs"), (v) => pct(v), true, "pts"],
+    ["חנויות שנסגרו", "חנויות שסגרו את החנות בשופיפיי בזמן שהאפליקציה מותקנת", (a, b) => sum("closures", a, b), int, false],
+  ]);
+
+  // funnel for the stores that installed for the first time in the period
+  const n = sum("cohort_installs", r.start, r.end);
+  const steps = [
+    ["התקינו", n, C.s1],
+    ["אישרו תוכנית", sum("cohort_approved", r.start, r.end), C.s1],
+    ["שילמו", sum("cohort_paid", r.start, r.end), C.s3],
+    ["הסירו תוך 24 שעות", sum("cohort_bounce", r.start, r.end), C.s2],
+  ];
+  $("funnelHint").textContent = `${int(n)} חנויות שהתקינו בפעם הראשונה בתקופה, ומה הן עשו עד היום`;
+  $("funnel").replaceChildren(...steps.map(([k, v, c]) => el("div", { class: "row" },
+    el("div", { class: "lbl" }, k),
+    el("div", { class: "bar" }, el("span", { style: `width:${n ? Math.max(0.5, (v / n) * 100) : 0}%;background:${c}` })),
+    el("div", { class: "val num" }, int(v), el("small", {}, n ? pct((v / n) * 100, 0) : "")))));
+
+  // how long stores kept the app before uninstalling
+  const B = [["פחות משעה", 0, 1], ["1–24 שעות", 1, 24], ["1–7 ימים", 24, 168], ["7–30 ימים", 168, 720], ["חודש עד 3 חודשים", 720, 2160], ["מעל 3 חודשים", 2160, Infinity]];
+  const life = B.map(() => 0); let lt = 0;
+  for (const [i, , h] of P.uninstall_reasons) if (i >= r.start && i <= r.end && h >= 0) { const k = B.findIndex(([, a, b]) => h >= a && h < b); if (k >= 0) { life[k]++; lt++; } }
+  $("lifeHint").textContent = `${int(lt)} הסרות בתקופה, לפי כמה זמן האפליקציה הייתה מותקנת`;
+  const mx = Math.max(1, ...life);
+  $("tLife").replaceChildren(el("tbody", {}, B.map(([k], j) => el("tr", {}, el("td", {}, k),
+    el("td", { class: "n" }, el("div", { class: "bar-cell" }, el("span", { class: "num" }, `${int(life[j])} · ${lt ? pct((life[j] / lt) * 100, 0) : "0%"}`),
+      el("span", { class: "track" }, el("span", { class: "fill", style: `display:block;background:var(--s2);width:${(life[j] / mx) * 100}%` }))))))));
+
+  const instSeries = [{ name: "התקנות", color: C.s1, values: per("installs") }, { name: "הסרות", color: C.s2, values: per("uninstalls") }];
+  legend("instLegend", instSeries);
+  barChart("cInst", bl, instSeries, int, (v) => int(v), { stacked: false });
   const baseSeries = [
     { name: "חנויות מותקנות", color: C.s1, values: P.series.installed.slice(r.start, r.end + 1) },
     { name: "מהן חנויות פתוחות", color: C.s3, values: P.series.open_installed.slice(r.start, r.end + 1) },
   ];
   legend("baseLegend", baseSeries, true);
   lineChart("cBase", dayLabels, baseSeries, int, (v) => int(v));
-  const paySeries = [{ name: "משלמים", color: C.s1, values: P.series.paying.slice(r.start, r.end + 1), area: true }];
-  $("payLegend").replaceChildren();
-  lineChart("cPay", dayLabels, paySeries, int, (v) => int(v));
-
-  renderPlans(mrrNow);
   renderReasons(r);
-  renderTop();
   renderRecent();
 }
+
+function renderBlogs({ r, C, bl, per }) {
+  const payers = P.customers.filter((x) => x.usage30 > 0).length;
+  kpiTiles("kpiBlogs", r, [
+    ["מאמרים נוספים שחויבו", "מאמרים מעבר למכסה שחנויות שילמו עליהם", (a, b) => sum("usage_count", a, b), int, true],
+    ["הכנסה מהם", "נטו, אחרי עמלות שופיפיי", (a, b) => sum("rev_usage", a, b), usd, true],
+    ["ממוצע ליום", "מאמרים נוספים שחויבו ביום", (a, b) => sum("usage_count", a, b) / (b - a + 1), (v) => v.toLocaleString("en-US", { maximumFractionDigits: 1 }), true],
+    ["חנויות שקנו מאמרים נוספים", "ב-30 הימים האחרונים, בלי קשר לתקופה", () => payers, int, true, "now"],
+  ]);
+  barChart("cUsage", bl, [{ name: "מאמרים נוספים", color: C.s1, values: per("usage_count") }], int, (v) => int(v));
+}
+
 function deltaAbs(cur, prev, upGood, fmt = int) {
   const d = cur - prev; if (Math.abs(d) < 0.005) return el("span", { class: "delta flat" }, "— 0");
   const good = (d > 0) === upGood;
@@ -668,6 +800,22 @@ function renderPlans(mrrNow) {
   );
   const noPlan = Math.max(0, P.series.installed[P.days.length - 1] - P.plans.reduce((a, p) => a + p.shops, 0));
   if (noPlan) t.querySelector("tbody").append(el("tr", {}, el("td", {}, el("span", { class: "dom" }, "לא אישרו אף תוכנית")), el("td", { class: "n num" }, int(noPlan)), el("td", { class: "n num" }, "0"), el("td", { class: "n" }, el("div", { class: "bar-cell" }, el("span", { class: "num" }, "$0.00"), el("span", { class: "track" })))));
+}
+function renderCustomers() {
+  const rows = P.customers;
+  $("custHint").textContent = `${int(rows.length)} חנויות שמשלמות עכשיו או ששילמו משהו ב-30 הימים האחרונים`;
+  $("tCust").replaceChildren(
+    el("thead", {}, el("tr", {}, el("th", {}, "חנות"), el("th", {}, "תוכנית"), el("th", { class: "n" }, "MRR"), el("th", { class: "n" }, "שילמה ב-30 יום"),
+      el("th", { class: "n" }, "מאמרים נוספים ב-30 יום"), el("th", { class: "n" }, "משלמת מאז"), el("th", { class: "n" }, "נכנס סה״כ"))),
+    el("tbody", {}, rows.map((x) => el("tr", {},
+      el("td", {}, el("div", {}, x.name || x.shop), el("div", { class: "dom num" }, x.shop.replace(".myshopify.com", ""))),
+      el("td", {}, !x.installed ? el("span", { class: "badge r" }, "הסירו") : x.mrr > 0 ? el("span", { class: "badge g" }, planHe(x.plan)) : el("span", { class: "badge" }, planHe(x.plan || "בלי תוכנית"))),
+      el("td", { class: "n num" }, x.mrr ? usd(x.mrr, 2) : "—"),
+      el("td", { class: "n num" }, usd(x.rev30, 2)),
+      el("td", { class: "n num" }, x.usage30 ? int(x.usage30) : "—"),
+      el("td", { class: "n num" }, x.paying_since ? dLabel(x.paying_since, true) : "—"),
+      el("td", { class: "n num" }, usd(x.revenue, 2))))),
+  );
 }
 function renderReasons(r) {
   const counts = new Map();
@@ -736,6 +884,12 @@ function init() {
     document.querySelectorAll("#seg button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
     render();
   });
+  showTab(state.tab);
+  $("tabs").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-t]"); if (!b) return;
+    showTab(b.dataset.t);
+    if (P) render();
+  });
   $("refresh").addEventListener("click", async () => {
     $("refresh").disabled = true; $("refresh").textContent = "מושך משופיפיי…";
     await load(true);
@@ -744,7 +898,7 @@ function init() {
   // Charts are drawn to the card's pixel width; redraw when the width changes.
   let rt, lastW = 0;
   new ResizeObserver(() => {
-    const w = $("cMrr").clientWidth;
+    const w = $("app").clientWidth;
     if (!P || Math.abs(w - lastW) < 2) return;
     lastW = w; clearTimeout(rt); rt = setTimeout(render, 120);
   }).observe(document.body);
