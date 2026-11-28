@@ -1453,7 +1453,7 @@ function emChart(a) {
     { name: "הקליקו", color: C.s4, values: days.map((d) => map[d]?.clicked || 0) },
   ];
   legend("emLegend", series);
-  barChart("emChart", days.map((d) => ({ short: dLabel(d), long: dLabel(d, true) })), series, int, (v) => int(v), { stacked: false, height: 200 });
+  barChart("emChart", days.map((d) => ({ short: dLabel(d), long: dLabel(d, true) })), series, int, (v) => (Number.isInteger(v) ? int(v) : ""), { stacked: false, height: 200 });
 }
 
 window.EmailsUI = { open: emOpen };
