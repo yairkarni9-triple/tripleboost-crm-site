@@ -1027,7 +1027,7 @@ function act(title, desc, fields, button, onRun, opts = {}) {
     btn.disabled = true; msg.replaceChildren();
     try {
       const out = await onRun(v);
-      msg.className = "msg ok"; msg.replaceChildren(el("div", {}, out.message || "בוצע"));
+      msg.className = "msg ok"; msg.replaceChildren(el("div", {}, (opts.done && opts.done(out, v)) || out.message || "בוצע"));
       const url = out.data?.confirmation_url;
       if (url) {
         const inp = el("input", { value: url, readonly: true });
@@ -1079,13 +1079,13 @@ function renderStore() {
   const run = (action) => (v) => api("action", {}, { id, action, ...v });
   const acts = el("div", { class: "acts" },
     act("בלוגים במתנה", "בלוגים נוספים מעבר למכסה של התוכנית. הם מנוצלים לפני כל חיוב על מאמר נוסף.", f1, "לתת", run("bonus-posts"),
-      { confirm: (v) => `לתת ${v.posts} בלוגים במתנה ל-${name}?` }),
+      { confirm: (v) => `לתת ${v.posts} בלוגים במתנה ל-${name}?`, done: (o) => `ניתנו בלוגים במתנה. יתרה עכשיו: ${o.data?.bonus_posts}` }),
     act("ימים בלי חיוב על מאמרים", "עד התאריך הזה החנות לא מחויבת על מאמרים מעבר למכסה. מוסיפים ימים מהיום, או מהסוף הנוכחי אם הוא עוד לא עבר.", f2, "להוסיף", run("free-days"),
-      { confirm: (v) => `להוסיף ${v.days} ימים בלי חיוב ל-${name}?` }),
+      { confirm: (v) => `להוסיף ${v.days} ימים בלי חיוב ל-${name}?`, done: (o) => `עד ${fmtDate(o.data?.free_days_ends_on)} אין חיוב על מאמרים נוספים` }),
     act("מנוי בתשלום בחינם", "יוצר בשופיפיי מנוי בהנחה של 100% למספר חודשים. הסוחר מאשר אותו בלחיצה אחת, ואחרי החודשים האלה הוא מתחדש במחיר הרגיל.", f3, "ליצור קישור", run("free-plan"),
-      { disabled: !!shopifyBlock || !paidPlans.length, disabledWhy: shopifyBlock, confirm: (v) => `ליצור ל-${name} מנוי ${planSel.el.selectedOptions[0]?.textContent} בחינם ל-${v.months} חודשים? הסוחר יצטרך לאשר.` }),
+      { disabled: !!shopifyBlock || !paidPlans.length, disabledWhy: shopifyBlock, confirm: (v) => `ליצור ל-${name} מנוי ${planSel.el.selectedOptions[0]?.textContent} בחינם ל-${v.months} חודשים? הסוחר יצטרך לאשר.`, done: () => "הקישור נוצר" }),
     act("הארכת תקופת ניסיון", "מוסיף ימי ניסיון למנוי שנמצא עכשיו בתקופת ניסיון בשופיפיי.", f4, "להאריך", run("extend-trial"),
-      { disabled: !!shopifyBlock, disabledWhy: shopifyBlock, confirm: (v) => `להאריך את תקופת הניסיון של ${name} ב-${v.days} ימים?` }),
+      { disabled: !!shopifyBlock, disabledWhy: shopifyBlock, confirm: (v) => `להאריך את תקופת הניסיון של ${name} ב-${v.days} ימים?`, done: (o, v) => `תקופת הניסיון הוארכה ב-${v.days} ימים` }),
     act("קרדיט", "זיכוי בדולרים שמתקזז מהחיובים הבאים של החנות על האפליקציה.", f5, "לתת קרדיט", run("credit"),
       { money: true, disabled: !!moneyBlock, disabledWhy: moneyBlock, confirm: (v) => `לתת ל-${name} קרדיט של $${v.amount}${s.is_dev_store ? " (בדיקה)" : ""}? לא ניתן לבטל.` }),
     act("החזר כספי", "החזר בסכום שבוחרים. שופיפיי מחזירה אותו כזיכוי שמתקזז מהחיובים הבאים, לא לכרטיס האשראי.", f6, "להחזיר", run("refund"),
