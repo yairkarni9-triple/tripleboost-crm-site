@@ -1098,8 +1098,8 @@ function summary() {
     el("div", { class: "dom num" }, s.shop, s.email ? " · " + s.email : ""),
     el("div", { class: "kv" },
       kv("תוכנית", (s.plan === "Free" ? "חינם" : s.plan || "בלי תוכנית") + (Number(s.plan_amount) > 0 ? ` · ${usd(s.plan_amount)}` : "")),
-      kv("שילמה סה״כ", d.paid ? usd(d.paid.total) : "—"),
-      kv("ב-30 יום", d.paid ? usd(d.paid.last_30d) : "—"),
+      kv("שילמה סה״כ", card.paid ? usd(card.paid.total) : "—"),
+      kv("ב-30 יום", card.paid ? usd(card.paid.last_30d) : "—"),
       kv("בלוגים החודש", `${s.posts_this_month} / ${s.plan_post_limit}` + (s.bonus_posts ? ` (+${s.bonus_posts} במתנה)` : "")),
       kv("בלי חיוב על מאמרים", s.in_free_days ? "עד " + fmtDate(s.free_days_ends_on) : "לא"),
       kv("הותקנה", fmtDate(s.installed_at))),
@@ -1124,8 +1124,8 @@ function blocks() {
   const s = card.data.store, prod = CFG.env === "prod";
   const shopify = !s.installed ? "האפליקציה לא מותקנת בחנות" : null;
   return {
-    credit: !prod ? "רק באפליקציה האמיתית" : shopify || (!card.data.partner_shop ? "החנות לא נמצאה בפרטנרס" : null),
-    refund: !prod ? "רק באפליקציה האמיתית" : shopify || (!card.data.partner_shop ? "החנות לא נמצאה בפרטנרס" : null),
+    credit: !prod ? "רק באפליקציה האמיתית" : shopify || (!card.partner_shop ? "החנות לא נמצאה בפרטנרס" : null),
+    refund: !prod ? "רק באפליקציה האמיתית" : shopify || (!card.partner_shop ? "החנות לא נמצאה בפרטנרס" : null),
     "bonus-posts": null, "free-days": null,
     "free-plan": shopify || (!(card.data.plans || []).length ? "אין תוכניות בתשלום" : null),
     "extend-trial": shopify || (!(card.data.subscription?.subscriptions || []).some((x) => x.trial_days > 0) ? "אין מנוי בתקופת ניסיון" : null),
