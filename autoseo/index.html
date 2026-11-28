@@ -1015,14 +1015,14 @@ async function api(op, params = {}, body) {
   const u = new URL(SUP); u.searchParams.set("op", op); for (const [k, v] of Object.entries(params)) u.searchParams.set(k, v);
   const res = await fetch(u, { method: body ? "POST" : "GET", headers: { Authorization: "Bearer " + session.access_token, "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined });
   const out = await res.json().catch(() => ({}));
-  if (res.status === 403) throw Object.assign(new Error("forbidden"), { code: 403 });
+  if (res.status === 403) throw Object.assign(new Error("forbidden"), { code: 403, email: out.email || session.user?.email || "" });
   if (!res.ok || out.status === false) throw new Error(out.message || out.error || "HTTP " + res.status);
   return out;
 }
 function steps(n) { document.querySelectorAll("#supSteps li").forEach((li) => { const s = +li.dataset.s; li.className = s < n ? "done" : s === n ? "on" : ""; }); }
-function gate(msg, link) {
+function gate(msg, link, extra) {
   $("supGate").hidden = false; $("supApp").hidden = true;
-  $("supGate").replaceChildren(el("div", {}, msg), link ? el("div", { style: "margin-top:8px" }, el("a", { href: link, target: "_blank", rel: "noopener" }, "להתחברות ל-CRM")) : "");
+  $("supGate").replaceChildren(el("div", {}, msg), extra || "", link ? el("div", { style: "margin-top:8px" }, el("a", { href: link, target: "_blank", rel: "noopener" }, "להתחברות ל-CRM")) : "");
 }
 
 async function open() {
@@ -1033,7 +1033,10 @@ async function open() {
   catch (e) {
     started = false;
     if (e.code === 401) return gate("כדי לנהל לקוחות צריך להיות מחובר ל-CRM כמנהל. מתחברים ב-CRM בדפדפן הזה, חוזרים לכאן ומרעננים.", "https://crm.tripleboost.net/");
-    if (e.code === 403) return gate("החשבון המחובר ל-CRM אינו מנהל, ולכן אין גישה לשירות לקוחות.");
+    if (e.code === 403) return gate(`הדפדפן הזה מחובר ל-CRM בתור ${e.email || "חשבון אחר"}, וזה לא חשבון מנהל. שירות לקוחות פתוח רק למנהלים.`, null,
+      el("div", { class: "btns", style: "margin-top:10px" },
+        el("button", { class: "btn-p", onclick: async () => { await sb.auth.signOut(); location.href = "https://crm.tripleboost.net/login"; } }, "התנתקות והתחברות עם חשבון המנהל"),
+        el("span", { class: "dom", style: "align-self:center" }, "או לפתוח את הקישור בפרופיל הכרום שבו אתה מחובר ל-CRM כמנהל")));
     return gate("שגיאה: " + e.message);
   }
   $("supGate").hidden = true; $("supApp").hidden = false;
