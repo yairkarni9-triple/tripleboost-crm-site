@@ -993,7 +993,7 @@ init();
 // Uses the visitor's CRM sign-in (same site, same Supabase session) and the autoseoSupport edge function,
 // which allows CRM admins only. Texts from the app/Shopify are inserted as text, never as HTML.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.86.0";
-const sb = createClient("https://bbupowzicprgtfltyepd.supabase.co", "sb_publishable_no7KUvhAdID-VYLP8jSzlg_C3CDEiG7", { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false } });
+const sb = createClient("https://bbupowzicprgtfltyepd.supabase.co", "sb_publishable_no7KUvhAdID-VYLP8jSzlg_C3CDEiG7", { auth: { flowType: "pkce", persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
 const SUP = "https://bbupowzicprgtfltyepd.supabase.co/functions/v1/autoseoSupport";
 const $ = (id) => document.getElementById(id);
 function el(tag, attrs = {}, ...kids) {
@@ -1020,6 +1020,9 @@ async function api(op, params = {}, body) {
   return out;
 }
 function steps(n) { document.querySelectorAll("#supSteps li").forEach((li) => { const s = +li.dataset.s; li.className = s < n ? "done" : s === n ? "on" : ""; }); }
+// Google sign-in right from this page; Google sends the visitor back to the support tab.
+const signIn = () => sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: location.origin + "/autoseo/?tab=support", queryParams: { prompt: "select_account" } } });
+const signInBtn = (label) => el("button", { class: "btn-p", onclick: signIn }, label);
 function gate(msg, link, extra) {
   $("supGate").hidden = false; $("supApp").hidden = true;
   $("supGate").replaceChildren(el("div", {}, msg), extra || "", link ? el("div", { style: "margin-top:8px" }, el("a", { href: link, target: "_blank", rel: "noopener" }, "להתחברות ל-CRM")) : "");
@@ -1032,11 +1035,11 @@ async function open() {
   try { CFG = await api("config"); }
   catch (e) {
     started = false;
-    if (e.code === 401) return gate("כדי לנהל לקוחות צריך להיות מחובר ל-CRM כמנהל. מתחברים ב-CRM בדפדפן הזה, חוזרים לכאן ומרעננים.", "https://crm.tripleboost.net/");
-    if (e.code === 403) return gate(`הדפדפן הזה מחובר ל-CRM בתור ${e.email || "חשבון אחר"}, וזה לא חשבון מנהל. שירות לקוחות פתוח רק למנהלים.`, null,
+    if (e.code === 401) return gate("כדי לנהל לקוחות צריך להתחבר עם חשבון Google מורשה.", null,
+      el("div", { class: "btns", style: "margin-top:10px" }, signInBtn("התחברות עם Google")));
+    if (e.code === 403) return gate(`הדפדפן הזה מחובר בתור ${e.email || "חשבון אחר"}, ולחשבון הזה אין גישה לשירות לקוחות.`, null,
       el("div", { class: "btns", style: "margin-top:10px" },
-        el("button", { class: "btn-p", onclick: async () => { await sb.auth.signOut(); location.href = "https://crm.tripleboost.net/login"; } }, "התנתקות והתחברות עם חשבון המנהל"),
-        el("span", { class: "dom", style: "align-self:center" }, "או לפתוח את הקישור בפרופיל הכרום שבו אתה מחובר ל-CRM כמנהל")));
+        el("button", { class: "btn-p", onclick: async () => { await sb.auth.signOut(); signIn(); } }, "התחברות עם חשבון אחר")));
     return gate("שגיאה: " + e.message);
   }
   $("supGate").hidden = true; $("supApp").hidden = false;
