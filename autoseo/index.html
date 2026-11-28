@@ -114,26 +114,51 @@ section[data-tab][hidden] { display: none; }
 .funnel .val small { color: var(--muted); font-weight: 500; margin-inline-start: 4px; }
 .soon { border: 1px dashed var(--border); background: var(--surface-2); border-radius: 12px; padding: 18px; color: var(--ink-2); line-height: 1.7; }
 .soon ul { margin: 8px 0 0; padding-inline-start: 18px; }
-.sup-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
-.sup-bar input { flex: 1; max-width: 460px; font: inherit; font-size: 14px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); }
-.sup-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); align-items: start; }
+.sup-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.steps { list-style: none; display: flex; gap: 6px; padding: 0; margin: 0 0 12px; flex-wrap: wrap; }
+.steps li { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); font-weight: 600; }
+.steps li b { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); font-size: 11px; }
+.steps li.on { color: var(--ink-strong); border-color: var(--ink-strong); } .steps li.on b { background: var(--ink-strong); color: var(--surface); }
+.steps li.done { color: var(--good); } .steps li.done b { background: var(--good); color: #fff; }
+.sup-grid { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.6fr); align-items: start; margin-bottom: 12px; }
 @media (max-width: 900px) { .sup-grid { grid-template-columns: minmax(0, 1fr); } }
-#supRes tr { cursor: pointer; }
-#supRes tr:hover td, #supRes tr.sel td { background: var(--surface-2); }
-.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px 16px; margin: 10px 0 4px; }
+.pick input[type=search] { width: 100%; font: inherit; font-size: 14px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); }
+.pick-tabs { display: flex; gap: 4px; margin: 10px 0 6px; }
+.pick-tabs button { border: 1px solid var(--border); background: var(--surface); border-radius: 999px; padding: 4px 10px; cursor: pointer; color: var(--ink-2); font-size: 12px; }
+.pick-tabs button[aria-pressed="true"] { background: var(--ink-strong); color: var(--surface); border-color: var(--ink-strong); }
+.pick-list { max-height: 520px; overflow-y: auto; margin: 0 -8px; }
+.pick-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 8px; border-radius: 8px; cursor: pointer; }
+.pick-item:hover { background: var(--surface-2); } .pick-item.sel { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--ink-strong); }
+.pick-item .nm { font-weight: 600; color: var(--ink-strong); } .pick-item .meta { text-align: end; font-size: 12px; color: var(--ink-2); white-space: nowrap; }
+.sum { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.sum h2 { font-size: 17px; margin: 0; }
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px 14px; margin: 12px 0 2px; }
 .kv .k { color: var(--ink-2); font-size: 12px; } .kv .v { font-weight: 650; color: var(--ink-strong); }
-.acts { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin: 12px 0; }
-.act { border: 1px solid var(--border); border-radius: 12px; padding: 12px; background: var(--surface); display: flex; flex-direction: column; gap: 8px; }
-.act h3 { margin: 0; font-size: 13px; color: var(--ink-strong); } .act p { margin: 0; color: var(--ink-2); font-size: 12px; }
-.act .row { display: flex; gap: 6px; flex-wrap: wrap; }
-.act input, .act select { font: inherit; padding: 7px 9px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); min-width: 0; }
-.act input[type=number] { width: 90px; } .act input.note { flex: 1 1 140px; }
-.act button { border: 0; border-radius: 8px; padding: 8px 12px; font-weight: 650; cursor: pointer; background: var(--ink-strong); color: var(--surface); }
-.act button[disabled] { opacity: .4; cursor: not-allowed; }
-.act.money button { background: var(--good); }
-.msg { margin-top: 8px; padding: 8px 10px; border-radius: 8px; font-size: 12px; }
-.msg.ok { background: var(--good-wash); color: var(--good); } .msg.bad { background: var(--bad-wash); color: var(--bad); }
-.linkbox { display: flex; gap: 6px; margin-top: 6px; } .linkbox input { flex: 1; font-size: 12px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-top: 10px; }
+.tile { text-align: start; border: 1px solid var(--border); background: var(--surface); border-radius: 12px; padding: 12px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; font: inherit; color: inherit; }
+.tile:hover:not([disabled]) { border-color: var(--ink-strong); } .tile[disabled] { opacity: .45; cursor: not-allowed; }
+.tile .ic { font-size: 20px; } .tile .t { font-weight: 700; color: var(--ink-strong); font-size: 14px; } .tile .d { color: var(--ink-2); font-size: 12px; }
+.tile.money .t { color: var(--good); }
+.form { display: flex; flex-direction: column; gap: 12px; }
+.form label { font-weight: 650; color: var(--ink-strong); display: block; margin-bottom: 6px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.chip { border: 1px solid var(--border); background: var(--surface); border-radius: 999px; padding: 6px 12px; cursor: pointer; font: inherit; color: var(--ink); }
+.chip[aria-pressed="true"] { background: var(--ink-strong); color: var(--surface); border-color: var(--ink-strong); }
+.form input[type=number], .form input[type=text], .form select { font: inherit; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); }
+.form input[type=number] { width: 110px; } .form input.wide { width: 100%; }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-p { border: 0; border-radius: 10px; padding: 10px 16px; font-weight: 700; cursor: pointer; background: var(--ink-strong); color: var(--surface); font: inherit; font-weight: 700; }
+.btn-p.go { background: var(--good); } .btn-p[disabled] { opacity: .45; cursor: not-allowed; }
+.btn-s { border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; cursor: pointer; background: var(--surface); color: var(--ink); font: inherit; }
+.confirm-box { border: 2px solid var(--ink-strong); border-radius: 12px; padding: 14px; }
+.confirm-box .big { font-size: 17px; font-weight: 700; color: var(--ink-strong); margin-bottom: 8px; }
+.confirm-box ul { margin: 6px 0 0; padding-inline-start: 18px; color: var(--ink-2); }
+.receipt { border-radius: 12px; padding: 14px; background: var(--good-wash); color: var(--good); }
+.receipt.bad { background: var(--bad-wash); color: var(--bad); }
+.receipt .big { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+.linkbox { display: flex; gap: 6px; margin-top: 8px; } .linkbox input { flex: 1; font-size: 12px; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--border); }
+.help summary { cursor: pointer; font-weight: 650; color: var(--ink-strong); }
+.help ul { margin: 10px 0 0; padding-inline-start: 18px; line-height: 1.8; color: var(--ink-2); }
 .g-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 12px; }
 .g-2 > .tablecard .scroll { max-height: 340px; }
 @media (max-width: 900px) { .g-hero, .g-2 { grid-template-columns: minmax(0, 1fr); } }
@@ -359,14 +384,31 @@ td.n, th.n { text-align: end; }
   <section data-tab="support" hidden>
     <div id="supGate" class="card soon" style="margin-bottom:12px">טוען…</div>
     <div id="supApp" hidden>
-      <div class="sup-bar">
-        <input id="supQ" type="search" placeholder="חיפוש חנות: שם, דומיין או מייל" autocomplete="off">
+      <div class="sup-head">
+        <div><h2 style="font-size:18px">שירות לקוחות</h2><p class="hint" style="margin:2px 0 0">בוחרים לקוח, בוחרים מה לתת, ומאשרים. כל פעולה נשמרת בהיסטוריה של הלקוח.</p></div>
         <span id="supEnv" class="badge"></span>
       </div>
+      <ol class="steps" id="supSteps"><li data-s="1"><b>1</b>בחירת לקוח</li><li data-s="2"><b>2</b>מה לתת</li><li data-s="3"><b>3</b>פרטים ואישור</li></ol>
       <div class="grid sup-grid">
-        <div class="card tablecard"><div class="ttl"><h2>חנויות</h2><p class="hint" style="margin:0" id="supResHint">מקלידים לפחות 2 תווים</p></div><div class="scroll"><table id="supRes"></table></div></div>
-        <div id="supStore"><div class="card empty">בוחרים חנות מהרשימה</div></div>
+        <div class="card pick">
+          <input id="supQ" type="search" placeholder="חיפוש: שם החנות, דומיין או מייל" autocomplete="off">
+          <div class="pick-tabs" id="supListTabs"><button data-l="paying" aria-pressed="true">משלמים</button><button data-l="recent">התקינו לאחרונה</button><button data-l="search">תוצאות חיפוש</button></div>
+          <div class="pick-list" id="supList"></div>
+        </div>
+        <div id="supMain"><div class="card empty">בוחרים לקוח מהרשימה מימין</div></div>
       </div>
+      <details class="card help">
+        <summary>איך זה עובד, ומה ההבדל בין זיכוי להחזר</summary>
+        <ul>
+          <li><b>זיכוי (קרדיט):</b> סכום בדולרים שנכנס לחשבון של החנות בשופיפיי ומתקזז אוטומטית מהחיוב הבא שלה על האפליקציה. מתאים לפיצוי על תקלה או למחווה.</li>
+          <li><b>החזר כספי:</b> אותו מנגנון של שופיפיי, אבל נרשם כהחזר על חיוב. שופיפיי לא מחזירה לכרטיס האשראי דרך אפליקציה: הכסף חוזר כזיכוי לחיובים הבאים.</li>
+          <li><b>בלוגים במתנה:</b> בלוגים מעבר למכסה של התוכנית. כשהחנות עוברת את המכסה, המתנות מנוצלות קודם, ורק אחריהן יש חיוב על מאמר נוסף.</li>
+          <li><b>ימים בלי חיוב:</b> עד התאריך שבוחרים, החנות לא מחויבת על מאמרים מעבר למכסה.</li>
+          <li><b>מנוי בחינם:</b> נוצר קישור לתוכנית בתשלום בהנחה של 100% לכמה חודשים. שולחים אותו לסוחר, והמנוי מתחיל רק אחרי שהוא מאשר. אחרי החודשים החינמיים המנוי ממשיך במחיר הרגיל, אלא אם הסוחר מבטל.</li>
+          <li><b>הארכת ניסיון:</b> מוסיפה ימים למנוי שנמצא עכשיו בתקופת ניסיון בשופיפיי.</li>
+          <li>קרדיט והחזר אי אפשר לבטל אחרי שניתנו. בחנויות פיתוח הכול נרשם כבדיקה, בלי כסף אמיתי.</li>
+        </ul>
+      </details>
     </div>
   </section>
 
@@ -906,6 +948,8 @@ async function load(refresh = false) {
   const data = await res.json();
   if (!data.days) return fail("הנתונים עוד נאספים. נסו שוב בעוד כמה דקות.");
   P = data;
+  window.__P = data;
+  if (state.tab === "support" && window.SupportUI) window.SupportUI.open();
   const upd = new Date(P.generated_at);
   $("upd").textContent = `עודכן ${upd.toLocaleDateString("he-IL", { day: "numeric", month: "numeric" })} ${upd.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}`;
   $("sub").textContent = `${int(P.totals.shops)} חנויות התקינו מאז ההשקה ב-13.6.2025`;
@@ -945,8 +989,9 @@ function init() {
 init();
 </script>
 <script type="module">
-// "שירות לקוחות": uses the visitor's CRM sign-in (same site, same Supabase session) and the autoseoSupport
-// edge function, which allows CRM admins only. All texts from the app are inserted as text, never as HTML.
+// "שירות לקוחות": a 3-step flow (customer → what to give → details + confirm → receipt).
+// Uses the visitor's CRM sign-in (same site, same Supabase session) and the autoseoSupport edge function,
+// which allows CRM admins only. Texts from the app/Shopify are inserted as text, never as HTML.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.86.0";
 const sb = createClient("https://bbupowzicprgtfltyepd.supabase.co", "sb_publishable_no7KUvhAdID-VYLP8jSzlg_C3CDEiG7", { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false } });
 const SUP = "https://bbupowzicprgtfltyepd.supabase.co/functions/v1/autoseoSupport";
@@ -959,9 +1004,10 @@ function el(tag, attrs = {}, ...kids) {
 }
 const usd = (v) => (v == null || v === "" ? "—" : "$" + Number(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 const fmtDate = (s) => (s ? new Date(String(s).replace(" ", "T")).toLocaleDateString("he-IL") : "—");
-const ACTION_HE = { bonus_posts: "בלוגים במתנה", bonus_post_used: "נוצל בלוג במתנה", free_days: "ימים בלי חיוב על מאמרים", free_plan: "מנוי בתשלום בחינם", extend_trial: "הארכת תקופת ניסיון", credit: "קרדיט", refund: "החזר כספי" };
+const short = (shop) => String(shop || "").replace(".myshopify.com", "");
+const ACTION_HE = { bonus_posts: "בלוגים במתנה", bonus_post_used: "נוצל בלוג במתנה", free_days: "ימים בלי חיוב", free_plan: "מנוי בחינם", extend_trial: "הארכת ניסיון", credit: "זיכוי", refund: "החזר כספי" };
 const STATUS_HE = { done: ["בוצע", "g"], failed: ["נכשל", "r"], pending: ["ממתין לאישור הסוחר", "b"] };
-let CFG = null, current = null, searchTimer = null, started = false;
+let CFG = null, started = false, listMode = "paying", searchRows = [], card = null, timer = null;
 
 async function api(op, params = {}, body) {
   const { data: { session } } = await sb.auth.getSession();
@@ -973,139 +1019,246 @@ async function api(op, params = {}, body) {
   if (!res.ok || out.status === false) throw new Error(out.message || out.error || "HTTP " + res.status);
   return out;
 }
-
+function steps(n) { document.querySelectorAll("#supSteps li").forEach((li) => { const s = +li.dataset.s; li.className = s < n ? "done" : s === n ? "on" : ""; }); }
 function gate(msg, link) {
   $("supGate").hidden = false; $("supApp").hidden = true;
   $("supGate").replaceChildren(el("div", {}, msg), link ? el("div", { style: "margin-top:8px" }, el("a", { href: link, target: "_blank", rel: "noopener" }, "להתחברות ל-CRM")) : "");
 }
 
 async function open() {
-  if (started && CFG) return;
+  if (started) { if (CFG) renderList(); return; }
   started = true;
   gate("בודק הרשאה…");
-  try {
-    CFG = await api("config");
-  } catch (e) {
+  try { CFG = await api("config"); }
+  catch (e) {
     started = false;
-    if (e.code === 401) return gate("כדי לנהל לקוחות צריך להיות מחובר ל-CRM כמנהל. מתחברים ב-CRM בדפדפן הזה, ואז חוזרים לכאן ומרעננים.", "https://crm.tripleboost.net/");
+    if (e.code === 401) return gate("כדי לנהל לקוחות צריך להיות מחובר ל-CRM כמנהל. מתחברים ב-CRM בדפדפן הזה, חוזרים לכאן ומרעננים.", "https://crm.tripleboost.net/");
     if (e.code === 403) return gate("החשבון המחובר ל-CRM אינו מנהל, ולכן אין גישה לשירות לקוחות.");
     return gate("שגיאה: " + e.message);
   }
   $("supGate").hidden = true; $("supApp").hidden = false;
-  $("supEnv").className = "badge " + (CFG.env === "prod" ? "r" : "b");
-  $("supEnv").textContent = CFG.env === "prod" ? "אפליקציה אמיתית" : "אפליקציית בדיקות";
-  $("supQ").addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(search, 300); });
+  $("supEnv").className = "badge " + (CFG.env === "prod" ? "g" : "b");
+  $("supEnv").textContent = CFG.env === "prod" ? "מחובר לאפליקציה האמיתית" : "מחובר לאפליקציית הבדיקות";
+  $("supQ").addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(search, 300); });
+  $("supListTabs").addEventListener("click", (e) => { const b = e.target.closest("[data-l]"); if (b) { listMode = b.dataset.l; renderList(); } });
+  steps(1); renderList();
 }
 
+// ---------- step 1: customer ----------
+function listRows() {
+  const P = window.__P;
+  if (listMode === "search") return searchRows.map((s) => ({ shop: s.shop, name: s.name, meta: s.installed ? (s.plan === "Free" ? "חינם" : s.plan || "מותקנת") : "הסירה", id: s.id, bad: !s.installed }));
+  if (!P) return [];
+  if (listMode === "paying") return (P.customers || []).map((c) => ({ shop: c.shop, name: c.name, meta: c.mrr ? `${c.plan} · ${usd(c.mrr)}` : `שילמה ${usd(c.rev30)} ב-30 יום`, bad: !c.installed }));
+  const seen = new Set(), rows = [];
+  for (const e of P.recent || []) if (e.type === "RELATIONSHIP_INSTALLED" && !seen.has(e.shop)) { seen.add(e.shop); rows.push({ shop: e.shop, name: e.name, meta: fmtDate(e.t) }); }
+  return rows.slice(0, 30);
+}
+function renderList() {
+  document.querySelectorAll("#supListTabs button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.l === listMode)));
+  const rows = listRows();
+  const sel = card?.data?.store?.shop;
+  $("supList").replaceChildren(...(rows.length ? rows.map((r) => el("div", { class: "pick-item" + (r.shop === sel ? " sel" : ""), onclick: () => pick(r) },
+    el("div", {}, el("div", { class: "nm" }, r.name || short(r.shop)), el("div", { class: "dom num" }, short(r.shop))),
+    el("div", { class: "meta" }, r.bad ? el("span", { class: "badge r" }, "הסירה") : r.meta))) :
+    [el("div", { class: "empty" }, listMode === "search" ? "מקלידים לפחות 2 תווים בחיפוש" : "אין נתונים להצגה")]));
+}
 async function search() {
   const q = $("supQ").value.trim();
-  if (q.length < 2) { $("supRes").replaceChildren(); $("supResHint").textContent = "מקלידים לפחות 2 תווים"; return; }
-  $("supResHint").textContent = "מחפש…";
+  listMode = "search";
+  if (q.length < 2) { searchRows = []; return renderList(); }
+  $("supList").replaceChildren(el("div", { class: "empty" }, "מחפש…"));
+  try { searchRows = (await api("search", { q })).data?.stores || []; renderList(); }
+  catch (e) { $("supList").replaceChildren(el("div", { class: "empty" }, "שגיאה: " + e.message)); }
+}
+async function pick(r) {
+  $("supMain").replaceChildren(el("div", { class: "card empty" }, "טוען את הלקוח…"));
   try {
-    const out = await api("search", { q });
-    const rows = out.data?.stores || [];
-    $("supResHint").textContent = rows.length ? `${rows.length} תוצאות` : "לא נמצאו חנויות";
-    $("supRes").replaceChildren(el("tbody", {}, rows.map((s) => el("tr", { onclick: (e) => { document.querySelectorAll("#supRes tr").forEach((r) => r.classList.remove("sel")); e.currentTarget.classList.add("sel"); loadStore(s.id); } },
-      el("td", {}, el("div", {}, s.name || s.shop), el("div", { class: "dom num" }, s.shop.replace(".myshopify.com", ""))),
-      el("td", {}, s.installed ? el("span", { class: "badge g" }, s.plan === "Free" ? "חינם" : (s.plan || "מותקנת")) : el("span", { class: "badge r" }, "הסירה"))))));
-  } catch (e) { $("supResHint").textContent = "שגיאה: " + e.message; }
+    let id = r.id;
+    if (!id) {
+      const rows = (await api("search", { q: r.shop })).data?.stores || [];
+      id = (rows.find((x) => x.shop === r.shop) || {}).id;
+      if (!id) throw new Error("החנות לא נמצאה באפליקציה");
+    }
+    card = await api("store", { id });
+    renderList(); chooseAction();
+  } catch (e) { $("supMain").replaceChildren(el("div", { class: "card empty" }, "שגיאה: " + e.message)); }
 }
+async function reload() { card = await api("store", { id: card.data.store.id }); }
 
-async function loadStore(id) {
-  $("supStore").replaceChildren(el("div", { class: "card empty" }, "טוען…"));
-  try { current = await api("store", { id }); renderStore(); }
-  catch (e) { $("supStore").replaceChildren(el("div", { class: "card empty" }, "שגיאה: " + e.message)); }
-}
-
-function act(title, desc, fields, button, onRun, opts = {}) {
-  const msg = el("div");
-  const btn = el("button", { disabled: opts.disabled || false, title: opts.disabledWhy || "" }, button);
-  btn.addEventListener("click", async () => {
-    const v = Object.fromEntries(fields.map((f) => [f.name, f.el.value.trim()]));
-    const q = opts.confirm ? opts.confirm(v) : null;
-    if (q && !confirm(q)) return;
-    btn.disabled = true; msg.replaceChildren();
-    try {
-      const out = await onRun(v);
-      msg.className = "msg ok"; msg.replaceChildren(el("div", {}, (opts.done && opts.done(out, v)) || out.message || "בוצע"));
-      const url = out.data?.confirmation_url;
-      if (url) {
-        const inp = el("input", { value: url, readonly: true });
-        msg.append(el("div", { style: "margin-top:6px" }, "שולחים לסוחר את הקישור הזה. המנוי יתחיל רק אחרי שהוא יאשר אותו:"),
-          el("div", { class: "linkbox" }, inp, el("button", { onclick: () => { inp.select(); navigator.clipboard?.writeText(url); } }, "העתקה")));
-      }
-      setTimeout(() => loadStore(current.data.store.id), url ? 60000 : 900);
-    } catch (e) { msg.className = "msg bad"; msg.replaceChildren(el("div", {}, e.message)); }
-    btn.disabled = false;
-  });
-  return el("div", { class: "act" + (opts.money ? " money" : "") }, el("h3", {}, title), el("p", {}, desc),
-    el("div", { class: "row" }, fields.map((f) => f.el), btn), opts.disabledWhy ? el("p", {}, opts.disabledWhy) : "", msg);
-}
-const num = (name, min, max, val, ph) => ({ name, el: el("input", { type: "number", min, max, step: name === "amount" ? "0.01" : "1", value: val ?? "", placeholder: ph || "" }) });
-const note = (req) => ({ name: "note", el: el("input", { class: "note", placeholder: req ? "סיבה (חובה)" : "הערה (לא חובה)" }) });
-
-function renderStore() {
-  const d = current.data, s = d.store, L = d.limits, subs = d.subscription?.subscriptions || [];
-  const id = s.id, name = s.name || s.shop;
-  const handle = s.shop.replace(".myshopify.com", "");
-  const prod = CFG.env === "prod";
-  const head = el("div", { class: "card", style: "margin-bottom:12px" },
-    el("div", { style: "display:flex;gap:8px;align-items:center;flex-wrap:wrap" }, el("h2", { style: "font-size:16px" }, name),
+// ---------- store summary + history ----------
+const kv = (k, v) => el("div", {}, el("div", { class: "k" }, k), el("div", { class: "v" }, v));
+function summary() {
+  const d = card.data, s = d.store, subs = d.subscription?.subscriptions || [];
+  return el("div", { class: "card", style: "margin-bottom:12px" },
+    el("div", { class: "sum" }, el("h2", {}, s.name || short(s.shop)),
       s.installed ? el("span", { class: "badge g" }, "מותקנת") : el("span", { class: "badge r" }, "הסירה את האפליקציה"),
-      s.is_dev_store ? el("span", { class: "badge b" }, "חנות פיתוח (חיובי בדיקה)") : ""),
-    el("div", { class: "dom num" }, s.shop, " · ", s.email || ""),
+      s.is_dev_store ? el("span", { class: "badge b" }, "חנות פיתוח: חיובי בדיקה") : "",
+      el("button", { class: "btn-s", style: "margin-inline-start:auto;padding:5px 10px", onclick: () => { card = null; renderList(); steps(1); $("supMain").replaceChildren(el("div", { class: "card empty" }, "בוחרים לקוח מהרשימה מימין")); } }, "לקוח אחר")),
+    el("div", { class: "dom num" }, s.shop, s.email ? " · " + s.email : ""),
     el("div", { class: "kv" },
       kv("תוכנית", (s.plan === "Free" ? "חינם" : s.plan || "בלי תוכנית") + (Number(s.plan_amount) > 0 ? ` · ${usd(s.plan_amount)}` : "")),
-      kv("סטטוס חיוב", s.charge_status || "—"),
-      kv("בלוגים החודש", `${s.posts_this_month} מתוך ${s.plan_post_limit}` + (s.bonus_posts ? ` + ${s.bonus_posts} במתנה` : "")),
-      kv("ימים בלי חיוב על מאמרים", s.in_free_days ? "עד " + fmtDate(s.free_days_ends_on) : "לא פעיל"),
-      kv("בלוגים סה״כ", `${s.posts_total} (${s.posts_30d} ב-30 יום)`),
-      kv("בלוג אחרון", fmtDate(s.last_post_at)),
-      kv("הותקנה", fmtDate(s.installed_at)),
-      kv("שילמה סה״כ (נטו)", d.paid ? usd(d.paid.total) + (d.paid.last_30d ? ` · ${usd(d.paid.last_30d)} ב-30 יום` : "") : "—")),
-    subs.length ? el("div", { class: "dom", style: "margin-top:6px" }, "מנוי פעיל בשופיפיי: ", subs.map((x) => `${x.name} (${x.status}${x.test ? ", בדיקה" : ""}${x.trial_days ? `, ${x.trial_days} ימי ניסיון` : ""})`).join(" · ")) : "");
-
-  const paidPlans = d.plans || [];
-  const planSel = { name: "plan_id", el: el("select", {}, paidPlans.map((p) => el("option", { value: p.plan_id }, `${p.name} · ${usd(p.amount)} לחודש`))) };
-  const shopifyBlock = !s.installed ? "האפליקציה לא מותקנת בחנות, אז אי אפשר לבצע פעולות מול שופיפיי." : null;
-  const moneyBlock = !prod ? "עובד רק מול האפליקציה האמיתית: שופיפיי לא מאפשרת קרדיט באפליקציית הבדיקות." : shopifyBlock || (!d.partner_shop ? "החנות לא נמצאה בפרטנרס." : null);
-
-  const f1 = [num("posts", 1, L.bonus_posts, 5), note()];
-  const f2 = [num("days", 1, L.free_days, 30), note()];
-  const f3 = [planSel, num("months", 1, L.free_months, 1), note()];
-  const f4 = [num("days", 1, L.trial_days, 7), note()];
-  const f5 = [num("amount", 0.5, CFG.max_credit, "", "$"), note(true)];
-  const f6 = [num("amount", 0.5, CFG.max_credit, "", "$"), note(true)];
-  const run = (action) => (v) => api("action", {}, { id, action, ...v });
-  const acts = el("div", { class: "acts" },
-    act("בלוגים במתנה", "בלוגים נוספים מעבר למכסה של התוכנית. הם מנוצלים לפני כל חיוב על מאמר נוסף.", f1, "לתת", run("bonus-posts"),
-      { confirm: (v) => `לתת ${v.posts} בלוגים במתנה ל-${name}?`, done: (o) => `ניתנו בלוגים במתנה. יתרה עכשיו: ${o.data?.bonus_posts}` }),
-    act("ימים בלי חיוב על מאמרים", "עד התאריך הזה החנות לא מחויבת על מאמרים מעבר למכסה. מוסיפים ימים מהיום, או מהסוף הנוכחי אם הוא עוד לא עבר.", f2, "להוסיף", run("free-days"),
-      { confirm: (v) => `להוסיף ${v.days} ימים בלי חיוב ל-${name}?`, done: (o) => `עד ${fmtDate(o.data?.free_days_ends_on)} אין חיוב על מאמרים נוספים` }),
-    act("מנוי בתשלום בחינם", "יוצר בשופיפיי מנוי בהנחה של 100% למספר חודשים. הסוחר מאשר אותו בלחיצה אחת, ואחרי החודשים האלה הוא מתחדש במחיר הרגיל.", f3, "ליצור קישור", run("free-plan"),
-      { disabled: !!shopifyBlock || !paidPlans.length, disabledWhy: shopifyBlock, confirm: (v) => `ליצור ל-${name} מנוי ${planSel.el.selectedOptions[0]?.textContent} בחינם ל-${v.months} חודשים? הסוחר יצטרך לאשר.`, done: () => "הקישור נוצר" }),
-    act("הארכת תקופת ניסיון", "מוסיף ימי ניסיון למנוי שנמצא עכשיו בתקופת ניסיון בשופיפיי.", f4, "להאריך", run("extend-trial"),
-      { disabled: !!shopifyBlock, disabledWhy: shopifyBlock, confirm: (v) => `להאריך את תקופת הניסיון של ${name} ב-${v.days} ימים?`, done: (o, v) => `תקופת הניסיון הוארכה ב-${v.days} ימים` }),
-    act("קרדיט", "זיכוי בדולרים שמתקזז מהחיובים הבאים של החנות על האפליקציה.", f5, "לתת קרדיט", run("credit"),
-      { money: true, disabled: !!moneyBlock, disabledWhy: moneyBlock, confirm: (v) => `לתת ל-${name} קרדיט של $${v.amount}${s.is_dev_store ? " (בדיקה)" : ""}? לא ניתן לבטל.` }),
-    act("החזר כספי", "החזר בסכום שבוחרים. שופיפיי מחזירה אותו כזיכוי שמתקזז מהחיובים הבאים, לא לכרטיס האשראי.", f6, "להחזיר", run("refund"),
-      { money: true, disabled: !!moneyBlock, disabledWhy: moneyBlock, confirm: (v) => `להחזיר ל-${name} $${v.amount}${s.is_dev_store ? " (בדיקה)" : ""}? לא ניתן לבטל.` }));
-
-  const hist = d.history || [];
-  const history = el("div", { class: "card tablecard" }, el("div", { class: "ttl" }, el("h2", {}, "היסטוריית שירות"), el("p", { class: "hint", style: "margin:0" }, "כל פעולה שנעשתה לחנות הזו, ומי עשה אותה")),
-    el("div", { class: "scroll" }, el("table", {}, hist.length ? el("tbody", {}, hist.map((h) => {
-      const [st, cls] = STATUS_HE[h.status] || [h.status, ""];
-      const p = h.params || {}, r = h.result || {};
+      kv("שילמה סה״כ", d.paid ? usd(d.paid.total) : "—"),
+      kv("ב-30 יום", d.paid ? usd(d.paid.last_30d) : "—"),
+      kv("בלוגים החודש", `${s.posts_this_month} / ${s.plan_post_limit}` + (s.bonus_posts ? ` (+${s.bonus_posts} במתנה)` : "")),
+      kv("בלי חיוב על מאמרים", s.in_free_days ? "עד " + fmtDate(s.free_days_ends_on) : "לא"),
+      kv("הותקנה", fmtDate(s.installed_at))),
+    subs.length ? el("div", { class: "dom", style: "margin-top:6px" }, "מנוי בשופיפיי: ", subs.map((x) => `${x.name} (${x.status}${x.test ? ", בדיקה" : ""}${x.trial_days ? `, ${x.trial_days} ימי ניסיון` : ""})`).join(" · ")) : "");
+}
+function history() {
+  const hist = card.data.history || [];
+  return el("details", { class: "card", style: "margin-top:12px" }, el("summary", { style: "cursor:pointer;font-weight:650" }, `היסטוריית שירות (${hist.length})`),
+    el("div", { class: "scroll", style: "margin-top:8px" }, el("table", {}, hist.length ? el("tbody", {}, hist.map((h) => {
+      const [st, cls] = STATUS_HE[h.status] || [h.status, ""]; const p = h.params || {}, r = h.result || {};
       const detail = h.action === "bonus_posts" ? `${p.posts} בלוגים` : h.action === "free_days" ? `${p.days} ימים, עד ${fmtDate(r.free_days_ends_on)}` :
         h.action === "free_plan" ? `${p.plan} ל-${p.months} חודשים` : h.action === "extend_trial" ? `${p.days} ימים` :
         (h.action === "credit" || h.action === "refund") ? usd(p.amount) + (p.test ? " (בדיקה)" : "") : "";
       return el("tr", {}, el("td", { class: "dom" }, fmtDate(h.created_at)), el("td", {}, ACTION_HE[h.action] || h.action, detail ? el("div", { class: "dom" }, detail) : ""),
         el("td", {}, el("span", { class: "badge " + cls }, st), r.error ? el("div", { class: "dom" }, String(r.error).slice(0, 160)) : ""),
         el("td", { class: "dom" }, h.actor || "", h.note ? el("div", {}, h.note) : ""));
-    })) : el("tbody", {}, el("tr", {}, el("td", { class: "empty" }, "עוד לא נעשו פעולות לחנות הזו"))))));
-  $("supStore").replaceChildren(head, el("div", { class: "card" }, el("h2", {}, "פעולות"), acts), el("div", { style: "height:12px" }), history);
+    })) : el("tbody", {}, el("tr", {}, el("td", { class: "empty" }, "עוד לא נעשו פעולות ללקוח הזה"))))));
 }
-const kv = (k, v) => el("div", {}, el("div", { class: "k" }, k), el("div", { class: "v" }, v));
+
+// ---------- step 2: what to give ----------
+function blocks() {
+  const s = card.data.store, prod = CFG.env === "prod";
+  const shopify = !s.installed ? "האפליקציה לא מותקנת בחנות" : null;
+  return {
+    credit: !prod ? "רק באפליקציה האמיתית" : shopify || (!card.data.partner_shop ? "החנות לא נמצאה בפרטנרס" : null),
+    refund: !prod ? "רק באפליקציה האמיתית" : shopify || (!card.data.partner_shop ? "החנות לא נמצאה בפרטנרס" : null),
+    "bonus-posts": null, "free-days": null,
+    "free-plan": shopify || (!(card.data.plans || []).length ? "אין תוכניות בתשלום" : null),
+    "extend-trial": shopify || (!(card.data.subscription?.subscriptions || []).some((x) => x.trial_days > 0) ? "אין מנוי בתקופת ניסיון" : null),
+  };
+}
+const ACTIONS = [
+  { key: "credit", ic: "💵", t: "זיכוי", d: "סכום בדולרים שמתקזז מהחיוב הבא", money: true },
+  { key: "refund", ic: "↩️", t: "החזר כספי", d: "החזר על חיוב, חוזר כזיכוי", money: true },
+  { key: "bonus-posts", ic: "📝", t: "בלוגים במתנה", d: "בלוגים מעבר למכסה, בלי חיוב" },
+  { key: "free-days", ic: "📅", t: "ימים בלי חיוב", d: "בלי חיוב על מאמרים עד תאריך" },
+  { key: "free-plan", ic: "⭐", t: "מנוי בחינם", d: "תוכנית בתשלום ב-100% הנחה לכמה חודשים" },
+  { key: "extend-trial", ic: "⏳", t: "הארכת ניסיון", d: "עוד ימים בתקופת הניסיון" },
+];
+function chooseAction() {
+  steps(2);
+  const B = blocks();
+  $("supMain").replaceChildren(summary(), el("div", { class: "card" }, el("h2", {}, "מה לתת ל" + (card.data.store.name || short(card.data.store.shop)) + "?"),
+    el("div", { class: "tiles" }, ACTIONS.map((a) => el("button", { class: "tile" + (a.money ? " money" : ""), disabled: !!B[a.key], title: B[a.key] || "", onclick: () => details(a) },
+      el("span", { class: "ic" }, a.ic), el("span", { class: "t" }, a.t), el("span", { class: "d" }, B[a.key] || a.d))))), history());
+}
+
+// ---------- step 3: details, confirm, receipt ----------
+function chips(values, fmt, initial, onPick) {
+  const wrap = el("div", { class: "chips" });
+  const set = (v) => { wrap.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.v === String(v)))); onPick(v); };
+  values.forEach((v) => wrap.append(el("button", { class: "chip", "data-v": v, type: "button", onclick: () => set(v) }, fmt(v))));
+  setTimeout(() => initial != null && set(initial));
+  return wrap;
+}
+function details(a) {
+  steps(3);
+  const s = card.data.store, L = card.data.limits, name = s.name || short(s.shop), v = { note: "" };
+  const fields = [];
+  const numberField = (label, key, opts, min, max, fmt, init, step = 1) => {
+    const inp = el("input", { type: "number", min, max, step, value: init ?? "" });
+    inp.addEventListener("input", () => { v[key] = inp.value; wrap.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.v === inp.value))); });
+    const wrap = chips(opts, fmt, init, (x) => { v[key] = String(x); inp.value = x; });
+    wrap.append(el("span", { class: "dom" }, "או:"), inp);
+    fields.push(el("div", {}, el("label", {}, label), wrap));
+    v[key] = init != null ? String(init) : "";
+  };
+  if (a.money) {
+    numberField("סכום (דולר)", "amount", [5, 10, 20, 50], 0.5, CFG.max_credit, (x) => "$" + x, null, 0.01);
+    const reasons = a.key === "refund" ? ["חיוב שגוי", "הלקוח ביקש החזר", "חיוב כפול"] : ["פיצוי על תקלה", "מחווה ללקוח", "שימור לקוח"];
+    const inp = el("input", { type: "text", class: "wide", placeholder: "סיבה (חובה, נשמרת בהיסטוריה)" });
+    inp.addEventListener("input", () => (v.note = inp.value));
+    const w = chips(reasons, (x) => x, null, (x) => { v.note = x; inp.value = x; });
+    fields.push(el("div", {}, el("label", {}, "סיבה"), w, el("div", { style: "margin-top:6px" }, inp)));
+  } else {
+    if (a.key === "bonus-posts") numberField("כמה בלוגים", "posts", [3, 5, 10, 20], 1, L.bonus_posts, (x) => x, 5);
+    if (a.key === "free-days") numberField("כמה ימים", "days", [7, 14, 30, 60], 1, L.free_days, (x) => x + " ימים", 30);
+    if (a.key === "extend-trial") numberField("כמה ימים", "days", [3, 7, 14], 1, L.trial_days, (x) => x + " ימים", 7);
+    if (a.key === "free-plan") {
+      const plans = card.data.plans || [];
+      fields.push(el("div", {}, el("label", {}, "איזו תוכנית"), chips(plans.map((p) => p.plan_id), (id) => { const p = plans.find((x) => x.plan_id === id); return `${p.name} · ${usd(p.amount)}`; }, plans[plans.length - 1]?.plan_id, (x) => (v.plan_id = x))));
+      numberField("לכמה חודשים בחינם", "months", [1, 2, 3, 6], 1, L.free_months, (x) => x + (x === 1 ? " חודש" : " חודשים"), 1);
+    }
+    const inp = el("input", { type: "text", class: "wide", placeholder: "הערה (לא חובה)" });
+    inp.addEventListener("input", () => (v.note = inp.value));
+    fields.push(el("div", {}, el("label", {}, "הערה"), inp));
+  }
+  const err = el("div", { class: "dom", style: "color:var(--bad)" });
+  const next = el("button", { class: "btn-p", onclick: () => {
+    const problem = validate(a, v);
+    if (problem) return (err.textContent = problem);
+    confirmStep(a, v);
+  } }, "המשך לאישור");
+  $("supMain").replaceChildren(summary(), el("div", { class: "card form" }, el("h2", {}, a.ic + " " + a.t + " ל" + name), ...fields, err,
+    el("div", { class: "btns" }, next, el("button", { class: "btn-s", onclick: chooseAction }, "חזרה"))), history());
+}
+function validate(a, v) {
+  const n = (x) => Number(x);
+  if (a.money) { if (!(n(v.amount) >= 0.5 && n(v.amount) <= CFG.max_credit)) return `סכום בין $0.50 ל-$${CFG.max_credit}`; if ((v.note || "").trim().length < 3) return "צריך לכתוב סיבה"; }
+  if (a.key === "bonus-posts" && !(n(v.posts) >= 1 && n(v.posts) <= card.data.limits.bonus_posts)) return "מספר בלוגים לא תקין";
+  if ((a.key === "free-days" || a.key === "extend-trial") && !(n(v.days) >= 1)) return "מספר ימים לא תקין";
+  if (a.key === "free-plan" && (!v.plan_id || !(n(v.months) >= 1))) return "בוחרים תוכנית ומספר חודשים";
+  return "";
+}
+function sentence(a, v, name) {
+  const plans = card.data.plans || []; const p = plans.find((x) => x.plan_id === v.plan_id);
+  return {
+    credit: `לתת ל-${name} זיכוי של ${usd(v.amount)}`,
+    refund: `להחזיר ל-${name} ${usd(v.amount)}`,
+    "bonus-posts": `לתת ל-${name} ${v.posts} בלוגים במתנה`,
+    "free-days": `${v.days} ימים בלי חיוב על מאמרים ל-${name}`,
+    "free-plan": `מנוי ${p?.name} בחינם ל-${v.months} ${v.months == 1 ? "חודש" : "חודשים"} ל-${name}`,
+    "extend-trial": `להאריך ל-${name} את תקופת הניסיון ב-${v.days} ימים`,
+  }[a.key];
+}
+function consequences(a, v) {
+  const s = card.data.store, dev = s.is_dev_store, plans = card.data.plans || []; const p = plans.find((x) => x.plan_id === v.plan_id);
+  const list = {
+    credit: ["הסכום ייכנס לחשבון של החנות בשופיפיי ויתקזז מהחיוב הבא שלה על האפליקציה.", "אי אפשר לבטל אחרי שניתן."],
+    refund: ["שופיפיי מחזירה את הסכום כזיכוי שמתקזז מהחיובים הבאים, לא לכרטיס האשראי.", "אי אפשר לבטל אחרי שניתן."],
+    "bonus-posts": [`היתרה תעלה מ-${s.bonus_posts || 0} ל-${(s.bonus_posts || 0) + Number(v.posts)}.`, "הבלוגים במתנה מנוצלים רק אחרי שהחנות עוברת את מכסת התוכנית."],
+    "free-days": [s.in_free_days ? `התאריך יוארך מ-${fmtDate(s.free_days_ends_on)}.` : "הימים נספרים מהיום.", "בתקופה הזו אין חיוב על מאמרים מעבר למכסה."],
+    "free-plan": [`נוצר קישור לאישור. המנוי מתחיל רק כשהסוחר מאשר אותו.`, `אחרי ${v.months} ${v.months == 1 ? "חודש" : "חודשים"} המנוי ממשיך במחיר הרגיל (${usd(p?.amount)} לחודש), אלא אם הסוחר מבטל.`],
+    "extend-trial": ["החיוב הראשון יידחה במספר הימים שבחרת."],
+  }[a.key];
+  if (dev && (a.money || a.key === "free-plan")) list.push("זו חנות פיתוח, אז הפעולה נרשמת בשופיפיי כבדיקה, בלי כסף אמיתי.");
+  return list;
+}
+function confirmStep(a, v) {
+  const s = card.data.store, name = s.name || short(s.shop);
+  const go = el("button", { class: "btn-p go" }, "אישור וביצוע");
+  const back = el("button", { class: "btn-s", onclick: () => details(a) }, "חזרה לעריכה");
+  go.addEventListener("click", async () => {
+    go.disabled = true; back.disabled = true; go.textContent = "מבצע…";
+    const body = { id: s.id, action: a.key, note: v.note || "" };
+    for (const k of ["amount", "posts", "days", "months", "plan_id"]) if (v[k] != null && v[k] !== "") body[k] = k === "plan_id" ? v[k] : Number(v[k]);
+    try { const out = await api("action", {}, body); await reload(); receipt(a, v, out, null); }
+    catch (e) { try { await reload(); } catch {} receipt(a, v, null, e.message); }
+  });
+  $("supMain").replaceChildren(summary(), el("div", { class: "card" }, el("div", { class: "confirm-box" },
+    el("div", { class: "big" }, sentence(a, v, name) + "?"),
+    el("ul", {}, consequences(a, v).map((t) => el("li", {}, t))),
+    v.note ? el("div", { class: "dom", style: "margin-top:8px" }, (a.money ? "סיבה: " : "הערה: ") + v.note) : "",
+    el("div", { class: "btns", style: "margin-top:12px" }, go, back))), history());
+}
+function receipt(a, v, out, error) {
+  const s = card.data.store, name = s.name || short(s.shop);
+  const box = el("div", { class: "receipt" + (error ? " bad" : "") }, el("div", { class: "big" }, error ? "✗ הפעולה לא בוצעה" : "✓ בוצע: " + sentence(a, v, name)),
+    el("div", {}, error || ({
+      credit: "הזיכוי נוסף לחשבון של החנות בשופיפיי.", refund: "ההחזר נוסף כזיכוי לחשבון של החנות בשופיפיי.",
+      "bonus-posts": `יתרת בלוגים במתנה עכשיו: ${out?.data?.bonus_posts}.`, "free-days": `עד ${fmtDate(out?.data?.free_days_ends_on)} אין חיוב על מאמרים.`,
+      "free-plan": "שולחים לסוחר את הקישור הזה. המנוי יתחיל אחרי שהוא יאשר:", "extend-trial": "תקופת הניסיון הוארכה.",
+    }[a.key])));
+  const url = out?.data?.confirmation_url;
+  if (url) { const inp = el("input", { value: url, readonly: true }); box.append(el("div", { class: "linkbox" }, inp, el("button", { class: "btn-s", onclick: () => { inp.select(); navigator.clipboard?.writeText(url); } }, "העתקת הקישור"))); }
+  $("supMain").replaceChildren(summary(), el("div", { class: "card" }, box,
+    el("div", { class: "btns", style: "margin-top:12px" }, el("button", { class: "btn-p", onclick: chooseAction }, "פעולה נוספת לאותו לקוח"),
+      el("button", { class: "btn-s", onclick: () => { card = null; renderList(); steps(1); $("supMain").replaceChildren(el("div", { class: "card empty" }, "בוחרים לקוח מהרשימה מימין")); } }, "לקוח אחר"))), history());
+}
 
 window.SupportUI = { open };
 if (new URLSearchParams(location.search).get("tab") === "support") open();
