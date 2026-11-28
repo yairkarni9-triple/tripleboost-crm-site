@@ -219,6 +219,21 @@ td.n, th.n { text-align: end; }
 .empty { color: var(--muted); padding: 20px; text-align: center; }
 .foot { color: var(--muted); font-size: 12px; margin-top: 18px; line-height: 1.7; }
 .loading { opacity: .55; transition: opacity .2s; }
+/* emails tab */
+.em-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.em-ctrl { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.em-auto-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.em-auto-top h2 { font-size: 16px; margin: 0; }
+.em-dots { display: inline-flex; gap: 4px; }
+.em-dot { width: 22px; height: 22px; border-radius: 6px; display: inline-grid; place-items: center; font-size: 11px; font-weight: 700; border: 1px dashed var(--border); color: var(--muted); background: var(--surface); }
+.em-dot.sent { border: 0; background: var(--surface-2); color: var(--ink-2); }
+.em-dot.open { border: 0; background: rgba(42, 120, 214, .14); color: var(--s1); }
+.em-dot.click { border: 0; background: var(--s1); color: #fff; }
+.em-dot.bounce { border: 0; background: var(--bad-wash); color: var(--bad); }
+.em-key { display: flex; gap: 12px; flex-wrap: wrap; color: var(--ink-2); font-size: 12px; align-items: center; }
+.em-key span { display: inline-flex; gap: 5px; align-items: center; }
+.em-key .em-dot { width: 16px; height: 16px; font-size: 9px; }
+.em-note { background: rgba(42, 120, 214, .08); color: var(--ink); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
 .err { max-width: 520px; margin: 80px auto; text-align: center; color: var(--ink-2); font-size: 15px; }
 </style>
 </head>
@@ -252,6 +267,7 @@ td.n, th.n { text-align: end; }
     <button role="tab" data-t="money" aria-selected="true">כסף</button>
     <button role="tab" data-t="users" aria-selected="false">משתמשים</button>
     <button role="tab" data-t="blogs" aria-selected="false">בלוגים</button>
+    <button role="tab" data-t="emails" aria-selected="false">מיילים</button>
     <button role="tab" data-t="support" aria-selected="false">שירות לקוחות</button>
   </nav>
 
@@ -381,6 +397,21 @@ td.n, th.n { text-align: end; }
     </div>
   </section>
 
+  <section data-tab="emails" hidden>
+    <div id="emGate" class="card soon" style="margin-bottom:12px">טוען…</div>
+    <div id="emApp" hidden>
+      <div class="em-head">
+        <div><h2 style="font-size:18px;margin:0">מיילים</h2><p class="hint" style="margin:2px 0 0">האוטומציות שהאפליקציה שולחת לחנויות: למי נשלח, כמה פתחו, כמה הקליקו וכמה עברו לתשלום.</p></div>
+        <div class="em-ctrl">
+          <div class="seg" id="emDays"><button data-d="7">7 ימים</button><button data-d="30" aria-pressed="true">30 ימים</button><button data-d="90">90 ימים</button><button data-d="all">הכול</button></div>
+          <div class="seg" id="emEnv"><button data-e="prod">אפליקציה אמיתית</button><button data-e="test">אתר הבדיקות</button></div>
+        </div>
+      </div>
+      <div id="emNote"></div>
+      <div id="emBody"></div>
+    </div>
+  </section>
+
   <section data-tab="support" hidden>
     <div id="supGate" class="card soon" style="margin-bottom:12px">טוען…</div>
     <div id="supApp" hidden>
@@ -421,14 +452,15 @@ td.n, th.n { text-align: end; }
 const FN = "https://bbupowzicprgtfltyepd.supabase.co/functions/v1/autoseoStats";
 const KEY_STORE = "autoseo-board-key";
 let P = null;
-const TABS = ["money", "users", "blogs", "support"];
+const TABS = ["money", "users", "blogs", "emails", "support"];
 const state = { period: "30", tab: TABS.includes(new URLSearchParams(location.search).get("tab")) ? new URLSearchParams(location.search).get("tab") : "money" };
 function showTab(t) {
   state.tab = t;
   document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.t === t)));
   document.querySelectorAll("section[data-tab]").forEach((s) => (s.hidden = s.dataset.tab !== t));
-  $("filters").style.display = t === "support" ? "none" : "";
+  $("filters").style.display = t === "support" || t === "emails" ? "none" : "";
   if (t === "support" && window.SupportUI) window.SupportUI.open();
+  if (t === "emails" && window.EmailsUI) window.EmailsUI.open();
   const u = new URL(location.href); u.searchParams.set("tab", t); history.replaceState(null, "", u);
 }
 
@@ -713,7 +745,7 @@ function render() {
     dayLabels: [],
   };
   for (let i = r.start; i <= r.end; i++) ctx.dayLabels.push({ short: r.len > 400 ? mLabel(P.days[i]) : dLabel(P.days[i]), long: dLabel(P.days[i], true) });
-  if (state.tab === "support") return;
+  if (state.tab === "support" || state.tab === "emails") return;
   ({ money: renderMoney, users: renderUsers, blogs: renderBlogs })[state.tab](ctx);
 }
 
@@ -970,7 +1002,7 @@ function init() {
   $("tabs").addEventListener("click", (e) => {
     const b = e.target.closest("[data-t]"); if (!b) return;
     showTab(b.dataset.t);
-    if (P && b.dataset.t !== "support") render();
+    if (P && b.dataset.t !== "support" && b.dataset.t !== "emails") render();
   });
   $("refresh").addEventListener("click", async () => {
     $("refresh").disabled = true; $("refresh").textContent = "מושך משופיפיי…";
@@ -1268,6 +1300,165 @@ function receipt(a, v, out, error) {
 
 window.SupportUI = { open };
 if (new URLSearchParams(location.search).get("tab") === "support") open();
+
+// ---------- "מיילים": the app's email automations (read only) ----------
+// Same sign-in and edge function as the support tab (op=emails). Numbers come from the app
+// (/api/support/emails): what was sent, plus Brevo's delivered/opened/clicked/bounced, synced hourly.
+const EM = { started: false, days: "30", env: null, data: null, fellBack: false };
+const emSignIn = () => sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: location.origin + "/autoseo/?tab=emails", queryParams: { prompt: "select_account" } } });
+const emPct = (a, b) => (b ? (Math.round((a / b) * 1000) / 10).toLocaleString("en-US") + "%" : "—");
+// The app stores times in UTC without a zone ("2026-11-28 16:48:18").
+const emDate = (s) => (s ? new Date(/[zZ]|[+-]\d\d:?\d\d$/.test(s) ? s : String(s).replace(" ", "T") + "Z") : null);
+const emWhen = (s) => { const d = emDate(s); return d ? d.toLocaleDateString("he-IL", { day: "numeric", month: "numeric" }) + " " + d.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" }) : "—"; };
+const emDay = (s) => { const d = emDate(s); return d ? d.toLocaleDateString("he-IL", { day: "numeric", month: "numeric", year: "2-digit" }) : "—"; };
+const EM_STATUS = {
+  in_flow: ["בזרימה", "b"], finished: ["קיבלה את כל המיילים", ""], paying: ["עברה לתשלום", "g"],
+  unsubscribed: ["ביטלה הרשמה", "r"], uninstalled: ["הסירה את האפליקציה", ""],
+};
+
+function emGate(msg, extra) {
+  $("emGate").hidden = false; $("emApp").hidden = true;
+  $("emGate").replaceChildren(el("div", {}, msg), extra || "");
+}
+
+async function emOpen() {
+  if (EM.started) return;
+  EM.started = true;
+  emGate("טוען…");
+  $("emDays").addEventListener("click", (e) => { const b = e.target.closest("[data-d]"); if (b && b.dataset.d !== EM.days) { EM.days = b.dataset.d; emLoad(); } });
+  $("emEnv").addEventListener("click", (e) => { const b = e.target.closest("[data-e]"); if (b && b.dataset.e !== EM.env) { EM.env = b.dataset.e; EM.fellBack = false; emLoad(); } });
+  await emLoad();
+}
+
+async function emLoad() {
+  document.querySelectorAll("#emDays button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.d === EM.days)));
+  $("emBody").classList.add("loading");
+  try {
+    const out = await api("emails", EM.env ? { days: EM.days, env: EM.env } : { days: EM.days });
+    EM.data = out.data; EM.env = out.env;
+  } catch (e) {
+    $("emBody").classList.remove("loading");
+    if (e.code === 401) { EM.started = false; return emGate("כדי לראות את המיילים צריך להתחבר עם חשבון Google מורשה.", el("div", { class: "btns", style: "margin-top:10px" }, el("button", { class: "btn-p", onclick: emSignIn }, "התחברות עם Google"))); }
+    if (e.code === 403) { EM.started = false; return emGate(`הדפדפן הזה מחובר בתור ${e.email || "חשבון אחר"}, ולחשבון הזה אין גישה.`, el("div", { class: "btns", style: "margin-top:10px" }, el("button", { class: "btn-p", onclick: async () => { await sb.auth.signOut(); emSignIn(); } }, "התחברות עם חשבון אחר"))); }
+    if (e.message === "not_live" && EM.env !== "test") { EM.env = "test"; EM.fellBack = true; return emLoad(); }
+    if (e.message === "not_live") return emGate("מעקב המיילים עוד לא עלה גם באתר הבדיקות.");
+    return emGate("שגיאה: " + e.message);
+  }
+  $("emBody").classList.remove("loading");
+  $("emGate").hidden = true; $("emApp").hidden = false;
+  document.querySelectorAll("#emEnv button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.e === EM.env)));
+  emRender();
+}
+
+function emRender() {
+  const d = EM.data;
+  $("emNote").replaceChildren(EM.fellBack ? el("div", { class: "em-note" }, "באפליקציה האמיתית זרימת המיילים עוד לא עלתה, לכן מוצגים כאן הנתונים של אתר הבדיקות.") : "");
+  $("emBody").replaceChildren(...d.automations.map(emAutomation),
+    el("div", { class: "foot" },
+      "איך סופרים: \"נמסר\", \"נפתח\" ו\"הקליק\" מגיעים מ-Brevo (שירות שליחת המיילים) ומתעדכנים פעם בשעה. אחוז הפתיחה והקליקים מחושב מתוך המיילים שנמסרו. " +
+      "פתיחה נספרת רק כשהנמען באמת פתח: טעינה אוטומטית של אפליקציית Mail באייפון לא נספרת. הקלקה על קישור ביטול ההרשמה לא נספרת כהקלקה. " +
+      "\"עברו לתשלום\" היא חנות שקיבלה לפחות מייל אחד מהזרימה ואחר כך עברה לתוכנית בתשלום. היא נספרת על המייל האחרון שקיבלה. " +
+      "\"ביטלו הרשמה\" נספר על המייל האחרון שהחנות קיבלה לפני הביטול. " +
+      (d.last_sync ? `עדכון אחרון מ-Brevo: ${emWhen(d.last_sync)}.` : "עוד לא היה עדכון מ-Brevo.")));
+}
+
+function emAutomation(a) {
+  const t = a.totals, base = t.delivered || t.sent;
+  const status = !a.enabled ? ["כבויה: לא נשלח כלום", "r"] : a.only_shops.length ? [`פעילה רק לחנויות בדיקה (${a.only_shops.length})`, "b"] : ["פעילה", "g"];
+  const head = el("div", { class: "card", style: "margin-bottom:12px" },
+    el("div", { class: "em-auto-top" }, el("h2", {}, "זרימת שדרוג: 4 מיילים לחנויות שלא משלמות"), el("span", { class: "badge " + status[1] }, status[0])),
+    el("p", { class: "hint", style: "margin:6px 0 14px" },
+      `נשלחת לחנויות שהתקינו את האפליקציה ועדיין לא משלמות, ביום ${a.days.join(", ").replace(/, (\d+)$/, " ו-$1")} אחרי ההתקנה. ` +
+      "נעצרת מיד כשהחנות עוברת לתשלום, מסירה את האפליקציה או מבטלת הרשמה. חנויות שהותקנו לפני שהזרימה עלתה לא מקבלות אותה."),
+    el("div", { class: "now-list" },
+      nowKV("חנויות שקיבלו מייל", int(t.reached), `${int(a.recipients_total)} ברשימה למטה`),
+      nowKV("מיילים שנשלחו", int(t.sent), t.failed ? `${int(t.failed)} נכשלו בשליחה` : `${int(t.delivered)} נמסרו`),
+      nowKV("אחוז פתיחה", emPct(t.opened, base), `${int(t.opened)} מתוך ${int(base)}`),
+      nowKV("אחוז הקלקה", emPct(t.clicked, base), `${int(t.clicked)} מתוך ${int(base)}`),
+      nowKV("עברו לתשלום", int(t.converted), `${emPct(t.converted, t.reached)} מהחנויות שקיבלו`),
+      nowKV("ביטלו הרשמה", int(t.unsubscribed), emPct(t.unsubscribed, t.reached) + " מהחנויות"),
+      nowKV("חזרו או סומנו כספאם", int(t.bounced + t.spam), `${int(t.bounced)} חזרו · ${int(t.spam)} ספאם`),
+      nowKV("בזרימה עכשיו", int(a.in_flow), `${int(a.queue.length)} יקבלו מייל ב-24 השעות הקרובות`)));
+
+  const max = Math.max(1, t.sent);
+  const funnelRow = (lbl, v, of) => el("div", { class: "row" }, el("div", { class: "lbl" }, lbl),
+    el("div", { class: "bar" }, el("span", { style: `width:${Math.max(v ? 1.5 : 0, (v / max) * 100)}%` })),
+    el("div", { class: "val num" }, int(v), of != null ? el("small", {}, emPct(v, of)) : ""));
+  const funnel = el("div", { class: "card" }, el("h2", {}, "מה קרה למיילים"), el("p", { class: "hint" }, "כל המיילים של הזרימה בתקופה שנבחרה"),
+    el("div", { class: "funnel" }, funnelRow("נשלחו", t.sent), funnelRow("נמסרו", t.delivered, t.sent), funnelRow("נפתחו", t.opened, base), funnelRow("הקליקו", t.clicked, base)));
+  const chartCard = el("div", { class: "card" }, el("h2", {}, "לפי יום"), el("p", { class: "hint" }, "מיילים שנשלחו בכל יום, וכמה מהם נפתחו והקליקו"),
+    el("div", { class: "legend", id: "emLegend" }), el("div", { class: "chart", id: "emChart" }));
+
+  const steps = el("div", { class: "card tablecard", style: "margin-bottom:12px" },
+    el("div", { class: "ttl" }, el("h2", {}, "כל מייל בזרימה"), el("p", { class: "hint", style: "margin:0" }, "[store] בנושא = שם החנות")),
+    el("div", { class: "scroll" }, el("table", {},
+      el("thead", {}, el("tr", {}, ...["מייל", "יום", "נושא", "נשלחו", "נמסרו", "נפתחו", "הקליקו", "עברו לתשלום", "ביטלו הרשמה", "חזרו"].map((h, i) => el("th", { class: i >= 3 ? "n" : "" }, h)))),
+      el("tbody", {}, ...a.steps.map((s) => { const b = s.delivered || s.sent; return el("tr", {},
+        el("td", {}, el("b", {}, `מייל ${s.step}`)), el("td", { class: "num" }, `יום ${s.day}`), el("td", { dir: "ltr", style: "text-align:start" }, s.subject),
+        el("td", { class: "n num" }, int(s.sent)), el("td", { class: "n num" }, int(s.delivered)),
+        el("td", { class: "n num" }, `${int(s.opened)} · ${emPct(s.opened, b)}`), el("td", { class: "n num" }, `${int(s.clicked)} · ${emPct(s.clicked, b)}`),
+        el("td", { class: "n num" }, int(s.converted)), el("td", { class: "n num" }, int(s.unsubscribed)), el("td", { class: "n num" }, int(s.bounced + s.spam))); })))));
+
+  const queue = el("div", { class: "card tablecard" },
+    el("div", { class: "ttl" }, el("h2", {}, "המיילים הבאים"), el("p", { class: "hint", style: "margin:0" }, a.enabled ? "מי יקבל מייל ב-24 השעות הקרובות" : "מי היה מקבל מייל ב-24 השעות הקרובות אם הזרימה הייתה פעילה")),
+    el("div", { class: "scroll" }, a.queue.length ? el("table", {},
+      el("thead", {}, el("tr", {}, el("th", {}, "חנות"), el("th", {}, "מייל"), el("th", { class: "n" }, "מתי"))),
+      el("tbody", {}, ...a.queue.map((q) => el("tr", {}, el("td", {}, q.name || short(q.shop), el("div", { class: "dom" }, short(q.shop))),
+        el("td", {}, `מייל ${q.step}`), el("td", { class: "n num" }, emWhen(q.at)))))) : el("div", { class: "empty" }, "אף חנות לא מחכה למייל עכשיו")));
+
+  const dot = (e, step) => {
+    if (!e) return el("span", { class: "em-dot", title: `מייל ${step}: לא נשלח` }, step);
+    const cls = e.bounced || e.spam ? "bounce" : e.clicked ? "click" : e.opened ? "open" : "sent";
+    const txt = { bounce: e.spam ? "סומן כספאם" : "חזר", click: "הקליק", open: "נפתח", sent: e.delivered ? "נמסר, לא נפתח" : "נשלח" }[cls];
+    return el("span", { class: "em-dot " + cls, title: `מייל ${step}: ${txt} · ${emWhen(e.sent_at)}` }, step);
+  };
+  const recipients = el("div", { class: "card tablecard" },
+    el("div", { class: "ttl" }, el("h2", {}, "למי זה הגיע"),
+      el("div", { class: "em-key", style: "margin-top:6px" },
+        el("span", {}, el("span", { class: "em-dot" }, "1"), "לא נשלח"), el("span", {}, el("span", { class: "em-dot sent" }, "1"), "נשלח"),
+        el("span", {}, el("span", { class: "em-dot open" }, "1"), "נפתח"), el("span", {}, el("span", { class: "em-dot click" }, "1"), "הקליק"),
+        el("span", {}, el("span", { class: "em-dot bounce" }, "1"), "חזר או ספאם"),
+        a.recipients_total > a.recipients.length ? el("span", {}, `מוצגות ${int(a.recipients.length)} מתוך ${int(a.recipients_total)}`) : "")),
+    el("div", { class: "scroll" }, a.recipients.length ? el("table", {},
+      el("thead", {}, el("tr", {}, ...["חנות", "כתובת", "הותקנה", "מיילים", "מצב", "מייל אחרון"].map((h) => el("th", {}, h)))),
+      el("tbody", {}, ...a.recipients.map((r) => {
+        const by = Object.fromEntries(r.emails.map((e) => [e.step, e]));
+        const st = EM_STATUS[r.status] || [r.status, ""];
+        return el("tr", {},
+          el("td", {}, el("div", { style: "font-weight:600" }, r.name || short(r.shop)), el("div", { class: "dom" }, short(r.shop))),
+          el("td", { dir: "ltr", style: "text-align:start" }, r.email || "—"),
+          el("td", { class: "num" }, emDay(r.installed_at)),
+          el("td", {}, el("span", { class: "em-dots" }, ...a.days.map((_, i) => dot(by[i + 1], i + 1)))),
+          el("td", {}, el("span", { class: "badge " + st[1] }, st[0] + (r.status === "paying" && r.plan ? ` · ${r.plan}` : ""))),
+          el("td", { class: "num" }, emWhen(r.last_sent_at)));
+      }))) : el("div", { class: "empty" }, "עוד לא נשלחו מיילים בתקופה הזו")));
+
+  const wrap = el("div", {}, head, el("div", { class: "grid g-2" }, funnel, chartCard), steps, el("div", { style: "margin-bottom:12px" }, queue), recipients);
+  requestAnimationFrame(() => emChart(a));
+  return wrap;
+}
+
+function nowKV(k, v, s) { return el("div", {}, el("div", { class: "k" }, k), el("div", { class: "v num" }, v), el("div", { class: "s" }, s)); }
+
+function emChart(a) {
+  if (!$("emChart")) return;
+  const map = Object.fromEntries(a.daily.map((x) => [x.date, x]));
+  const today = new Date(); const end = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+  const n = EM.days === "all" ? Math.max(7, a.daily.length ? Math.ceil((end - Date.parse(a.daily[0].date)) / 86400000) + 1 : 7) : Number(EM.days);
+  const days = []; for (let i = n - 1; i >= 0; i--) days.push(new Date(end - i * 86400000).toISOString().slice(0, 10));
+  const C = { s1: css("--s1"), s3: css("--s3"), s4: css("--s4") };
+  const series = [
+    { name: "נשלחו", color: C.s1, values: days.map((d) => map[d]?.sent || 0) },
+    { name: "נפתחו", color: C.s3, values: days.map((d) => map[d]?.opened || 0) },
+    { name: "הקליקו", color: C.s4, values: days.map((d) => map[d]?.clicked || 0) },
+  ];
+  legend("emLegend", series);
+  barChart("emChart", days.map((d) => ({ short: dLabel(d), long: dLabel(d, true) })), series, int, (v) => int(v), { stacked: false, height: 200 });
+}
+
+window.EmailsUI = { open: emOpen };
+if (new URLSearchParams(location.search).get("tab") === "emails") emOpen();
+
 </script>
 </body>
 </html>
